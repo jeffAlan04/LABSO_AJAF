@@ -1,0 +1,29 @@
+name: Java Build
+
+on:
+  push:
+    branches:
+      - main  # Controllo su tutti i push sul main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository    #checkout della repo
+        uses: actions/checkout@v2
+
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: '24'
+
+      - name: Compile Java files
+        run: |
+          # Compila solo i file modificati
+          modified_files=$(git diff --name-only HEAD^ HEAD | grep '\.java$')
+          if [ -n "$modified_files" ]; then
+            javac $modified_files
+          else
+            echo "Nessun file Java modificato."
+          fi
