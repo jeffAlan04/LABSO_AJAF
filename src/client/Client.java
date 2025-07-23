@@ -8,14 +8,14 @@ public class Client {
       return;
     }
 
-    String indirizzo_master = args[0];
+    String indirizzoMaster = args[0];
     int porta = Integer.parseInt(args[1]);
 
-    Scanner keyboard = new Scanner(System.in);
+    Scanner tastiera = new Scanner(System.in);
 
     while (true) {
       System.out.print("> ");
-      String userInput = keyboard.nextLine();
+      String inputUtente = tastiera.nextLine();
     }
 
   }
