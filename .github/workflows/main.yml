@@ -17,6 +17,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: '24'
+          distribution: 'temurin'
 
       - name: Compile Java files
         run: |
