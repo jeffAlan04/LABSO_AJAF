@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Checkout repository    #checkout della repo
         uses: actions/checkout@v2
+        with:
+              fetch-depth: 2  #prende gli ultimi 2 commit
 
       - name: Set up JDK
         uses: actions/setup-java@v2
@@ -22,7 +24,7 @@ jobs:
       - name: Compile Java files
         run: |
           # Compila solo i file modificati
-          modified_files=$(git diff --name-only HEAD^ HEAD | grep '\.java$')
+          modified_files=$(git diff --name-only HEAD~1 HEAD | grep '\.java$')
           if [ -n "$modified_files" ]; then
             javac $modified_files
           else
