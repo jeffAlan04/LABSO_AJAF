@@ -1,9 +1,12 @@
 name: Java Build
 
 on:
-  push:
+  pull_request:
     branches:
-      - main  # Controllo su tutti i push sul main
+      - main
+  schedule:
+    - cron: '0 0 * * *'  # Esegue l'azione ogni giorno a mezzanotte UTC
+
 
 jobs:
   build:
