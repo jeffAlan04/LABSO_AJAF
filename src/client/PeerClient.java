@@ -1,36 +1,62 @@
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Scanner;
 
 public class PeerClient {
 
   private String indirizzoHostPeer;
   private int porta;
   private String nomeRisorsa;
-  private Socket s;
 
-  public PeerClient(String indirizzoPeer, int porta, String nomeRisorsa) {
-    this.indirizzoHostPeer = indirizzoPeer;
+  public PeerClient(String indirizzoHostPeer, int porta, String nomeRisorsa) {
+    this.indirizzoHostPeer = indirizzoHostPeer;
     this.porta = porta;
     this.nomeRisorsa = nomeRisorsa;
   }
 
   private boolean avviaConnessione() {
-    try {
-      this.s = new Socket(indirizzoHostPeer, porta);
+
+    try (Socket s = new Socket(indirizzoHostPeer, porta)) {
+
+      System.out.println("Connesso al peer " + indirizzoHostPeer);
+      return richiediRisorsa(s);
+
     } catch (IOException e) {
+
       System.out.println("Errore nella connessione al peer " + indirizzoHostPeer);
       return false;
     }
 
-    return true;
   }
 
-  private void terminaConnessione() {
-    try {
-      s.close();
+  private boolean richiediRisorsa(Socket s) {
+    try (Scanner socketOut = new Scanner(s.getInputStream());
+        PrintWriter socketIn = new PrintWriter(s.getOutputStream());) {
+
+      System.out.println("Richiedo risorsa " + nomeRisorsa);
+
+      socketIn.println(nomeRisorsa);
+      socketIn.flush();
+
+      String rispostaServer = socketOut.nextLine();
+
+      if (rispostaServer.equals("MANCANTE")) {
+        System.out.println("Risorsa " + nomeRisorsa + " non disponibile");
+        return false;
+      }
+
+      return ricezioneRisorsa(s);
+
     } catch (IOException e) {
-      System.out.println("Errore nella chiusura della connessione con il peer " + indirizzoHostPeer);
+      System.out.println("Errore nel controllo della risorsa");
+      return false;
     }
+  }
+
+  private boolean ricezioneRisorsa(Socket s) {
+    System.out.println("Inizio il download della risorsa");
+    return true;
   }
 
   // Da eliminare, solo per testing
