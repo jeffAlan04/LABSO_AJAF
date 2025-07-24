@@ -17,8 +17,13 @@ public class PeerServer implements Runnable {
       System.out.println("Server in ascolto sulla porta " + porta);
 
       while (true) {
-        Socket socket = serverSocket.accept();
-        System.out.println("Connessione a " + socket.getRemoteSocketAddress());
+
+        try (Socket socket = serverSocket.accept()) {
+          System.out.println("Connessione a " + socket.getRemoteSocketAddress());
+
+        } catch (IOException e) {
+          System.out.println("Errore mentre veniva stabilita una connessione");
+        }
 
       }
     } catch (IOException e) {
