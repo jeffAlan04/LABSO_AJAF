@@ -32,4 +32,15 @@ public class PeerServer {
       System.out.println("Errore durante la chiusura del server");
     }
   }
+
+  public static void main(String[] args) {
+    PeerServer s;
+    if (args.length < 1) {
+      s = new PeerServer(9999);
+    } else {
+      s = new PeerServer(Integer.parseInt(args[0]));
+
+    }
+    s.avviaServer();
+  }
 }
