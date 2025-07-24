@@ -2,8 +2,6 @@ import java.io.*;
 import java.net.*;
 import java.util.Scanner;
 
-//alMaster = outputMaster
-
 public class Client {
   public static void main(String[] args) {
     if (args.length < 2) {
@@ -24,11 +22,25 @@ public class Client {
 
       while (true) {
         System.out.print("> ");
-        String inputUtente = tastiera.nextLine();
+        String inputUtente = tastiera.nextLine().trim();
+
+        if (inputUtente.equalsIgnoreCase("quit")){
+          eseguiQuit(outputMaster);
+          break;
+        }
+        else{
+          System.out.println("Altri comandi");
+        }
       }
     }
     catch(IOException e){
       System.out.println("Errore di connessione al master");
     }
+  }
+
+  private static void eseguiQuit(PrintWriter outputMaster){
+    outputMaster.println("QUIT");
+    outputMaster.flush();
+    System.out.println("Disconnessione in corso");
   }
 }
