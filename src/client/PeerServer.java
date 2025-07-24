@@ -23,6 +23,7 @@ public class PeerServer implements Runnable {
       }
     } catch (IOException e) {
       System.out.println("Errore nell'esecuzione del server");
+    } finally {
       terminaServer();
     }
   }
