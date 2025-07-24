@@ -2,7 +2,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class PeerServer {
+public class PeerServer implements Runnable {
   private int porta;
   private ServerSocket serverSocket;
 
@@ -10,9 +10,10 @@ public class PeerServer {
     this.porta = porta;
   }
 
-  public void avviaServer() {
+  @Override
+  public void run() {
     try {
-      serverSocket = new ServerSocket(porta);
+      this.serverSocket = new ServerSocket(porta);
       System.out.println("Server in ascolto sulla porta " + porta);
 
       while (true) {
@@ -22,6 +23,7 @@ public class PeerServer {
       }
     } catch (IOException e) {
       System.out.println("Errore nell'esecuzione del server");
+      terminaServer();
     }
   }
 
@@ -41,6 +43,6 @@ public class PeerServer {
       s = new PeerServer(Integer.parseInt(args[0]));
 
     }
-    s.avviaServer();
+    s.run();
   }
 }
