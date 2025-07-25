@@ -67,6 +67,5 @@ public class Client {
         System.out.println("- " + f.getName());
       }
     }
-    System.out.println("Ciao");
   }
 }
