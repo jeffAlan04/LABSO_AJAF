@@ -1,7 +1,7 @@
 # LABSO_AJAF
 
 ## Compilazione
-Per compilare tutti i sorgenti dentro /src
+Per compilare tutti i sorgenti presenti dentro /src
 ```bash
 make build
 ```
