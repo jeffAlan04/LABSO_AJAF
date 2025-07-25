@@ -7,18 +7,18 @@ public class GestioneRisorse {
 
   }
 
-  public static boolean risorsaPresente(String nome) {
-    File directory = new File("/risorse");
+  public static String risorsaPresente(String nome) {
+    File directory = new File("risorse");
     File[] risorse = directory.listFiles();
 
-    if (risorse != null & risorse.length != 0) {
+    if (risorse != null && risorse.length != 0) {
       for (File risorsa : risorse) {
-        if (nome == risorsa.getName()) {
-          return true;
+        if (nome.equals(risorsa.getName())) {
+          return "true";
         }
       }
     }
 
-    return false;
+    return "false";
   }
 }
