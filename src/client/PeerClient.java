@@ -51,7 +51,7 @@ public class PeerClient {
       }
 
       System.out.println("Disconnessione");
-      return ricezioneRisorsa(s, nomeRisorsa);
+      return downloadRisorsa(s, nomeRisorsa);
 
     } catch (IOException e) {
       System.out.println("Errore nel controllo della risorsa");
@@ -59,7 +59,7 @@ public class PeerClient {
     }
   }
 
-  private boolean ricezioneRisorsa(Socket s, String nomeRisorsa) {
+  private boolean downloadRisorsa(Socket s, String nomeRisorsa) {
     System.out.println("Inizio il download della risorsa " + nomeRisorsa);
     try (InputStream is = s.getInputStream();
         FileOutputStream fos = new FileOutputStream("scaricati/" + nomeRisorsa);
@@ -72,7 +72,7 @@ public class PeerClient {
         bos.write(byteArray, 0, byteRead);
       }
       bos.flush();
-      System.out.println("Risorsa" + nomeRisorsa + " scaricata");
+      System.out.println("Risorsa " + nomeRisorsa + " scaricata");
       return true;
 
     } catch (IOException e) {
