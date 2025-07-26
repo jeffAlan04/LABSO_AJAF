@@ -41,11 +41,13 @@ public class PeerClient {
 
       String rispostaServer = socketOut.nextLine();
 
-      if (rispostaServer.equals("MANCANTE")) {
+      if (rispostaServer.equals("false")) {
         System.out.println("Risorsa " + nomeRisorsa + " non disponibile");
+        System.out.println("Disconnessione");
         return false;
       }
 
+      System.out.println("Disconnessione");
       return ricezioneRisorsa(s);
 
     } catch (IOException e) {
@@ -63,7 +65,7 @@ public class PeerClient {
   public static void main(String[] args) {
     PeerClient c;
     if (args.length < 2) {
-      c = new PeerClient("localhost", 9999, "prova");
+      c = new PeerClient("localhost", 9999, "prova.txt");
     } else {
       c = new PeerClient(args[0], Integer.parseInt(args[1]), args[2]);
     }
