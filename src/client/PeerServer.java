@@ -1,4 +1,9 @@
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -52,11 +57,32 @@ public class PeerServer implements Runnable {
       writer.flush();
 
       if (risposta.equals("true")) {
+        uploadRisorsa(s, nomeRisorsa);
 
       }
 
     } catch (IOException e) {
-      System.out.println("Errore durante upload di una risorsa con peer " + s.getRemoteSocketAddress());
+      System.out.println(
+          "Errore durante controllo presenza di una risorsa con peer " + s.getRemoteSocketAddress());
+    }
+  }
+
+  private synchronized void uploadRisorsa(Socket s, String nomeRisorsa) {
+    File f = new File("risorse/" + nomeRisorsa);
+    byte[] byteArray = new byte[(int) f.length()];
+
+    try (FileInputStream fis = new FileInputStream(f);
+        BufferedInputStream bis = new BufferedInputStream(fis);
+        OutputStream os = s.getOutputStream()) {
+
+      System.out.println("Inizio upload risorsa " + nomeRisorsa + " verso peer " + s.getRemoteSocketAddress());
+      bis.read(byteArray, 0, byteArray.length);
+      os.write(byteArray, 0, byteArray.length);
+      os.flush();
+      System.out.println("Fine upload risorsa " + nomeRisorsa + " verso peer " + s.getRemoteSocketAddress());
+
+    } catch (IOException e) {
+      System.out.println("Errore durante upload della risorsa " + nomeRisorsa);
     }
   }
 
