@@ -49,6 +49,7 @@ public class PeerServer implements Runnable {
 
       System.out.println("Disponibilità risorsa " + nomeRisorsa + ": " + risposta);
       writer.println(risposta);
+      writer.flush();
 
       if (risposta.equals("true")) {
 
