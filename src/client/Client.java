@@ -2,6 +2,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
+
 public class Client {
 
   
@@ -32,7 +33,7 @@ public class Client {
           break;
         }
        else if (inputUtente.equalsIgnoreCase("listdata local")){
-          eseguiListDataLocal(outputMaster);
+          GestioneRisorse.eseguiListDataLocal();
           break;
        }
        else{
@@ -50,22 +51,5 @@ public class Client {
     outputMaster.println("QUIT");
     outputMaster.flush();
     System.out.println("Disconnessione in corso");
-  }
-
-// Metodo per il comando listdata local
-  private static void eseguiListDataLocal(PrintWriter outputMaster){
-    File input = new File("src/client/risorse");
-    File[] risorse = input.listFiles();
-
-    if (risorse == null || risorse.length == 0){
-      System.out.println("Nessuna risorsa disponibile");
-      return;
-    }
-    System.out.println("Risorse: ");
-    for (File f : risorse) {
-      if(f.isFile()){
-        System.out.println("- " + f.getName());
-      }
-    }
   }
 }
