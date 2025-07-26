@@ -32,4 +32,5 @@ jobs:
             javac $modified_files
           else
             echo "Nessun file Java modificato."
+            exit 0
           fi
