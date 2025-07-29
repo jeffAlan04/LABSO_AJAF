@@ -94,6 +94,7 @@ public class PeerServer implements Runnable {
     }
   }
 
+  // Da eliminare, inserito per testing
   public static void main(String[] args) {
     PeerServer s;
     if (args.length < 1) {
