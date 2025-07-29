@@ -36,7 +36,11 @@ public class PeerServer implements Runnable {
           System.out.println("Chiusura connessione con peer " + indirizzoPeer);
 
         } catch (IOException e) {
-          System.out.println("Errore mentre veniva stabilita una connessione");
+          if (!running) {
+            System.out.println("PeerServer chiuso");
+          } else {
+            System.out.println("Errore mentre veniva stabilita una connessione");
+          }
         }
 
       }
@@ -92,7 +96,8 @@ public class PeerServer implements Runnable {
     running = false;
 
     try {
-      serverSocket.close();
+      if (serverSocket != null && !serverSocket.isClosed())
+        serverSocket.close();
     } catch (IOException e) {
       System.out.println("Errore durante la chiusura del server");
     }
