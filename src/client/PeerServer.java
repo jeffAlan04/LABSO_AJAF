@@ -12,6 +12,7 @@ import java.util.Scanner;
 public class PeerServer implements Runnable {
   private int porta;
   private ServerSocket serverSocket;
+  private boolean running;
 
   public PeerServer(int porta) {
     this.porta = porta;
@@ -22,8 +23,9 @@ public class PeerServer implements Runnable {
     try {
       this.serverSocket = new ServerSocket(porta);
       System.out.println("Server in ascolto sulla porta " + porta);
+      running = true;
 
-      while (true) {
+      while (running) {
 
         try (Socket socket = serverSocket.accept()) {
           String indirizzoPeer = socket.getRemoteSocketAddress().toString();
@@ -34,7 +36,11 @@ public class PeerServer implements Runnable {
           System.out.println("Chiusura connessione con peer " + indirizzoPeer);
 
         } catch (IOException e) {
-          System.out.println("Errore mentre veniva stabilita una connessione");
+          if (!running) {
+            System.out.println("PeerServer chiuso");
+          } else {
+            System.out.println("Errore mentre veniva stabilita una connessione");
+          }
         }
 
       }
@@ -87,8 +93,11 @@ public class PeerServer implements Runnable {
   }
 
   public void terminaServer() {
+    running = false;
+
     try {
-      serverSocket.close();
+      if (serverSocket != null && !serverSocket.isClosed())
+        serverSocket.close();
     } catch (IOException e) {
       System.out.println("Errore durante la chiusura del server");
     }
