@@ -50,10 +50,11 @@ public class Client {
     outputMaster.flush();
     System.out.println("Disconnessione in corso");
 
-    server.terminaServer();
+    server.terminaServer(); // termina PeerServer
 
   }
 
+  // Crea un thread che esegua PeerServer
   private static void avvioServer() {
     server = new PeerServer(9999);
     Thread threadServer = new Thread(server);
