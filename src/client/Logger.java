@@ -3,6 +3,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.io.File;
 
 public class Logger {
   private static PrintWriter scrittore;
@@ -32,5 +33,12 @@ public class Logger {
   public static void close() {
     if (scrittore != null)
       scrittore.close();
+  }
+
+  // da eliminare, solo per testing
+  public static void main(String[] args) {
+    Logger prova = new Logger();
+    prova.log("[prova]: sto facendo una prova");
+    prova.close();
   }
 }
