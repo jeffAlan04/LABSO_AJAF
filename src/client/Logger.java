@@ -6,11 +6,16 @@ import java.time.format.DateTimeFormatter;
 import java.io.File;
 
 public class Logger {
-  private static PrintWriter scrittore;
+  private PrintWriter scrittore;
+  private String classe;
+  private String identificativo;
 
-  public Logger() {
+  public Logger(String classe, String identificativo) {
+    this.classe = classe;
+    this.identificativo = identificativo;
+
     try {
-      FileWriter f = new FileWriter(new File("log/" + stampaMomento() + ".txt"), true);
+      FileWriter f = new FileWriter(new File(generaNome()), true);
       scrittore = new PrintWriter(f);
     } catch (IOException e) {
       // Rilancia l'eccezione sul chiamante così da interrompere l'esecuzione
@@ -18,37 +23,44 @@ public class Logger {
     }
   }
 
-  public static String stampaMomento() {
+  public static String generaNome() {
     LocalDateTime momento = LocalDateTime.now();
     DateTimeFormatter formattatore = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
+    String dataOra = momento.format(formattatore);
+    return "log/" + dataOra + ".txt";
+  }
+
+  public static String stampaMomento() {
+    LocalDateTime momento = LocalDateTime.now();
+    DateTimeFormatter formattatore = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     String dataOra = momento.format(formattatore);
     return dataOra;
   }
 
-  public static void log(String messaggio) {
+  public void log(String messaggio) {
     String messaggioFinale = stampaMomento() + " " + messaggio;
     scrittore.println(messaggioFinale);
     scrittore.flush();
   }
 
-  public static void logErrore(String messaggio) {
+  public void logErrore(String messaggio) {
     messaggio = "[ERRORE]\t" + messaggio;
     log(messaggio);
   }
 
-  public static void logInfo(String messaggio) {
+  public void logInfo(String messaggio) {
     messaggio = "[INFO]\t" + messaggio;
     log(messaggio);
   }
 
-  public static void close() {
+  public void close() {
     if (scrittore != null)
       scrittore.close();
   }
 
   // da eliminare, solo per testing
   public static void main(String[] args) {
-    Logger prova = new Logger();
+    Logger prova = new Logger("Logger", "1");
     prova.logInfo("Sto facendo una prova");
     prova.close();
   }
