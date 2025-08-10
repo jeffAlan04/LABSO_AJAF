@@ -23,7 +23,7 @@ public class Logger {
     }
   }
 
-  public String generaNome() {
+  private String generaNome() {
     LocalDateTime momento = LocalDateTime.now();
     DateTimeFormatter formattatore = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
     String dataOra = momento.format(formattatore);
