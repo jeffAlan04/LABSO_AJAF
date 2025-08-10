@@ -27,6 +27,8 @@ public class Logger {
     LocalDateTime momento = LocalDateTime.now();
     DateTimeFormatter formattatore = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
     String dataOra = momento.format(formattatore);
+
+    // Formato: <nome_classe>_<identificativo>_<data>_<ora>.log
     return "log/" + classe + "_" + identificativo + "_" + dataOra + ".log";
   }
 
