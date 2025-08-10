@@ -3,3 +3,6 @@
 
 # Risorse per il test
 *.txt
+
+# File di log
+*.log
