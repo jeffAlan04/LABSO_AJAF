@@ -23,11 +23,11 @@ public class Logger {
     }
   }
 
-  public static String generaNome() {
+  public String generaNome() {
     LocalDateTime momento = LocalDateTime.now();
     DateTimeFormatter formattatore = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
     String dataOra = momento.format(formattatore);
-    return "log/" + dataOra + ".txt";
+    return "log/" + classe + "_" + identificativo + "_" + dataOra + ".log";
   }
 
   public static String stampaMomento() {
