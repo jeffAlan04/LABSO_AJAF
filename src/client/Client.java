@@ -32,10 +32,32 @@ public class Client {
           eseguiQuit(outputMaster);
           break;
         }
+
        else if (inputUtente.equalsIgnoreCase("listdata local")){
           GestioneRisorse.eseguiListDataLocal();
           break;
        }
+
+       else if (inputUtente.startsWith("add ")){
+        String[] parti = inputUtente.split("\\s", 3);
+        if (parti.length < 3){
+          System.out.println("Uso corretto: add nome_risorsa contenuto");
+        }
+        else{
+          String nomeFile = parti[1];
+
+          if (!nomeFile.contains(".txt")){
+            nomeFile = nomeFile + ".txt";
+          }
+          String contenuto = parti[2];
+
+          GestioneRisorse.eseguiAdd(nomeFile, contenuto);
+
+          outputMaster.println("ADD " + nomeFile);
+          outputMaster.flush();
+        }
+       }
+       
        else{
         System.out.println("Altri comandi");
        }
