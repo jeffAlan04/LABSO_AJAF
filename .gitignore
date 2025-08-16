@@ -6,3 +6,6 @@
 
 # File di log
 *.log
+.idea/
+*.iml
+out/
