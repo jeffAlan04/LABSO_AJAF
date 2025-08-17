@@ -7,7 +7,7 @@ public class TestPeerMultithread {
 
     public static void main(String[] args) {
         int numeroPeer = 5; // Numero di peer simultanei
-        int porta = 12345;
+        int porta = 9000;
 
         for (int i = 1; i <= numeroPeer; i++) {
             int peerId = i;
@@ -30,11 +30,29 @@ public class TestPeerMultithread {
             out.println("LISTA");
             System.out.println("Peer " + id + ": " + in.readLine());
 
+            // Tutti i peer diversi da 1 scaricano R1
+            if(id != 1){
+                out.println("DOWNLOAD|R1");
+                System.out.println("Peer " + id + ": " + in.readLine());
+            }
+
+            // Aspetta un momento per assicurarsi che tutti i download siano completati
+            Thread.sleep(500);
+
+            // Solo Peer 1 richiede il log alla fine
+            if(id == 1) {
+                out.println("LOG");
+                String risposta;
+                while ((risposta = in.readLine()) != null && !risposta.isEmpty()){
+                    System.out.println("Peer " + id + " LOG: " + risposta);
+                }
+            }
+
             // Disconnetti il peer
             out.println("QUIT");
             System.out.println("Peer " + id + ": " + in.readLine());
 
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             System.err.println("Peer " + id + " errore: " + e.getMessage());
         }
     }

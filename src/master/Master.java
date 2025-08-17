@@ -1,48 +1,49 @@
-public class Database {
-    public Database() {
-        readerCount = 0;
-        dbReading = false;
-        dbWriting = false;
+public class Master{
+
+    private int lettoriAttivi;
+    private boolean inLettura;
+    private boolean inScrittura;
+
+    public Master() {
+         lettoriAttivi = 0;
+         inLettura = false;
+         inScrittura = false;
     }
-    public synchronized int startRead() {
-        while (dbWriting == true) {
+    public synchronized int inizioLettura() {
+        while (inScrittura == true) {
             try {
                 wait();
             }
             catch (InterruptedException e) {}
         }
-        ++readerCount;
+        lettoriAttivi++;
 
-        if (readerCount == 1)
-            dbReading = true;
+        if (lettoriAttivi == 1)
+            inLettura = true;
 
-        return readerCount;
+        return lettoriAttivi;
     }
 
-    public synchronized int endRead() {
-        --readerCount;
-        if (readerCount == 0)
-            db.notifyAll();  //è sufficiente una notify() perchè nel wait-set sono presenti solo processi scrittori
-        return readerCount;
+    public synchronized int fineLettura() {
+        lettoriAttivi--;
+        if (lettoriAttivi == 0)
+            notifyAll();
+        return lettoriAttivi;
     }
 
-    public synchronized void startWrite() {
-        while (dbReading == true || dbWriting == true){
+    public synchronized void inizioScrittura() {
+        while (inLettura == true || inScrittura == true){
             try {
                 wait();
             }
             catch (InterruptedException e){}
         }
-        dbWriting = true;
+        inScrittura = true;
     }
 
 
-    public synchronized void endWrite() {
-        dbWriting = false;
+    public synchronized void fineScrittura() {
+        inScrittura = false;
         notifyAll();
     }
-
-    private int readerCount;
-    private boolean dbReading;
-    private boolean dbWriting;
 }
