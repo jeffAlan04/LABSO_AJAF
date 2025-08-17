@@ -18,7 +18,7 @@ public class PeerClient {
     this.nomeRisorsa = nomeRisorsa;
   }
 
-  private boolean avviaConnessione() {
+  public boolean avviaConnessione() {
 
     try (Socket s = new Socket(indirizzoHostPeer, porta)) {
 
