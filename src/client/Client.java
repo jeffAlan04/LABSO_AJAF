@@ -66,6 +66,49 @@ public class Client {
           outputMaster.flush();
         }
        }
+
+       else if (inputUtente.startsWith("download")){
+        String[] parti = inputUtente.split("\\s");
+        if (parti.length != 2){
+          System.out.println("Uso corretto: download nome_risorsa");
+        }
+        else{
+          String nomeRisorsa = parti[1];
+
+          if (!nomeRisorsa.contains(".txt")){
+            nomeRisorsa = nomeRisorsa + ".txt";
+          }
+
+          outputMaster.println("DOWNLOAD " + nomeRisorsa);
+          outputMaster.flush();
+
+          String indirizzoHostPeer = inputMaster.nextLine();
+
+          PeerClient pc = new PeerClient(indirizzoHostPeer, porta, nomeRisorsa);
+
+          boolean risorsaTrovata = pc.avviaConnessione();
+
+          while (!risorsaTrovata){
+            outputMaster.println("Risorsa non disponibile dal Peer: " + indirizzoHostPeer);
+            outputMaster.flush();
+
+            String indirizzoHostPeerAlternativo = inputMaster.nextLine();
+
+            if (indirizzoHostPeerAlternativo.equals("NESSUNO")){
+              System.out.println("Download fallito: nessun peer disponibile");
+              break;
+            }
+            else{
+              PeerClient pcAlternativo = new PeerClient(indirizzoHostPeerAlternativo, porta, nomeRisorsa);
+
+              risorsaTrovata = pcAlternativo.avviaConnessione();
+            }
+            
+          }
+          
+        }
+        
+       }
        
        else{
         System.out.println("Altri comandi");
