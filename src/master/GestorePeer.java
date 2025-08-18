@@ -65,14 +65,14 @@ class GestorePeer implements Runnable {
                     }
                 }
                 else if (messaggio.equals("LOG")) {
-                    // Comando per visualizzare tutti i download
                     out.println("Risorse scaricate:");
-                    synchronized(MasterServer.getLog()) { // protegge l'accesso multithread
-                        for (Log rigaLog : MasterServer.getLog()) {
-                            out.println("- " + rigaLog.getOrario() + " " + rigaLog.getRisorsa() +
-                                    " da: " + rigaLog.getPeerSorgente() +
-                                    " a: " + rigaLog.getPeerDestinazione());
+                    try (BufferedReader br = new BufferedReader(new FileReader("/home/james/Scrivania/LABSO_AJAF/src/master/log.txt"))) {
+                        String line;
+                        while ((line = br.readLine()) != null) {
+                            out.println("- " + line);
                         }
+                    } catch (IOException e) {
+                        out.println("Errore lettura log da file: " + e.getMessage());
                     }
                 }
             }

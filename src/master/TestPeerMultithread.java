@@ -20,19 +20,26 @@ public class TestPeerMultithread {
              BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
              PrintWriter out = new PrintWriter(socket.getOutputStream(), true)) {
 
-            String risorsa = "R" + id;
+            // Ogni peer aggiunge due risorse
+            String risorsa1 = "R" + id;
+            String risorsa2 = "R" + id + "_extra";
 
-            // Aggiungi una risorsa
-            out.println("AGGIUNGI|" + risorsa);
+            out.println("AGGIUNGI|" + risorsa1);
+            System.out.println("Peer " + id + ": " + in.readLine());
+
+            out.println("AGGIUNGI|" + risorsa2);
             System.out.println("Peer " + id + ": " + in.readLine());
 
             // Richiedi lista risorse
             out.println("LISTA");
             System.out.println("Peer " + id + ": " + in.readLine());
 
-            // Tutti i peer diversi da 1 scaricano R1
+            // Tutti i peer diversi da 1 provano a scaricare R1 e R1_extra
             if(id != 1){
                 out.println("DOWNLOAD|R1");
+                System.out.println("Peer " + id + ": " + in.readLine());
+
+                out.println("DOWNLOAD|R1_extra");
                 System.out.println("Peer " + id + ": " + in.readLine());
             }
 
