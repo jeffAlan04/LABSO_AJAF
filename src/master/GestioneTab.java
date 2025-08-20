@@ -18,7 +18,7 @@ public class GestioneTab {
     }
 
     public List<String> getPeers(String risorsa) { // restituisci tutti peer che hanno quella risorsa
-        if (tabella.keySet().contains(risorsa)) {
+        if (tabella.containsKey(risorsa)) {
             return tabella.get(risorsa);
         }
 
@@ -31,13 +31,14 @@ public class GestioneTab {
         tabella.put(risorsa, new ArrayList<String>());
     }
 
-    public void aggingiPeer(String indirizzoIp, List<String> risorse) {
+    public void aggiungiPeer(String indirizzoIp, List<String> risorse) {
         for (String risorsa : risorse) {
             if (tabella.containsKey(risorsa)) { // esiste la risorsa
                 tabella.get(risorsa).add(indirizzoIp);
             }
             else { // non esiste la risorsa
                 aggiungiRisorsa(risorsa);
+                tabella.get(risorsa).add(indirizzoIp);
             }
         }
     }
@@ -46,23 +47,24 @@ public class GestioneTab {
     // RIMOZIONE
     public String rimuoviPeer(String ipAddress) {
         int count = 0;
+
         for (String risorsa : tabella.keySet()) {
-            if (tabella.get(risorsa).contains(ipAddress)) {
-                tabella.get(risorsa).remove(ipAddress);
-                count = 1;
+            if (tabella.get(risorsa).remove(ipAddress)) {
+                count++;
             }
         }
 
-        if (count == 1) {
-            return "Rimozione peer" + ipAddress + " avvenuta con successo.";
+        if (count > 0) {
+            return "Rimozione peer " + ipAddress + " avvenuta con successo.";
+        } else {
+            return "Impossibile rimuovere peer " + ipAddress + "... non presente in tabella.";
         }
-        return "Impossibile rimuovere peer " + ipAddress + "... non presente in tabella.";
     }
 
     public String rimuoviRisorsa(String risorsa) {
         if (tabella.containsKey(risorsa)) {
             tabella.remove(risorsa);
-            return "Rimozione risorsa " + risorsa + "avvenuta con successo.";
+            return "Rimozione risorsa " + risorsa + " avvenuta con successo.";
         }
         return "Impossibile rimuovere risorsa " + risorsa + "... non presente in tabella.";
     }
