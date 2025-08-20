@@ -1,7 +1,10 @@
 import java.util.*;
+import java.io.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 public class GestioneTab {
-    private Map<String, List<String>> risorse = new HashMap<>();
+    private Map<String, List<String>> tabella = new HashMap<>();
 
     // GET
     public List<String> getRisorse() {
@@ -14,14 +17,19 @@ public class GestioneTab {
 
 
     // AGGIUNTA
-    public void aggiungiRisorsa(String risorsa, List<String> indirizziIp) {
-        // Controlla che la risorsa esista
-        // se non esiste la crei
+    public void aggiungiRisorsa(String risorsa) {
+        tabella.put(risorsa, new ArrayList<>());
     }
 
     public void aggingiPeer(String indirizzoIp, List<String> risorse) {
-        // Per ogni risorsa del peer da aggiungere chiamare metodo `aggiungiRisorsa()` 
-        // che aggiunge questo peer alla lista di ogni risorsa che contiene
+        for (String risorsa : risorse) {
+            if (tabella.containsKey(risorsa)) { // esiste la risorsa
+                tabella.get(risorsa).add(indirizzoIp);
+            }
+            else { // non esiste la risorsa
+                aggiungiRisorsa(risorsa);
+            }
+        }
     }
 
 
