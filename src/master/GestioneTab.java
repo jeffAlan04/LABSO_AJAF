@@ -7,18 +7,28 @@ public class GestioneTab {
     private Map<String, List<String>> tabella = new HashMap<>();
 
     // GET
-    public List<String> getRisorse() {
-        // Restituisci tutte le risorse (comando `listdata remote`)
+    public String getRisorse() { // restituisci tutte le risorse (comando `listdata remote`)
+        String risposta = "";
+        
+        for (String risorsa : tabella.keySet()) {
+            risposta += risorsa + ": " + tabella.get(risorsa) + "\n";
+        }
+
+        return risposta;
     }
 
-    public List<String> getPeers(String risorsa) {
-        // Restituisci tutti peer che hanno quella risorsa
+    public List<String> getPeers(String risorsa) { // restituisci tutti peer che hanno quella risorsa
+        if (tabella.keySet().contains(risorsa)) {
+            return tabella.get(risorsa);
+        }
+
+        return new ArrayList<String>();
     }
 
 
     // AGGIUNTA
     public void aggiungiRisorsa(String risorsa) {
-        tabella.put(risorsa, new ArrayList<>());
+        tabella.put(risorsa, new ArrayList<String>());
     }
 
     public void aggingiPeer(String indirizzoIp, List<String> risorse) {
@@ -35,21 +45,26 @@ public class GestioneTab {
 
     // RIMOZIONE
     public String rimuoviPeer(String ipAddress) {
-        if (...) {
-            return "Rimozione peer avvenuta con successo!";
+        int count = 0;
+        for (String risorsa : tabella.keySet()) {
+            if (tabella.get(risorsa).contains(ipAddress)) {
+                tabella.get(risorsa).remove(ipAddress);
+                count = 1;
+            }
         }
-        else {
-            return "Rimozione peer fallita.";
+
+        if (count == 1) {
+            return "Rimozione peer" + ipAddress + " avvenuta con successo.";
         }
+        return "Impossibile rimuovere peer " + ipAddress + "... non presente in tabella.";
     }
 
     public String rimuoviRisorsa(String risorsa) {
-        if (...) {
-            return "Rimozione risorsa avvenuta con successo!";
+        if (tabella.containsKey(risorsa)) {
+            tabella.remove(risorsa);
+            return "Rimozione risorsa " + risorsa + "avvenuta con successo.";
         }
-        else {
-            return "Rimozione risorsa fallita.";
-        }
+        return "Impossibile rimuovere risorsa " + risorsa + "... non presente in tabella.";
     }
 
 
