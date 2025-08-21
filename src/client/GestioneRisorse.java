@@ -25,7 +25,6 @@ public class GestioneRisorse {
 // Metodo per il comando listdata local
   public static void eseguiListDataLocal(){
     File input = new File("risorse");
-    System.out.println("Path assoluto: " + input.getAbsolutePath());
     File[] risorse = input.listFiles();
 
     if (risorse == null || risorse.length == 0){
