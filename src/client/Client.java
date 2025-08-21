@@ -32,21 +32,16 @@ public class Client {
         if (inputUtente.equalsIgnoreCase("quit")) {
           eseguiQuit(outputMaster);
           break;
-<<<<<<< HEAD
-        } else if (inputUtente.equalsIgnoreCase("listdata local")) {
-          GestioneRisorse.eseguiListDataLocal();
-          break;
-        } else {
-          System.out.println("Altri comandi");
-        }
-=======
+
         }
 
+        // Esegue il comando listdata local
        else if (inputUtente.equalsIgnoreCase("listdata local")){
           GestioneRisorse.eseguiListDataLocal();
           break;
        }
 
+       // Esegue il comando add nome_risorsa contenuto
        else if (inputUtente.startsWith("add ")){
         String[] parti = inputUtente.split("\\s", 3);
         if (parti.length < 3){
@@ -55,6 +50,7 @@ public class Client {
         else{
           String nomeFile = parti[1];
 
+          // Se nome_risorsa inserito dall'utente non contiene ".txt", viene aggiunto.
           if (!nomeFile.contains(".txt")){
             nomeFile = nomeFile + ".txt";
           }
@@ -67,6 +63,7 @@ public class Client {
         }
        }
 
+       // Esegue il comando donwload nome_risorsa.
        else if (inputUtente.startsWith("download")){
         String[] parti = inputUtente.split("\\s");
         if (parti.length != 2){
@@ -75,6 +72,7 @@ public class Client {
         else{
           String nomeRisorsa = parti[1];
 
+          // Se nome_risorsa inserito dall'utente non contiene ".txt", viene aggiunto.
           if (!nomeRisorsa.contains(".txt")){
             nomeRisorsa = nomeRisorsa + ".txt";
           }
@@ -82,12 +80,14 @@ public class Client {
           outputMaster.println("DOWNLOAD " + nomeRisorsa);
           outputMaster.flush();
 
+          // Legge la risposta del master che contiene l'indirizzo dell'host peer che possiede la risorsa indicata.
           String indirizzoHostPeer = inputMaster.nextLine();
 
           PeerClient pc = new PeerClient(indirizzoHostPeer, porta, nomeRisorsa);
 
           boolean risorsaTrovata = pc.avviaConnessione();
 
+          // Fino a che risorsaTrovata non corrisponde a true, il master deve fornire un host peer alternativo, a meno che questo sia "NESSUNO" uscendo dal ciclo.
           while (!risorsaTrovata){
             outputMaster.println("Risorsa non disponibile dal Peer: " + indirizzoHostPeer);
             outputMaster.flush();
@@ -110,10 +110,11 @@ public class Client {
         
        }
        
+       // Da togliere non appena completati tutti i comandi
        else{
         System.out.println("Altri comandi");
        }
->>>>>>> feat/client
+
       }
     } catch (IOException e) {
       System.out.println("Errore di connessione al master");
