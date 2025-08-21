@@ -5,12 +5,16 @@ import java.net.*;
 import java.util.*;
 import java.util.concurrent.*;
 
-public class MasterServer {
+public class Master {
+    // Tabella delle risorse condivise tra i peer
     private final TabellaRisorse tabella = new TabellaRisorse();
+    // Thread pool per gestire i peer in parallelo
     private final ExecutorService pool = Executors.newCachedThreadPool();
+    // Mappa per associare ID peer a nomi univoci (peer0, peer1, ...)
     private static final Map<String, String> peerNomi = new HashMap<>();
     private static int counterPeer = 0;
 
+    // Registra un peer e assegna un nome unico se non esiste già
     public static synchronized String registraPeer(String idPeer){
         if(!peerNomi.containsKey(idPeer)){
             String nome = "peer" + counterPeer++;
@@ -19,10 +23,12 @@ public class MasterServer {
         return peerNomi.get(idPeer);
     }
 
+    // Recupera il nome del peer a partire dal suo ID
     public static String getNomePeer(String idPeer){
         return peerNomi.getOrDefault(idPeer, idPeer);
     }
 
+    // Avvio del server sulla porta specificata
     public void avvia(int porta) throws IOException {
         try (ServerSocket serverSocket = new ServerSocket(porta)) {
             System.out.println("Master in ascolto sulla porta " + porta);
@@ -30,17 +36,18 @@ public class MasterServer {
             while (true) {
                 Socket socketPeer = serverSocket.accept();
 
-                // ID e nome del peer
+                // ID e nome del peer connesso
                 String idPeer = socketPeer.getRemoteSocketAddress().toString();
                 String nomePeer = registraPeer(idPeer);
                 System.out.println("Nuovo peer connesso: " + nomePeer + " (ID: " + idPeer + ")");
 
-                // Avvio handler per il peer
+                // Avvio del gestore peer in thread separato
                 pool.execute(new GestorePeer(socketPeer, tabella));
             }
         }
     }
 
+    // Aggiunge una riga di log sul file log.txt
     public static void aggiungiLog(Log rigaLog) {
         try (FileWriter fw = new FileWriter("log.txt", true);
              BufferedWriter bw = new BufferedWriter(fw);
@@ -51,20 +58,22 @@ public class MasterServer {
         }
     }
 
+    // Notifica disconnessione di un peer stampandola a terminale
     public static void notificaDisconnessione(String idPeer) {
         String nomePeer = getNomePeer(idPeer);
         System.out.println("Peer disconnesso: " + nomePeer + " (ID: " + idPeer + ")");
     }
 
+    // Metodo main: avvia il server e gestisce la console interattiva
     public static void main(String[] args) {
         if (args.length < 1) {
-            System.out.println("Uso corretto: java master.MasterServer <porta>");
+            System.out.println("Uso corretto: java master.Master <porta>");
             return;
         }
 
         try {
             int porta = Integer.parseInt(args[0]);
-            MasterServer server = new MasterServer();
+            Master server = new Master();
 
             // Avvio server in thread separato
             new Thread(() -> {
@@ -75,7 +84,7 @@ public class MasterServer {
                 }
             }).start();
 
-            // Console interattiva
+            // Console interattiva per comandi "listdata", "log", "quit"
             Scanner scanner = new Scanner(System.in);
             while (true) {
                 String comando = scanner.nextLine().trim();
