@@ -1,7 +1,7 @@
 package master;
 
 import java.time.*;
-import java.time.format.DateTimeFormatter;
+import java.time.format.*;
 
 public class Log {
     // Orario del download (formattato HH:mm)
