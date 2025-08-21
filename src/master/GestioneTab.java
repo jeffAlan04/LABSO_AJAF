@@ -29,7 +29,7 @@ public class GestioneTab {
 
 
     // AGGIUNTA
-    public void aggiungiRisorsa(String risorsa) {
+    private void aggiungiRisorsa(String risorsa) {
         tabella.put(risorsa, new ArrayList<String>());
     }
 
@@ -77,7 +77,7 @@ public class GestioneTab {
 
 
     // SALVATAGGIO E CARICAMENTO DATI
-    public void caricaDaFile() {
+    private void caricaDaFile() {
         try {
             tabella = mapper.readValue(new File(FILE_PATH), new TypeReference<Map<String, List<String>>>() {});
         }
@@ -89,7 +89,7 @@ public class GestioneTab {
         }
     }
 
-    public void salvaSuFile() {
+    private void salvaSuFile() {
         try {
             mapper.writeValue(new File(FILE_PATH), tabella);
         }
