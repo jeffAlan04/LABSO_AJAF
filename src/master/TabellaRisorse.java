@@ -1,54 +1,47 @@
 package master;
 
 import java.util.*;
+import java.util.concurrent.*;
 
+// Classe che gestisce le risorse condivise dai peer
 public class TabellaRisorse {
-    private final Map<String, Set<String>> risorse = new HashMap<>();
-    private final MasterSincro master = new MasterSincro();
+    // Map: nome risorsa -> set di peer che la possiedono
+    private final Map<String, Set<String>> risorse = new ConcurrentHashMap<>();
 
-    // Aggiunge una risorsa ad un peer
-    public void aggiungiRisorsa(String risorsa, String indirizzoPeer) {
-        master.inizioScrittura();
-        try {
-            risorse.putIfAbsent(risorsa, new HashSet<>());
-            risorse.get(risorsa).add(indirizzoPeer);
-        } finally {
-            master.fineScrittura();
-        }
+    // Map: nome peer -> stato attivo (true se connesso)
+    private final Map<String, Boolean> peerAttivi = new ConcurrentHashMap<>();
+
+    /** Registra un peer come attivo */
+    public void registraPeer(String nomePeer) {
+        peerAttivi.put(nomePeer, true);
     }
 
-    // Rimuove una risorsa da un peer
-    public void rimuoviRisorsa(String risorsa, String indirizzoPeer) {
-        master.inizioScrittura();
-        try {
-            if (risorse.containsKey(risorsa)) {
-                risorse.get(risorsa).remove(indirizzoPeer);
-                if (risorse.get(risorsa).isEmpty()) {
-                    risorse.remove(risorsa);
-                }
-            }
-        } finally {
-            master.fineScrittura();
-        }
+    /** Disconnetti un peer e rimuovilo dalle risorse */
+    public void disconnettiPeer(String nomePeer) {
+        peerAttivi.put(nomePeer, false);
+        risorse.forEach((risorsa, peers) -> peers.remove(nomePeer));
     }
 
-    // Restituisce i peer che hanno una risorsa
+    /** Controlla se un peer è attivo */
+    public boolean isAttivo(String nomePeer) {
+        return peerAttivi.getOrDefault(nomePeer, false);
+    }
+
+    /** Aggiunge una risorsa associandola a un peer */
+    public void aggiungiRisorsa(String risorsa, String nomePeer) {
+        risorse.computeIfAbsent(risorsa, k -> ConcurrentHashMap.newKeySet())
+                .add(nomePeer);
+    }
+
+    /** Restituisce tutti i peer che possiedono una risorsa */
     public Set<String> ottieniPeerPerRisorsa(String risorsa) {
-        master.inizioLettura();
-        try {
-            return new HashSet<>(risorse.getOrDefault(risorsa, Collections.emptySet()));
-        } finally {
-            master.fineLettura();
-        }
+        return risorse.getOrDefault(risorsa, Collections.emptySet());
     }
 
-    // Restituisce tutte le risorse
+    /** Restituisce una copia di tutte le risorse e dei rispettivi peer */
     public Map<String, Set<String>> ottieniTutteRisorse() {
-        master.inizioLettura();
-        try {
-            return new HashMap<>(risorse);
-        } finally {
-            master.fineLettura();
-        }
+        Map<String, Set<String>> copia = new HashMap<>();
+        risorse.forEach((risorsa, peers) -> copia.put(risorsa, new HashSet<>(peers)));
+        return copia;
     }
 }
