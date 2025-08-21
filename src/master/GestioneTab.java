@@ -6,7 +6,11 @@ import com.fasterxml.jackson.core.type.TypeReference;
 public class GestioneTab {
     private final String FILE_PATH = "risorse/tabella.json";
     private ObjectMapper mapper = new ObjectMapper();
-    private Map<String, List<String>> tabella = new HashMap<>();
+    private Map<String, Set<String>> tabella = new HashMap<>();
+
+    public GestioneTab() {
+        caricaDaFile();
+    }
 
     // GET
     public String getRisorse() { // restituisci tutte le risorse (comando `listdata remote`)
@@ -19,21 +23,21 @@ public class GestioneTab {
         return risposta;
     }
 
-    public List<String> getPeers(String risorsa) { // restituisci tutti peer che hanno quella risorsa
+    public Set<String> getPeers(String risorsa) { // restituisci tutti peer che hanno quella risorsa
         if (tabella.containsKey(risorsa)) {
             return tabella.get(risorsa);
         }
 
-        return new ArrayList<String>();
+        return new HashSet<String>();
     }
 
 
     // AGGIUNTA
     private void aggiungiRisorsa(String risorsa) {
-        tabella.put(risorsa, new ArrayList<String>());
+        tabella.put(risorsa, new HashSet<String>());
     }
 
-    public void aggiungiPeer(String indirizzoIp, List<String> risorse) {
+    public void aggiungiPeer(String indirizzoIp, Set<String> risorse) {
         for (String risorsa : risorse) {
             if (tabella.containsKey(risorsa)) { // esiste la risorsa
                 tabella.get(risorsa).add(indirizzoIp);
@@ -79,7 +83,7 @@ public class GestioneTab {
     // SALVATAGGIO E CARICAMENTO DATI
     private void caricaDaFile() {
         try {
-            tabella = mapper.readValue(new File(FILE_PATH), new TypeReference<Map<String, List<String>>>() {});
+            tabella = mapper.readValue(new File(FILE_PATH), new TypeReference<Map<String, Set<String>>>() {});
         }
         catch (IOException ioException) {
             System.out.println("Caricamento da file fallito... tabella JSON non trovata.");
