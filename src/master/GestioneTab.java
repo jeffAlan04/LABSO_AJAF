@@ -64,6 +64,7 @@ public class GestioneTab {
         }
 
         if (count > 0) {
+            tabella.entrySet().removeIf(entry -> entry.getValue().isEmpty());
             salvaSuFile();
             return "Rimozione peer " + ipAddress + " avvenuta con successo.";
         } else {
