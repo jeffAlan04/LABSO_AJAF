@@ -37,7 +37,7 @@ public class GestioneTab {
         tabella.put(risorsa, new HashSet<String>());
     }
 
-    public void aggiungiPeer(String indirizzoIp, Set<String> risorse) {
+    public String aggiungiPeer(String indirizzoIp, Set<String> risorse) {
         for (String risorsa : risorse) {
             if (tabella.containsKey(risorsa)) { // esiste la risorsa
                 tabella.get(risorsa).add(indirizzoIp);
@@ -49,6 +49,7 @@ public class GestioneTab {
         }
 
         salvaSuFile();
+        return "Informazioni peer " + indirizzoIp + " aggiunte con successo.";
     }
 
 
@@ -82,14 +83,20 @@ public class GestioneTab {
 
     // SALVATAGGIO E CARICAMENTO DATI
     private void caricaDaFile() {
-        try {
-            tabella = mapper.readValue(new File(FILE_PATH), new TypeReference<Map<String, Set<String>>>() {});
+        File file = new File(FILE_PATH);
+
+        if (!file.exists() || file.length() == 0) {
+            System.out.println("File JSON vuoto o non trovato. Inizializzo tabella vuota.");
+            tabella = new HashMap<>();
+            return;
         }
-        catch (IOException ioException) {
-            System.out.println("Caricamento da file fallito... tabella JSON non trovata.");
+
+        try {
+            tabella = mapper.readValue(file, new TypeReference<Map<String, Set<String>>>() {});
         }
         catch (Exception e) {
-            System.out.println("Errore nel caricamento da file della tabella.");
+            System.out.println("Errore nel caricamento da file della tabella: " + e.getMessage());
+            tabella = new HashMap<>();
         }
     }
 
@@ -100,11 +107,6 @@ public class GestioneTab {
         catch (Exception e) {
             System.out.println("Errore nel salvataggio su file della tabella.");
         }
-    }
-
-
-    public static void main(String[] args) {
-        // fare test
     }
 }
 
