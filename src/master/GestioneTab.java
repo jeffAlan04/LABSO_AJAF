@@ -43,6 +43,8 @@ public class GestioneTab {
                 tabella.get(risorsa).add(indirizzoIp);
             }
         }
+
+        salvaSuFile();
     }
 
 
@@ -57,6 +59,7 @@ public class GestioneTab {
         }
 
         if (count > 0) {
+            salvaSuFile();
             return "Rimozione peer " + ipAddress + " avvenuta con successo.";
         } else {
             return "Impossibile rimuovere peer " + ipAddress + "... non presente in tabella.";
@@ -66,6 +69,7 @@ public class GestioneTab {
     public String rimuoviRisorsa(String risorsa) {
         if (tabella.containsKey(risorsa)) {
             tabella.remove(risorsa);
+            salvaSuFile();
             return "Rimozione risorsa " + risorsa + " avvenuta con successo.";
         }
         return "Impossibile rimuovere risorsa " + risorsa + "... non presente in tabella.";
