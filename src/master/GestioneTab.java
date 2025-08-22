@@ -23,7 +23,7 @@ public class GestioneTab {
         return risposta;
     }
 
-    public String getPeers(String risorsa) { // restituisci tutti peer che hanno quella risorsa
+    public String getPeers(String risorsa) { // restituisci il primo peer che ha quella risorsa
         Set<String> peers = tabella.get(risorsa);
         if (peers == null || peers.isEmpty()) {
             return null;
@@ -71,6 +71,8 @@ public class GestioneTab {
             return "Impossibile rimuovere peer " + ipAddress + "... non presente in tabella.";
         }
     }
+
+    // metodo rimuovi peer da una specifica risorsa
 
     public String rimuoviRisorsa(String risorsa) {
         if (tabella.containsKey(risorsa)) {
