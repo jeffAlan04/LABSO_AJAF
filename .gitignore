@@ -4,5 +4,9 @@
 # Risorse per il test
 *.txt
 
+# jar
+*.jar
+
 # File di log
 *.log
+
