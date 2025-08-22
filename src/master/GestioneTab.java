@@ -54,11 +54,11 @@ public class GestioneTab {
 
 
     // RIMOZIONE
-    public String rimuoviPeer(String ipAddress) { // forse da rimuovere
+    public String rimuoviPeer(String indirizzoIp) { // forse da rimuovere
         int count = 0;
 
         for (String risorsa : tabella.keySet()) {
-            if (tabella.get(risorsa).remove(ipAddress)) {
+            if (tabella.get(risorsa).remove(indirizzoIp)) {
                 count++;
             }
         }
@@ -66,13 +66,21 @@ public class GestioneTab {
         if (count > 0) {
             tabella.entrySet().removeIf(entry -> entry.getValue().isEmpty());
             salvaSuFile();
-            return "Rimozione peer " + ipAddress + " avvenuta con successo.";
+            return "Rimozione peer " + indirizzoIp + " avvenuta con successo.";
         } else {
-            return "Impossibile rimuovere peer " + ipAddress + "... non presente in tabella.";
+            return "Impossibile rimuovere peer " + indirizzoIp + "... non presente in tabella.";
         }
     }
 
     // metodo rimuovi peer da una specifica risorsa
+    public String rimuoviPeerInRisorsa(String indirizzoIp, String risorsa) {
+        if (tabella.get(risorsa).remove(indirizzoIp)) {
+            return "Rimozione " + indirizzoIp + " dalla risorsa " + risorsa + " avvenuta con successo.";
+        }
+        else {
+            return "Impossibile rimuovere " + indirizzoIp + " dalla risorsa " + risorsa + "... uno dei due non presente.";
+        }
+    }
 
     public String rimuoviRisorsa(String risorsa) {
         if (tabella.containsKey(risorsa)) {
