@@ -28,4 +28,25 @@ public class ArbitroLetturaScrittura {
         // return contatoreLettori;
     }
 
+    public synchronized void fineLettura() {
+        --contatoreLettori;
+
+        if (contatoreLettori == 0) {
+            notifyAll();
+        }
+
+        // return contatoreLettori;
+    }
+
+    public synchronized void inizioScrittura(){
+        while (lettura == true || scrittura == false){
+            try{
+                wait();
+            } catch ((InterruptedException e)){}
+        }
+
+        scrittura = true;
+
+    }
+
 }
