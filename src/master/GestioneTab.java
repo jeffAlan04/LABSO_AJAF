@@ -23,12 +23,12 @@ public class GestioneTab {
         return risposta;
     }
 
-    public Set<String> getPeers(String risorsa) { // restituisci tutti peer che hanno quella risorsa
-        if (tabella.containsKey(risorsa)) {
-            return tabella.get(risorsa);
+    public String getPeers(String risorsa) { // restituisci tutti peer che hanno quella risorsa
+        Set<String> peers = tabella.get(risorsa);
+        if (peers == null || peers.isEmpty()) {
+            return null;
         }
-
-        return new HashSet<String>();
+        return peers.iterator().next();
     }
 
 
@@ -54,7 +54,7 @@ public class GestioneTab {
 
 
     // RIMOZIONE
-    public String rimuoviPeer(String ipAddress) {
+    public String rimuoviPeer(String ipAddress) { // forse da rimuovere
         int count = 0;
 
         for (String risorsa : tabella.keySet()) {
