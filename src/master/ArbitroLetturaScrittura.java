@@ -15,7 +15,6 @@ public class ArbitroLetturaScrittura {
             try {
                 wait();
             } catch (InterruptedException e) {
-
             }
         }
 
@@ -32,6 +31,7 @@ public class ArbitroLetturaScrittura {
         --contatoreLettori;
 
         if (contatoreLettori == 0) {
+            lettura = false;
             notifyAll();
         }
 
@@ -47,6 +47,11 @@ public class ArbitroLetturaScrittura {
 
         scrittura = true;
 
+    }
+
+    public synchronized void fineScrittura() {
+        scrittura = false;
+        notifyAll();
     }
 
 }
