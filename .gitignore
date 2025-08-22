@@ -6,3 +6,7 @@
 
 # jar
 *.jar
+
+# File di log
+*.log
+
