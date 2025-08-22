@@ -1,10 +1,18 @@
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Scanner;
 
 public class PeerServer implements Runnable {
   private int porta;
   private ServerSocket serverSocket;
+  private boolean running;
 
   public PeerServer(int porta) {
     this.porta = porta;
@@ -15,14 +23,24 @@ public class PeerServer implements Runnable {
     try {
       this.serverSocket = new ServerSocket(porta);
       System.out.println("Server in ascolto sulla porta " + porta);
+      running = true;
 
-      while (true) {
+      while (running) {
 
         try (Socket socket = serverSocket.accept()) {
-          System.out.println("Connessione a " + socket.getRemoteSocketAddress());
+          String indirizzoPeer = socket.getRemoteSocketAddress().toString();
+          System.out.println("Connessione a " + indirizzoPeer);
+
+          avviaComunicazione(socket);
+
+          System.out.println("Chiusura connessione con peer " + indirizzoPeer);
 
         } catch (IOException e) {
-          System.out.println("Errore mentre veniva stabilita una connessione");
+          if (!running) {
+            System.out.println("PeerServer chiuso");
+          } else {
+            System.out.println("Errore mentre veniva stabilita una connessione");
+          }
         }
 
       }
@@ -33,14 +51,59 @@ public class PeerServer implements Runnable {
     }
   }
 
+  private synchronized void avviaComunicazione(Socket s) {
+    try (Scanner scanner = new Scanner(s.getInputStream());
+        PrintWriter writer = new PrintWriter(s.getOutputStream())) {
+
+      String nomeRisorsa = scanner.nextLine();
+      String risposta = GestioneRisorse.risorsaPresente(nomeRisorsa);
+
+      System.out.println("Disponibilità risorsa " + nomeRisorsa + ": " + risposta);
+      writer.println(risposta);
+      writer.flush();
+
+      if (risposta.equals("true")) {
+        uploadRisorsa(s, nomeRisorsa);
+
+      }
+
+    } catch (IOException e) {
+      System.out.println(
+          "Errore durante controllo presenza di una risorsa con peer " + s.getRemoteSocketAddress());
+    }
+  }
+
+  private synchronized void uploadRisorsa(Socket s, String nomeRisorsa) {
+    File f = new File("risorse/" + nomeRisorsa);
+    byte[] byteArray = new byte[(int) f.length()];
+
+    try (FileInputStream fis = new FileInputStream(f);
+        BufferedInputStream bis = new BufferedInputStream(fis);
+        OutputStream os = s.getOutputStream()) {
+
+      System.out.println("Inizio upload risorsa " + nomeRisorsa + " verso peer " + s.getRemoteSocketAddress());
+      bis.read(byteArray, 0, byteArray.length);
+      os.write(byteArray, 0, byteArray.length);
+      os.flush();
+      System.out.println("Fine upload risorsa " + nomeRisorsa + " verso peer " + s.getRemoteSocketAddress());
+
+    } catch (IOException e) {
+      System.out.println("Errore durante upload della risorsa " + nomeRisorsa);
+    }
+  }
+
   public void terminaServer() {
+    running = false;
+
     try {
-      serverSocket.close();
+      if (serverSocket != null && !serverSocket.isClosed())
+        serverSocket.close();
     } catch (IOException e) {
       System.out.println("Errore durante la chiusura del server");
     }
   }
 
+  // Da eliminare, inserito per testing
   public static void main(String[] args) {
     PeerServer s;
     if (args.length < 1) {
