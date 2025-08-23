@@ -20,7 +20,7 @@ public class ArbitroLetturaScrittura {
 
         contatoreLettori++;
 
-        if (readerCount == 1) {
+        if (contatoreLettori == 1) {
             lettura = true;
         }
 
@@ -38,11 +38,12 @@ public class ArbitroLetturaScrittura {
         // return contatoreLettori;
     }
 
-    public synchronized void inizioScrittura(){
-        while (lettura == true || scrittura == false){
-            try{
+    public synchronized void inizioScrittura() {
+        while (lettura == true || scrittura == false) {
+            try {
                 wait();
-            } catch ((InterruptedException e)){}
+            } catch (InterruptedException e) {
+            }
         }
 
         scrittura = true;
