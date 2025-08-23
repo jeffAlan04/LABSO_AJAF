@@ -11,10 +11,11 @@ public class ArbitroLetturaScrittura {
     }
 
     public synchronized void inizioLettura() {
-        while (scrittura == false) {
+        while (scrittura == true) {
             try {
                 wait();
             } catch (InterruptedException e) {
+
             }
         }
 
@@ -24,7 +25,6 @@ public class ArbitroLetturaScrittura {
             lettura = true;
         }
 
-        // return contatoreLettori;
     }
 
     public synchronized void fineLettura() {
@@ -35,11 +35,10 @@ public class ArbitroLetturaScrittura {
             notifyAll();
         }
 
-        // return contatoreLettori;
     }
 
     public synchronized void inizioScrittura() {
-        while (lettura == true || scrittura == false) {
+        while (lettura == true || scrittura == true) {
             try {
                 wait();
             } catch (InterruptedException e) {
