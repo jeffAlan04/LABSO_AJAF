@@ -4,10 +4,14 @@ import java.net.*;
 
 public class Master{
 
-    private static Socket socket;
-    private static GestioneTab tabella;
-    private static ReaderWriter lettore;
-    private static ReaderWriter scrittore;
+    private Socket socket;
+    private GestioneTab tabella;
+    private ReaderWriter lettore;
+    private ReaderWriter scrittore;
+    public boolean inEsecuzione;
+
+    
+
     public static void main(String[] args) throws IOException {
         if (args.length < 1){
             System.out.println("Utilizzo: java Master <porta>");
@@ -26,7 +30,7 @@ public class Master{
         
             System.out.println("Server in ascolto sulla porta: " + porta);
 
-            while(true){
+            while(inEsecuzione){
                 socket = serverSocket.accept();
                 System.out.println("Connessione a: " + socket.getRemoteSocketAddress());
                 GestorePeer gp = new GestorePeer(socket, tabella, lettore, scrittore);
