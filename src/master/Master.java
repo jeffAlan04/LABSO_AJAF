@@ -8,9 +8,8 @@ public class Master{
     private GestioneTab tabella;
     private ReaderWriter lettore;
     private ReaderWriter scrittore;
-    public boolean inEsecuzione;
-
     
+    public static boolean inEsecuzione = true;
 
     public static void main(String[] args) throws IOException {
         if (args.length < 1){
