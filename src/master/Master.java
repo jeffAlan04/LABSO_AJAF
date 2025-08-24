@@ -19,6 +19,8 @@ public class Master{
             tabella = new GestioneTab();
             lettore = new ReaderWriter();
             scrittore = new ReaderWriter();
+
+            new Thread(new GestioneComandi(tabella, lettore, scrittore)).start();
             
         try (ServerSocket serverSocket = new ServerSocket(porta);){
         
