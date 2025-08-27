@@ -31,6 +31,16 @@ public class Log {
         this.esito = esito;
     }
 
+    // Scrive l'esito dell'operazione sul file
+    private void scriviLog(Log riga){
+        System.out.println("Risorse scaricate: ");
+        try(BufferedWriter bw = new BufferedWriter(new FileWriter(FILE, true))){
+            bw.write(riga.toString());
+            bw.newLine();
+        }catch (IOException e){
+            System.err.println("Errore scrittura log: " + e.getMessage());
+        }
+    }
     // Rappresentazione testuale del log
     @Override
     public String toString() {
