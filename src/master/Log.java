@@ -9,7 +9,7 @@ public class Log {
     // Nome cartella Salvatagio
     private final String DIR = "LogOut";
     // Nome del file delle informazioni
-    private final String FILE = DIR + "log.txt";
+    private final String FILE = DIR + "/log.txt";
     // formattazione orario (formattato HH:mm)
     private final DateTimeFormatter FormattoOrario = DateTimeFormatter.ofPattern("HH:mm");
     // unica istanza
@@ -47,7 +47,7 @@ public class Log {
                 " a: " + peerDestinazione +
                 (esito ? " Ok" : " Fallito");
         try(BufferedWriter bw = new BufferedWriter(new FileWriter(FILE, true))){
-            bw.write(riga.toString());
+            bw.write(riga);
             bw.newLine();
         }catch (IOException e){
             System.err.println("Errore scrittura log: " + e.getMessage());
