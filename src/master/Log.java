@@ -9,43 +9,43 @@ public class Log {
     // Nome cartella Salvatagio
     private final String DIR = "LogOut";
     // Nome del file delle informazioni
-    private final String FILE = "log.txt";
+    private final String FILE = DIR + "log.txt";
     // formattazione orario (formattato HH:mm)
     private final DateTimeFormatter FormattoOrario = DateTimeFormatter.ofPattern("HH:mm");
-    // Orario del download
-    private final String orario;
-    // Nome della risorsa scaricata
-    private final String risorsa;
-    // Peer sorgente da cui è stata scaricata la risorsa
-    private final String peerSorgente;
-    // Peer destinazione che ha ricevuto la risorsa
-    private final String peerDestinazione;
-    // Esito del download (true = successo, false = fallito)
-    private final boolean esito;
+    // unica istanza
+    private static Log instance;
 
-    public Log(String Risorsa, String peerSorgente, String peerDestinazione, boolean esito){
-        this.orario = LocalDateTime.now().format(FormattoOrario);
-        this.risorsa = Risorsa;
-        this.peerSorgente = peerSorgente;
-        this.peerDestinazione = peerDestinazione;
-        this.esito = esito;
+    private Log() {
+        File dir = new File(DIR);
+        if (!dir.exists()) {
+            dir.mkdir();
+        }
+    }
+
+    public static synchronized Log getInstance() {
+        if (instance == null) {
+            instance = new Log();
+        }
+        return instance;
     }
 
     //Metodo per scrivere i download riuscito
     public synchronized  void downloadSuccesso(String risorsa, String peerSorgente, String peerDestinazione){
-        Log nuovoLog = new Log(risorsa, peerSorgente, peerDestinazione, true);
-        scriviLog(nuovoLog);
+        scriviLog(risorsa, peerSorgente, peerDestinazione, true);
     }
 
     //Metodo per scrivere i download falliti
     public synchronized  void downloadFallito(String risorsa, String peerSorgente, String peerDestinazione){
-        Log nuovoLog = new Log(risorsa, peerSorgente, peerDestinazione, false);
-        scriviLog(nuovoLog);
+        scriviLog(risorsa, peerSorgente, peerDestinazione, false);
     }
 
     // Scrive l'esito dell'operazione sul file
-    private void scriviLog(Log riga){
-        System.out.println("Risorse scaricate: ");
+    private void scriviLog(String risorsa, String peerSorgente, String peerDestinazione, boolean esito) {
+        String orario = LocalDateTime.now().format(FormattoOrario);
+        String riga = orario + " " + risorsa +
+                " da: " + peerSorgente +
+                " a: " + peerDestinazione +
+                (esito ? " Ok" : " Fallito");
         try(BufferedWriter bw = new BufferedWriter(new FileWriter(FILE, true))){
             bw.write(riga.toString());
             bw.newLine();
@@ -65,14 +65,5 @@ public class Log {
         } catch (IOException e) {
             System.err.println("Errore lettura log: " + e.getMessage());
         }
-    }
-
-    // Rappresentazione testuale del log
-    @Override
-    public String toString() {
-        return orario + " " + risorsa +
-                " da: " + peerSorgente +
-                " a: " + peerDestinazione +
-                (esito ? " Ok" : " Fallito");
     }
 }
