@@ -31,6 +31,18 @@ public class Log {
         this.esito = esito;
     }
 
+    //Metodo per scrivere i download riuscito
+    public synchronized  void downloadSuccesso(String risorsa, String peerSorgente, String peerDestinazione){
+        Log nuovoLog = new Log(risorsa, peerSorgente, peerDestinazione, true);
+        scriviLog(nuovoLog);
+    }
+
+    //Metodo per scrivere i download falliti
+    public synchronized  void downloadFallito(String risorsa, String peerSorgente, String peerDestinazione){
+        Log nuovoLog = new Log(risorsa, peerSorgente, peerDestinazione, false);
+        scriviLog(nuovoLog);
+    }
+
     // Scrive l'esito dell'operazione sul file
     private void scriviLog(Log riga){
         System.out.println("Risorse scaricate: ");
@@ -54,7 +66,7 @@ public class Log {
             System.err.println("Errore lettura log: " + e.getMessage());
         }
     }
-    
+
     // Rappresentazione testuale del log
     @Override
     public String toString() {
