@@ -25,23 +25,35 @@ public class GestionePeer implements Runnable {
         // comandi da gestire: listdata remote, quit, add risorsa, download risorsa
         try (Scanner in = new Scanner(socket.getInputStream()); PrintWriter out = new PrintWriter(socket.getOutputStream())) {
             while (in.hasNextLine()) {
-                String comando = in.nextLine().split(" ")[0];
+                String[] richiesta = in.nextLine().split(" ");
+                String comando = richiesta[0];
+                String nomeRisorsa = null;
+                if (richiesta.length > 1) {
+                    nomeRisorsa = richiesta[1];
+                }
 
                 switch (comando) {
                     case COMANDO_LISTDATAREMOTE:
                         out.println(listDataRemote());
+                        break;
 
                     case COMANDO_QUIT:
-
                         return;
 
                     case COMANDO_ADD:
+                        String indirizzoIp = this.socket.getInetAddress().getHostAddress();
 
-                        return;
+                        if (nomeRisorsa != null) {
+                            out.println(addRisorsa(indirizzoIp, Set.of(nomeRisorsa)));
+                        }
+                        else {
+                            out.println("Specifica una risorsa da aggiungere.");
+                        }
+
+                        break;
 
                     case COMANDO_DOWNLOAD:
-
-                        return;
+                        break;
 
                     default:
                         return;
@@ -66,6 +78,16 @@ public class GestionePeer implements Runnable {
         }
         finally {
             this.arbitroTabella.fineLettura();
+        }
+    }
+
+    private String addRisorsa(String indirizzoIp, Set<String> risorse) {
+        try {
+            this.arbitroTabella.inizioScrittura();
+            return this.gestioneTab.aggiungiPeer(indirizzoIp, risorse).trim();
+        }
+        finally {
+            this.arbitroTabella.fineScrittura();
         }
     }
 }
