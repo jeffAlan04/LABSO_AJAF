@@ -8,7 +8,8 @@ public class Master{
     private static GestioneTab tabella;
     private static ArbitroLettoreScrittore lettore;
     private static ArbitroLettoreScrittore scrittore;
-    
+    private static ArbitroLettoreScrittore gestoreLog;
+
     public static boolean inEsecuzione = true;
 
     public static void main(String[] args) throws IOException {
@@ -23,7 +24,7 @@ public class Master{
             lettore = new ArbitroLettoreScrittore();
             scrittore = new ArbitroLettoreScrittore();
 
-            new Thread(new GestioneComandi(tabella, lettore, scrittore)).start();
+            new Thread(new GestioneComandi(tabella, lettore, scrittore, gestoreLog)).start();
             
         try (ServerSocket serverSocket = new ServerSocket(porta)){
         
