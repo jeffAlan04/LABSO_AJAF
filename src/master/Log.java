@@ -41,6 +41,20 @@ public class Log {
             System.err.println("Errore scrittura log: " + e.getMessage());
         }
     }
+
+    // Stampa tutto il contenuto del file di Log
+    public synchronized  void stampa(){
+        System.out.println("Risorse scaricati: ");
+        try(BufferedReader br = new BufferedReader(new FileReader(FILE))) {
+            String linea;
+            while ((linea = br.readLine()) != null) {
+                System.out.println("- " + linea);
+            }
+        } catch (IOException e) {
+            System.err.println("Errore lettura log: " + e.getMessage());
+        }
+    }
+    
     // Rappresentazione testuale del log
     @Override
     public String toString() {
