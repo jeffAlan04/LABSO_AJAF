@@ -66,14 +66,4 @@ public class Log {
             System.err.println("Errore lettura log: " + e.getMessage());
         }
     }
-
-    public static void main(String[] args){
-        Log log = Log.getInstance();
-        log.downloadSuccesso("R0", "peer0", "peer1");
-        log.downloadFallito("R1", "peer1","peer0");
-        log.downloadSuccesso("R2", "peer0", "peer1");
-
-        log.stampa();
-
-    }
 }
