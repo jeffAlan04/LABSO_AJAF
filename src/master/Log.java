@@ -12,9 +12,10 @@ public class Log {
     private final String FILE = DIR + "/log.txt";
     // formattazione orario (formattato HH:mm)
     private final DateTimeFormatter FormattoOrario = DateTimeFormatter.ofPattern("HH:mm");
-    // unica istanza
+    // unica istanza della classe
     private static Log instance;
 
+    // Crea la cartella dei log se non esiste
     private Log() {
         File dir = new File(DIR);
         if (!dir.exists()) {
@@ -22,6 +23,8 @@ public class Log {
         }
     }
 
+    // Metodo statico per ottenere l’unica istanza della classe
+    // (se non esiste ancora, la crea)
     public static synchronized Log getInstance() {
         if (instance == null) {
             instance = new Log();
@@ -59,6 +62,7 @@ public class Log {
         System.out.println("Risorse scaricati: ");
         try(BufferedReader br = new BufferedReader(new FileReader(FILE))) {
             String linea;
+            // Legge riga per riga e stampa
             while ((linea = br.readLine()) != null) {
                 System.out.println("- " + linea);
             }
