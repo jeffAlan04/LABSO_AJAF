@@ -6,8 +6,8 @@ public class Master{
 
     private Socket socket;
     private GestioneTab tabella;
-    private ReaderWriter lettore;
-    private ReaderWriter scrittore;
+    private ArbitroLettoreScrittore lettore;
+    private ArbitroLettoreScrittore scrittore;
     
     public static boolean inEsecuzione = true;
 
@@ -20,12 +20,12 @@ public class Master{
             int porta = Integer.parseInt(args[0]);
 
             tabella = new GestioneTab();
-            lettore = new ReaderWriter();
-            scrittore = new ReaderWriter();
+            lettore = new ArbitroLettoreScrittore();
+            scrittore = new ArbitroLettoreScrittore();
 
             new Thread(new GestioneComandi(tabella, lettore, scrittore)).start();
             
-        try (ServerSocket serverSocket = new ServerSocket(porta);){
+        try (ServerSocket serverSocket = new ServerSocket(porta)){
         
             System.out.println("Server in ascolto sulla porta: " + porta);
 
