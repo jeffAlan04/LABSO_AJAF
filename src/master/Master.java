@@ -23,16 +23,23 @@ public class Master{
             tabella = new GestioneTab();
             lettore = new ArbitroLettoreScrittore();
             scrittore = new ArbitroLettoreScrittore();
+            gestoreLog = new ArbitroLettoreScrittore();
 
+            // Avvio del thread di GestioneComandi
             new Thread(new GestioneComandi(tabella, lettore, scrittore, gestoreLog)).start();
-            
+
+        // Creazionde del ServerSocket    
         try (ServerSocket serverSocket = new ServerSocket(porta)){
         
             System.out.println("Server in ascolto sulla porta: " + porta);
 
+            // Ciclo continuo fino a che inEsecuzione = false
             while(inEsecuzione){
                 socket = serverSocket.accept();
+                
                 System.out.println("Connessione a: " + socket.getRemoteSocketAddress());
+
+                // Creazione di GestorePeer e avvio del thread
                 GestorePeer gp = new GestorePeer(socket, tabella, lettore, scrittore);
                 new Thread(gp).start();
             }
