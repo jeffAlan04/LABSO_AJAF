@@ -4,10 +4,10 @@ import java.net.*;
 
 public class Master{
 
-    private Socket socket;
-    private GestioneTab tabella;
-    private ArbitroLettoreScrittore lettore;
-    private ArbitroLettoreScrittore scrittore;
+    private static Socket socket;
+    private static GestioneTab tabella;
+    private static ArbitroLettoreScrittore lettore;
+    private static ArbitroLettoreScrittore scrittore;
     
     public static boolean inEsecuzione = true;
 
