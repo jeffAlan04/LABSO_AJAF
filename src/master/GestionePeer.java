@@ -8,6 +8,11 @@ public class GestionePeer implements Runnable {
     private final ArbitroLetturaScrittura arbitroLog;
     private final GestioneTab gestioneTab;
 
+    private final String COMANDO_LISTDATAREMOTE = "LISTDATA_REMOTE";
+    private final String COMANDO_QUIT = "QUIT";
+    private final String COMANDO_ADD = "ADD";
+    private final String COMANDO_DOWNLOAD = "DOWNLOAD";
+
     public GestionePeer(Socket socket, ArbitroLetturaScrittura arbitroLog, ArbitroLetturaScrittura arbitroTabella, GestioneTab gestioneTab) {
         this.socket = socket;
         this.arbitroLog = arbitroLog;
@@ -20,9 +25,26 @@ public class GestionePeer implements Runnable {
         // comandi da gestire: listdata remote, quit, add risorsa, download risorsa
         try (Scanner in = new Scanner(socket.getInputStream()); PrintWriter out = new PrintWriter(socket.getOutputStream())) {
             while (in.hasNextLine()) {
-                String comando = in.nextLine();
-                if (comando.split(" ")[0].equals("LISTDATA_REMOTE")) {
-                    out.println(listDataRemote());
+                String comando = in.nextLine().split(" ")[0];
+
+                switch (comando) {
+                    case COMANDO_LISTDATAREMOTE:
+                        out.println(listDataRemote());
+
+                    case COMANDO_QUIT:
+
+                        return;
+
+                    case COMANDO_ADD:
+
+                        return;
+
+                    case COMANDO_DOWNLOAD:
+
+                        return;
+
+                    default:
+                        return;
                 }
             }
         }
