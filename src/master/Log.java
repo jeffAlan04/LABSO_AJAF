@@ -7,7 +7,7 @@ import java.time.format.*;
 public class Log {
 
     // Nome cartella Salvatagio
-    private final String DIR = "Log";
+    private final String DIR = "LogOut";
     // Nome del file delle informazioni
     private final String FILE = "log.txt";
     // formattazione orario (formattato HH:mm)
