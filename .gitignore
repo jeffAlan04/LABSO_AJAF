@@ -10,3 +10,5 @@
 # File di log
 *.log
 
+# Tabella JSON
+*.json
