@@ -19,14 +19,20 @@ public class Log {
         }
     }
 
+    private ArbitroLetturaScrittura arbrito = new ArbitroLetturaScrittura();
+
     //Metodo per scrivere i download riuscito
-    public synchronized  void downloadSuccesso(String risorsa, String peerSorgente, String peerDestinazione){
+    public void downloadSuccesso(String risorsa, String peerSorgente, String peerDestinazione){
+        arbrito.inizioScrittura();
         scriviLog(risorsa, peerSorgente, peerDestinazione, true);
+        arbrito.fineScrittura();
     }
 
     //Metodo per scrivere i download falliti
-    public synchronized  void downloadFallito(String risorsa, String peerSorgente, String peerDestinazione){
+    public void downloadFallito(String risorsa, String peerSorgente, String peerDestinazione){
+        arbrito.inizioScrittura();
         scriviLog(risorsa, peerSorgente, peerDestinazione, false);
+        arbrito.fineScrittura();
     }
 
     // Scrive l'esito dell'operazione sul file
@@ -45,7 +51,8 @@ public class Log {
     }
 
     // Stampa tutto il contenuto del file di Log
-    public synchronized  void stampa(){
+    public void stampa(){
+        arbrito.inizioLettura();
         System.out.println("Risorse scaricati: ");
         try(BufferedReader br = new BufferedReader(new FileReader(FILE))) {
             String linea;
@@ -56,5 +63,6 @@ public class Log {
         } catch (IOException e) {
             System.err.println("Errore lettura log: " + e.getMessage());
         }
+        arbrito.fineLettura();
     }
 }
