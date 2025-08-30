@@ -6,9 +6,8 @@ public class Master{
 
     private static Socket socket;
     private static GestioneTab tabella;
-    private static ArbitroLettoreScrittore lettore;
-    private static ArbitroLettoreScrittore scrittore;
-    private static ArbitroLettoreScrittore gestoreLog;
+    private static ArbitroLettoreScrittore arbitroTabella;
+    private static ArbitroLettoreScrittore arbitroLog;
 
     public static boolean inEsecuzione = true;
 
@@ -21,12 +20,11 @@ public class Master{
             int porta = Integer.parseInt(args[0]);
 
             tabella = new GestioneTab();
-            lettore = new ArbitroLettoreScrittore();
-            scrittore = new ArbitroLettoreScrittore();
-            gestoreLog = new ArbitroLettoreScrittore();
+            arbitroTabella = new ArbitroLettoreScrittore();
+            arbitroLog = new ArbitroLettoreScrittore();
 
             // Avvio del thread di GestioneComandi
-            new Thread(new GestioneComandi(tabella, lettore, scrittore, gestoreLog)).start();
+            new Thread(new GestioneComandi(tabella, arbitroTabella, arbitroLog)).start();
 
         // Creazionde del ServerSocket    
         try (ServerSocket serverSocket = new ServerSocket(porta)){
@@ -40,7 +38,7 @@ public class Master{
                 System.out.println("Connessione a: " + socket.getRemoteSocketAddress());
 
                 // Creazione di GestorePeer e avvio del thread
-                GestorePeer gp = new GestorePeer(socket, tabella, lettore, scrittore);
+                GestorePeer gp = new GestorePeer(socket, tabella, arbitroTabella, arbitroLog);
                 new Thread(gp).start();
             }
         }
