@@ -24,6 +24,11 @@ public class GestionePeer implements Runnable {
     public void run() {
         // comandi da gestire: listdata remote, quit, add risorsa, download risorsa
         try (Scanner in = new Scanner(socket.getInputStream()); PrintWriter out = new PrintWriter(socket.getOutputStream())) {
+            // leggere lista risorse e mandarle a gestione tabella
+            String indirizzoIpPeer = this.socket.getInetAddress().getHostAddress();
+            Set<String> risorsePeer = getRisorsePeer();
+            out.println(salvataggioRisorsePeer(indirizzoIpPeer, risorsePeer));
+            
             while (in.hasNextLine()) {
                 String[] richiesta = in.nextLine().split(" ");
                 String comando = richiesta[0];
@@ -41,10 +46,8 @@ public class GestionePeer implements Runnable {
                         return;
 
                     case COMANDO_ADD:
-                        String indirizzoIp = this.socket.getInetAddress().getHostAddress();
-
                         if (nomeRisorsa != null) {
-                            out.println(addRisorsa(indirizzoIp, Set.of(nomeRisorsa)));
+                            out.println(addRisorsa(indirizzoIpPeer, Set.of(nomeRisorsa)));
                         }
                         else {
                             out.println("Specifica una risorsa da aggiungere.");
@@ -64,6 +67,20 @@ public class GestionePeer implements Runnable {
             // ...
         }
     }
+
+    private Set<String> getRisorsePeer() {
+        // ...
+    }
+
+    private String salvataggioRisorsePeer(String indirizzoIpPeer, Set<String> risorsePeer) {
+        try {
+            this.arbitroTabella.inizioScrittura();
+            return this.gestioneTab.aggiungiPeer(indirizzoIpPeer, risorsePeer);
+        }
+        finally {
+            this.arbitroTabella.fineScrittura();
+        }
+    }
     
     private String listDataRemote() {
         try {
@@ -81,10 +98,10 @@ public class GestionePeer implements Runnable {
         }
     }
 
-    private String addRisorsa(String indirizzoIp, Set<String> risorse) {
+    private String addRisorsa(String indirizzoIpPeer, Set<String> risorse) {
         try {
             this.arbitroTabella.inizioScrittura();
-            return this.gestioneTab.aggiungiPeer(indirizzoIp, risorse).trim();
+            return this.gestioneTab.aggiungiPeer(indirizzoIpPeer, risorse).trim();
         }
         finally {
             this.arbitroTabella.fineScrittura();
