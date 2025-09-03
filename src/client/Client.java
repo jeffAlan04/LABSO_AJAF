@@ -109,6 +109,20 @@ public class Client {
         }
         
        }
+
+       else if (inputUtente.equalsIgnoreCase("listdata remote")){
+          outputMaster.println("LISTDATA_REMOTE");
+          outputMaster.flush();
+
+          if (inputMaster.hasNextLine()){
+            String risposta = inputMaster.nextLine();
+            GestioneRisorse.eseguiListDataRemote(risposta);
+          }
+          
+          else{
+            System.out.println("Nessuna risposta ricevuta");
+          }
+       }
        
        // Da togliere non appena completati tutti i comandi
        else{
