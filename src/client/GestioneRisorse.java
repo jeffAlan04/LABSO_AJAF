@@ -55,4 +55,26 @@ public class GestioneRisorse {
       System.out.println("Errore nella creazione della risorsa");
     }
   }
+
+// Metodo per il comando listdata_remote
+  public static void eseguiListDataRemote(String risposta){
+    if (risposta == null || risposta.isEmpty() || risposta.trim().toLowerCase().contains("nessuna risorsa disponibile")){
+      System.out.println("Nessuna risorsa disponibile");
+      return;
+    }
+    System.out.println("Risorse: ");
+    String[] righe = risposta.split(";");
+
+    for (String riga: righe){
+
+      // Divide la stringa in due parti: risosa (prima dei :) e peers (dopo :)
+      String[] parti = riga.split(":", 2);
+      
+      String risorsa = parti[0].trim();
+      String peers = parti.length > 1 ? parti[1].trim() : "";
+
+      System.out.println(" - " + risorsa + ": " + peers);
+    }
+
+  }
 }
