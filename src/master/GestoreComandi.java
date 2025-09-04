@@ -22,13 +22,11 @@ public class GestoreComandi implements Runnable{
                 messaggio = messaggio.trim();
 
                 if (messaggio.toUpperCase().startsWith("LOG")) {
-                    gestisciLog(out); // aggiungi risorsa
-                } else if (messaggio.equalsIgnoreCase("LISTDATA REMOTE")) {
-                    gestisciListData(out); // lista risorse remote
+                    gestisciLog();
+                } else if (messaggio.equalsIgnoreCase("LISTDATA")) {
+                    gestisciListData();
                 } else if (messaggio.equalsIgnoreCase("QUIT")) {
-                     // segnala disconnessione
-                    out.println("Peer " + "(aggiungere nome peer)"  + " disconnesso");
-                    //aggiungere comando per chiudere anche tutti i programmi del master
+                    gestisciQuit();
                     break;
                 }  else {
                     out.println("Comando non riconosciuto: " + messaggio);
@@ -38,7 +36,7 @@ public class GestoreComandi implements Runnable{
             System.err.println("Errore con peer " + "(aggiungere nome peer)" + ": " + e.getMessage());
         }
     }
-    // Stampa su console il contenuto del file di log del master
+    //Gestisce il comando "Log" del master, Stampa su console il contenuto del file di log del master
     private void gestisciLog() {
         arbitroLog.inizioLettura();
         try {
@@ -53,10 +51,16 @@ public class GestoreComandi implements Runnable{
         arbitroTabella.inizioLettura();
         try {
             System.out.println("=== Tabella Risorse ===");
-            System.out.println(tabella.getRisorse()); 
+            System.out.println(tabella.getRisorse());
         } finally {
             arbitroTabella.fineLettura();
         }
     }
 
+    // Gestisce il comando "quit" del master, fermando l'esecuzione e chiudendo la JVM
+    private void gestisciQuit() {
+        System.out.println("Chiusura master in corso...");
+        Master.inEsecuzione = false;
+        System.exit(0);
+    }
 }
