@@ -38,4 +38,13 @@ public class GestoreComandi implements Runnable{
             System.err.println("Errore con peer " + "(aggiungere nome peer)" + ": " + e.getMessage());
         }
     }
+    // Stampa su console il contenuto del file di log del master
+    private void gestisciLog() {
+        arbitroLog.inizioLettura();
+        try {
+            Log.getInstance().stampa();
+        } finally {
+            arbitroLog.fineLettura();
+        }
+    }
 }
