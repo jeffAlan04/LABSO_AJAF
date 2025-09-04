@@ -1,5 +1,3 @@
-package master;
-
 import java.io.*;
 
 public class GestoreComandi implements Runnable{
