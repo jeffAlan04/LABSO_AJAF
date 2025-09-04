@@ -1,5 +1,6 @@
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -14,12 +15,16 @@ public class Logger {
         this.classe = classe;
         this.identificativo = identificativo;
 
+        PrintWriter scrittoreTemporaneo;
         try {
             FileWriter f = new FileWriter(new File(generaNome()), true);
-            scrittore = new PrintWriter(f);
+            scrittoreTemporaneo = new PrintWriter(f);
         } catch (IOException e) {
-
+            System.out.println("Errore nella creazione del file di log. I loge verranno stampati su console");
+            scrittoreTemporaneo = new ConsolePrintWriter();
         }
+
+        this.scrittore = scrittoreTemporaneo;
     }
 
     private String generaNome() {
@@ -57,6 +62,18 @@ public class Logger {
     public void close() {
         if (scrittore != null)
             scrittore.close();
+    }
+
+    // ConsolePrintWriter è una estensione di PrintWriter che scrive i log su
+    // console
+    private static class ConsolePrintWriter extends PrintWriter {
+        ConsolePrintWriter() {
+            super(new OutputStreamWriter(System.out));
+        }
+
+        @Override
+        public void close() {
+        } // Metodo no-op perchè non c'è nulla da chiudere
     }
 
     // da eliminare, solo per testing
