@@ -28,13 +28,14 @@ public class ArbitroLetturaScrittura {
     }
 
     public synchronized void fineLettura() {
-        --contatoreLettori;
+        if (contatoreLettori > 0) {
+            --contatoreLettori;
 
-        if (contatoreLettori == 0) {
-            lettura = false;
-            notifyAll();
+            if (contatoreLettori == 0) {
+                lettura = false;
+                notifyAll();
+            }
         }
-
     }
 
     public synchronized void inizioScrittura() {
