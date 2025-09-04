@@ -10,6 +10,8 @@ public class Log {
     private final String FILE = DIR + "/log.txt";
     // formattazione orario (formattato HH:mm)
     private final DateTimeFormatter FormattoOrario = DateTimeFormatter.ofPattern("HH:mm");
+    // unica istanza condivisa
+    private static Log istanza = null;
 
     // Crea la cartella dei log se non esiste
     private Log() {
@@ -17,6 +19,14 @@ public class Log {
         if (!dir.exists()) {
             dir.mkdir();
         }
+    }
+
+    // Restituisce l’unica istanza della classe Log
+    public static synchronized Log getInstance() {
+        if (istanza == null) {
+            istanza = new Log();
+        }
+        return istanza;
     }
 
     //Metodo per scrivere i download riuscito
