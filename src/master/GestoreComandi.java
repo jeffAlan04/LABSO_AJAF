@@ -47,4 +47,16 @@ public class GestoreComandi implements Runnable{
             arbitroLog.fineLettura();
         }
     }
+
+    // Gestisce il comando "listdata" del master, stampando tutte le risorse e i peer associati
+    private void gestisciListData() {
+        arbitroTabella.inizioLettura();
+        try {
+            System.out.println("=== Tabella Risorse ===");
+            System.out.println(tabella.getRisorse()); 
+        } finally {
+            arbitroTabella.fineLettura();
+        }
+    }
+
 }
