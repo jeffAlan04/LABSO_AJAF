@@ -120,19 +120,19 @@ public class GestionePeer implements Runnable {
             String peer = getPeer(risorsa);
 
             if (peer == null) {
-                out.println("NESSUN PEER DISPONIBILE");
+                out.println("Non disponibile");
                 // logNessunPeer
                 return;
             }
 
-            out.println("PEER DISPONIBILE: " + peer); // primo peer disponibile
+            out.println("Disponibile: " + peer); // primo peer disponibile
 
             if (in.hasNextLine()) { // feedback
                 String risposta = in.nextLine().trim();
 
                 if (risposta.equals("true")) {
                     // logSuccesso
-                    out.println("DOWNLOAD COMPLETATO");
+                    out.println("Completato");
                     return;
                 }
                 else if (risposta.equals("false")) {
@@ -140,6 +140,8 @@ public class GestionePeer implements Runnable {
                     rimuoviPeer(peer, risorsa);
                 }
                 else {
+                    // logFallimento
+                    out.println("Fallito");
                     return;
                 }
             }
