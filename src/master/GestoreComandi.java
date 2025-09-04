@@ -5,10 +5,12 @@ import java.io.*;
 public class GestoreComandi implements Runnable{
     private final ArbitroLetturaScrittura arbitroLog;
     private final ArbitroLetturaScrittura arbitroTabella;
+    private final GestioneTab tabella;
 
-    public GestoreComandi(ArbitroLetturaScrittura arbitroLog, ArbitroLetturaScrittura arbitroTabella) {
+    public GestoreComandi(ArbitroLetturaScrittura arbitroLog, ArbitroLetturaScrittura arbitroTabella,GestioneTab tabella) {
         this.arbitroLog = arbitroLog;
         this.arbitroTabella = arbitroTabella;
+        this.tabella = tabella;
     }
 
     @Override
