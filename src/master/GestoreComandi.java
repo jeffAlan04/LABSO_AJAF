@@ -3,8 +3,11 @@ package master;
 import java.io.*;
 
 public class GestoreComandi implements Runnable{
+    // arbitro per sincronizzare accesso ai log
     private final ArbitroLetturaScrittura arbitroLog;
+    // arbitro per sincronizzare accesso alla tabella
     private final ArbitroLetturaScrittura arbitroTabella;
+    // riferimento alla tabella delle risorse
     private final GestioneTab tabella;
 
     public GestoreComandi(ArbitroLetturaScrittura arbitroLog, ArbitroLetturaScrittura arbitroTabella,GestioneTab tabella) {
@@ -13,6 +16,7 @@ public class GestoreComandi implements Runnable{
         this.tabella = tabella;
     }
 
+    // Loop principale che legge i comandi dalla console
     @Override
     public void run() {
         try (
