@@ -5,47 +5,60 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.Scanner;
 
 public class PeerServer implements Runnable {
     private int porta;
     private ServerSocket serverSocket;
     private boolean running;
+    private Logger logger;
 
     public PeerServer(int porta) {
         this.porta = porta;
+
+        String indirizzoIP;
+        try {
+            InetAddress localHost = InetAddress.getLocalHost();
+            indirizzoIP = localHost.getHostAddress();
+        } catch (UnknownHostException e) {
+            indirizzoIP = "localhost";
+        }
+
+        logger = new Logger("PeerServer", indirizzoIP);
     }
 
     @Override
     public void run() {
         try {
             this.serverSocket = new ServerSocket(porta);
-            System.out.println("Server in ascolto sulla porta " + porta);
+            logger.logInfo("Server in ascolto sulla porta " + porta);
             running = true;
 
             while (running) {
 
                 try (Socket socket = serverSocket.accept()) {
                     String indirizzoPeer = socket.getRemoteSocketAddress().toString();
-                    System.out.println("Connessione a " + indirizzoPeer);
+                    logger.logInfo("Connessione a " + indirizzoPeer);
 
                     avviaComunicazione(socket);
 
-                    System.out.println("Chiusura connessione con peer " + indirizzoPeer);
+                    logger.logInfo("Chiusura connessione con peer " + indirizzoPeer);
 
                 } catch (IOException e) {
                     if (!running) {
-                        System.out.println("PeerServer chiuso");
+                        logger.logErrore("PeerServer chiuso");
                     } else {
-                        System.out.println("Errore mentre veniva stabilita una connessione");
+                        logger.logErrore("Errore mentre veniva stabilita una connessione");
                     }
                 }
 
             }
         } catch (IOException e) {
-            System.out.println("Errore nell'esecuzione del server");
+            logger.logErrore("Errore nell'esecuzione del server");
         } finally {
             terminaServer();
         }
@@ -58,7 +71,7 @@ public class PeerServer implements Runnable {
             String nomeRisorsa = scanner.nextLine();
             String risposta = GestioneRisorse.risorsaPresente(nomeRisorsa);
 
-            System.out.println("Disponibilità risorsa " + nomeRisorsa + ": " + risposta);
+            logger.logInfo("Disponibilità risorsa " + nomeRisorsa + ": " + risposta);
             writer.println(risposta);
             writer.flush();
 
@@ -68,7 +81,7 @@ public class PeerServer implements Runnable {
             }
 
         } catch (IOException e) {
-            System.out.println(
+            logger.logErrore(
                     "Errore durante controllo presenza di una risorsa con peer " + s.getRemoteSocketAddress());
         }
     }
@@ -81,14 +94,14 @@ public class PeerServer implements Runnable {
                 BufferedInputStream bis = new BufferedInputStream(fis);
                 OutputStream os = s.getOutputStream()) {
 
-            System.out.println("Inizio upload risorsa " + nomeRisorsa + " verso peer " + s.getRemoteSocketAddress());
+            logger.logInfo("Inizio upload risorsa " + nomeRisorsa + " verso peer " + s.getRemoteSocketAddress());
             bis.read(byteArray, 0, byteArray.length);
             os.write(byteArray, 0, byteArray.length);
             os.flush();
-            System.out.println("Fine upload risorsa " + nomeRisorsa + " verso peer " + s.getRemoteSocketAddress());
+            logger.logInfo("Fine upload risorsa " + nomeRisorsa + " verso peer " + s.getRemoteSocketAddress());
 
         } catch (IOException e) {
-            System.out.println("Errore durante upload della risorsa " + nomeRisorsa);
+            logger.logErrore("Errore durante upload della risorsa " + nomeRisorsa);
         }
     }
 
@@ -99,7 +112,7 @@ public class PeerServer implements Runnable {
             if (serverSocket != null && !serverSocket.isClosed())
                 serverSocket.close();
         } catch (IOException e) {
-            System.out.println("Errore durante la chiusura del server");
+            logger.logErrore("Errore durante la chiusura del server");
         }
     }
 
