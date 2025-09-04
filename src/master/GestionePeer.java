@@ -22,10 +22,10 @@ public class GestionePeer implements Runnable {
 
     @Override
     public void run() {
-        // comandi da gestire: listdata remote, quit, add risorsa, download risorsa
+        String indirizzoIpPeer = this.socket.getInetAddress().getHostAddress();
+        
         try (Scanner in = new Scanner(socket.getInputStream()); PrintWriter out = new PrintWriter(socket.getOutputStream(), true)) {
             // leggere lista risorse e mandarle a gestione tabella
-            String indirizzoIpPeer = this.socket.getInetAddress().getHostAddress();
             Set<String> risorsePeer = getRisorsePeer();
             out.println(salvataggioRisorsePeer(indirizzoIpPeer, risorsePeer));
             
@@ -33,6 +33,7 @@ public class GestionePeer implements Runnable {
                 String[] richiesta = in.nextLine().split(" ");
                 String comando = richiesta[0];
                 String nomeRisorsa = null;
+                
                 if (richiesta.length > 1) {
                     nomeRisorsa = richiesta[1];
                 }
@@ -52,7 +53,6 @@ public class GestionePeer implements Runnable {
                         else {
                             out.println("Specifica una risorsa da aggiungere.");
                         }
-
                         break;
 
                     case COMANDO_DOWNLOAD:
@@ -62,16 +62,32 @@ public class GestionePeer implements Runnable {
                         else {
                             out.println("Specifica una risorsa da scaricare.");
                         }
-
                         break;
 
                     default:
-                        return;
+                        out.println("Comando non riconosciuto.");
+                        break;
                 }
             }
         }
         catch (IOException e) {
             // ...
+        }
+        finally {
+            try {
+                this.arbitroTabella.inizioScrittura();
+                if (!this.socket.isClosed()) {
+                    this.socket.close();
+                }
+                System.out.println(this.gestioneTab.rimuoviPeer(indirizzoIpPeer));
+            }
+            catch (Exception e) {
+                System.out.println("Errore chiusura socket: " + e.getMessage());
+            }
+            finally {
+                this.arbitroTabella.fineScrittura();
+            }
+            System.out.println("Chiusura socket avvenuta con successo.");
         }
     }
 
