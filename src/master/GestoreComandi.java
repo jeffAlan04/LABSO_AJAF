@@ -17,7 +17,6 @@ public class GestoreComandi implements Runnable{
     public void run() {
         try (
                 BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-                PrintWriter out = new PrintWriter(System.out, true);
         ) {
             String messaggio;
             while ((messaggio = in.readLine()) != null) {
@@ -31,11 +30,11 @@ public class GestoreComandi implements Runnable{
                     gestisciQuit();
                     break;
                 }  else {
-                    out.println("Comando non riconosciuto: " + messaggio);
+                    System.out.println("Comando non riconosciuto: " + messaggio);
                 }
             }
         } catch (IOException e) {
-            System.err.println("Errore con peer " + "(aggiungere nome peer)" + ": " + e.getMessage());
+            System.err.println("Errore nella lettura dei comandi: " + e.getMessage());
         }
     }
     //Gestisce il comando "Log" del master, Stampa su console il contenuto del file di log del master
