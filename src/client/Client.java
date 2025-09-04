@@ -25,7 +25,12 @@ public class Client {
 
         avvioServer(); // Avvia PeerServer in contemporanea
 
-        registrazioneRisorseLocali();
+        List<String> risorseLocali = registrazioneRisorseLocali();
+
+        for (String riga : risorseLocali){
+          outputMaster.println(riga);
+        }
+        outputMaster.flush();
 
         // Il client aspetta i comandi dell'utente
         while (true) {
