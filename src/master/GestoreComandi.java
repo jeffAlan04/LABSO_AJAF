@@ -29,9 +29,9 @@ public class GestoreComandi implements Runnable{
 
                 if (messaggio.toUpperCase().startsWith("LOG")) {
                     gestisciLog();
-                } else if (messaggio.equalsIgnoreCase("LISTDATA")) {
+                } else if ("LISTDATA".equalsIgnoreCase(messaggio)) {
                     gestisciListData();
-                } else if (messaggio.equalsIgnoreCase("QUIT")) {
+                } else if ("QUIT".equalsIgnoreCase(messaggio)) {
                     gestisciQuit();
                     break;
                 }  else {
