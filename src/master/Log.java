@@ -21,14 +21,6 @@ public class Log {
         }
     }
 
-    // Restituisce l’unica istanza della classe Log
-    public static synchronized Log getInstance() {
-        if (istanza == null) {
-            istanza = new Log();
-        }
-        return istanza;
-    }
-
     //Metodo per scrivere i download riuscito
     public synchronized  void downloadSuccesso(String risorsa, String peerSorgente, String peerDestinazione){
         scriviLog(risorsa, peerSorgente, peerDestinazione, true);
