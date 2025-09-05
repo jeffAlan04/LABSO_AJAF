@@ -47,7 +47,7 @@ public class GestioneRisorse {
         try {
             controlloCartella();
 
-            File nuovoFile = new File(cartella, nomeFile);
+            File nuovoFile = new File("risorse", nomeFile);
 
             FileWriter writer = new FileWriter(nuovoFile);
             writer.write(contenuto);
