@@ -5,12 +5,23 @@ import java.util.*;
 public class Client {
 
     private static PeerServer server;
-    
+    private static Logger logger;
     public static void main(String[] args) {
         if (args.length < 2) {
             System.out.println("Utilizzo: java Client [indirizzo master] [porta]");
             return;
         }
+
+        // Blocco per ottenere l'indirizzo del peer
+        String indirizzoIP;
+        try {
+            InetAddress localHost = InetAddress.getLocalHost();
+            indirizzoIP = localHost.getHostAddress();
+        } catch (UnknownHostException e) {
+            indirizzoIP = "localhost";
+        }
+
+        logger = new Logger("Client", indirizzoIP);
 
         String indirizzoMaster = args[0];
         int porta = Integer.parseInt(args[1]);
@@ -46,7 +57,6 @@ public class Client {
                 // Esegue il comando listdata local
                 else if (inputUtente.equalsIgnoreCase("listdata local")) {
                     GestioneRisorse.eseguiListDataLocal();
-                    break;
                 }
 
                 // Esegue il comando add nome_risorsa contenuto
@@ -103,7 +113,7 @@ public class Client {
                             String indirizzoHostPeerAlternativo = inputMaster.nextLine();
 
                             if (indirizzoHostPeerAlternativo.equals("NESSUNO")) {
-                                System.out.println("Download fallito: nessun peer disponibile");
+                                logger.logErrore("Download fallito: nessun peer disponibile")
                                 break;
                             } else {
                                 PeerClient pcAlternativo = new PeerClient(indirizzoHostPeerAlternativo, porta,
@@ -128,18 +138,18 @@ public class Client {
                     }
 
                     else {
-                        System.out.println("Nessuna risposta ricevuta");
+                        logger.logErrore("Nessuna risposta ricevuta");
                     }
                 }
 
                 // Da togliere non appena completati tutti i comandi
                 else {
-                    System.out.println("Altri comandi");
+                    System.out.println("Comando non riconosciuto");
                 }
 
             }
         } catch (IOException e) {
-            System.out.println("Errore di connessione al master");
+            logger.logErrore("Errore di connessione al master");
         }
     }
 
@@ -170,7 +180,7 @@ public class Client {
         }
 
         else {
-            System.out.println("cartella risorse non trovata");
+            logger.logErrore("Cartella risorse non trovata");
         }
 
         risorseLocali.add("FINE");
