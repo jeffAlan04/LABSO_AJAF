@@ -3,13 +3,14 @@ import java.io.FileWriter;
 import java.util.LinkedList;
 
 public class GestioneRisorse {
+    private static final String CARTELLA_RISORSE = "risorse";
 
     // Metodo per verificare la presenza di una risorsa all'interno della cartella
     // risorse
     public static String risorsaPresente(String nome) {
         controlloCartella();
 
-        File directory = new File("risorse");
+        File directory = new File(CARTELLA_RISORSE);
         File[] risorse = directory.listFiles();
 
         if (risorse != null && risorse.length != 0) {
@@ -27,7 +28,7 @@ public class GestioneRisorse {
     public static void eseguiListDataLocal() {
         controlloCartella();
 
-        File input = new File("risorse");
+        File input = new File(CARTELLA_RISORSE);
         File[] risorse = input.listFiles();
 
         if (risorse == null || risorse.length == 0) {
@@ -47,7 +48,7 @@ public class GestioneRisorse {
         try {
             controlloCartella();
 
-            File nuovoFile = new File("risorse", nomeFile);
+            File nuovoFile = new File(new File(CARTELLA_RISORSE), nomeFile);
 
             FileWriter writer = new FileWriter(nuovoFile);
             writer.write(contenuto);
@@ -60,7 +61,7 @@ public class GestioneRisorse {
     }
 
     private static void controlloCartella() {
-        File cartella = new File("risorse");
+        File cartella = new File(CARTELLA_RISORSE);
         if (!cartella.exists()) {
             cartella.mkdirs();
         }
