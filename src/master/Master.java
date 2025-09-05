@@ -6,8 +6,8 @@ public class Master{
 
     private static Socket socket;
     private static GestioneTab tabella;
-    private static ArbitroLettoreScrittore arbitroTabella;
-    private static ArbitroLettoreScrittore arbitroLog;
+    private static ArbitroLetturaScrittura arbitroTabella;
+    private static ArbitroLetturaScrittura arbitroLog;
     private static Log log;
 
     public static boolean inEsecuzione = true;
@@ -21,8 +21,8 @@ public class Master{
             int porta = Integer.parseInt(args[0]);
 
             tabella = new GestioneTab();
-            arbitroTabella = new ArbitroLettoreScrittore();
-            arbitroLog = new ArbitroLettoreScrittore();
+            arbitroTabella = new ArbitroLetturaScrittura();
+            arbitroLog = new ArbitroLetturaScrittura();
             log = new Log();
 
             // Avvio del thread di GestoreComandi
