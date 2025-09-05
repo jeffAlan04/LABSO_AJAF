@@ -1,7 +1,7 @@
 # Compilati
 *.class
 
-# Risorse per il test
+#Risorse per il test
 *.txt
 
 # jar
@@ -9,4 +9,3 @@
 
 # File di log
 *.log
-
