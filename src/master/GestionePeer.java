@@ -73,7 +73,7 @@ public class GestionePeer implements Runnable {
             }
         }
         catch (IOException e) {
-            // ...
+            System.out.println("Errore con " + indirizzoIpPeer + " nell'apertura della socket.");
         }
         finally {
             try {
@@ -84,7 +84,7 @@ public class GestionePeer implements Runnable {
                 System.out.println(this.gestioneTab.rimuoviPeer(indirizzoIpPeer));
             }
             catch (Exception e) {
-                System.out.println("Errore chiusura socket: " + e.getMessage());
+                System.out.println("Errore con " + indirizzoIpPeer + " nella chiusura della socket.");
             }
             finally {
                 this.arbitroTabella.fineScrittura();
