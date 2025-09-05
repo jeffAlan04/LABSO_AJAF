@@ -4,6 +4,7 @@ import java.net.*;
 
 public class GestionePeer implements Runnable {
     private final Socket socket;
+    private final Log logger;
     private final ArbitroLetturaScrittura arbitroTabella;
     private final ArbitroLetturaScrittura arbitroLog;
     private final GestioneTab gestioneTab;
@@ -13,8 +14,9 @@ public class GestionePeer implements Runnable {
     private final String COMANDO_ADD = "ADD";
     private final String COMANDO_DOWNLOAD = "DOWNLOAD";
 
-    public GestionePeer(Socket socket, ArbitroLetturaScrittura arbitroLog, ArbitroLetturaScrittura arbitroTabella, GestioneTab gestioneTab) {
+    public GestionePeer(Socket socket, Log logger, ArbitroLetturaScrittura arbitroLog, ArbitroLetturaScrittura arbitroTabella, GestioneTab gestioneTab) {
         this.socket = socket;
+        this.logger = logger;
         this.arbitroLog = arbitroLog;
         this.arbitroTabella = arbitroTabella;
         this.gestioneTab = gestioneTab;
@@ -57,7 +59,7 @@ public class GestionePeer implements Runnable {
 
                     case COMANDO_DOWNLOAD:
                         if (nomeRisorsa != null) {
-                            downloadRisorsa(nomeRisorsa, in, out);
+                            downloadRisorsa(nomeRisorsa, indirizzoIpPeer, in, out);
                         }
                         else {
                             out.println("Specifica una risorsa da scaricare.");
@@ -141,37 +143,48 @@ public class GestionePeer implements Runnable {
         }
     }
 
-    private void downloadRisorsa(String risorsa, Scanner in, PrintWriter out) {
+    private void downloadRisorsa(String risorsa, String peerSorgente, Scanner in, PrintWriter out) {
         while (true) {
-            String peer = getPeer(risorsa);
+            String peerDestinazione = getPeer(risorsa);
 
-            if (peer == null) {
+            if (peerDestinazione == null) {
                 out.println("Non disponibile");
-                // logNessunPeer
+                scritturaLog(risorsa, peerSorgente, peerDestinazione, false);
                 return;
             }
 
-            out.println("Disponibile: " + peer); // primo peer disponibile
+            out.println("Disponibile: " + peerDestinazione); // primo peer disponibile
 
             if (in.hasNextLine()) { // feedback
                 String risposta = in.nextLine().trim();
 
                 if (risposta.equals("true")) {
-                    // logSuccesso
+                    scritturaLog(risorsa, peerSorgente, peerDestinazione, true);
                     out.println("Completato");
                     return;
                 }
                 else if (risposta.equals("false")) {
-                    // logFallimento
-                    rimuoviPeer(peer, risorsa);
+                    scritturaLog(risorsa, peerSorgente, peerDestinazione, false);
+                    rimuoviPeer(peerDestinazione, risorsa);
                 }
                 else {
-                    // logFallimento
+                    scritturaLog(risorsa, peerSorgente, peerDestinazione, false);
                     out.println("Fallito");
                     return;
                 }
             }
         }
+    }
+
+    private void scritturaLog(String risorsa, String peerSorgente, String peerDestinazione, boolean esito) {
+        this.arbitroLog.inizioScrittura();
+        if (esito) {
+            this.logger.downloadSuccesso(risorsa, peerSorgente, peerDestinazione);
+        }
+        else {
+            this.logger.downloadFallito(risorsa, peerSorgente, peerDestinazione);
+        }
+        this.arbitroLog.fineScrittura();
     }
 
     private String getPeer(String risorsa) {
