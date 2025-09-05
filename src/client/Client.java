@@ -148,7 +148,7 @@ public class Client {
       risorseLocali.add("REGISTRAZIONE_RISORSE ");
 
       // All'interno della cartella risorse, vengono aggiunti alla lista.
-      File cartella = new File("src/client/risorse");
+      File cartella = new File("risorse/");
       if (cartella.exists() && cartella.isDirectory()) {
         File[] f = cartella.listFiles();
 
