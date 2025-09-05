@@ -8,13 +8,13 @@ public class GestoreComandi implements Runnable{
     // riferimento alla tabella delle risorse
     private final GestioneTab tabella;
     // Log per leggere i logging
-    private final Log Logger;
+    private final Log logger;
 
-    public GestoreComandi(ArbitroLetturaScrittura arbitroLog, ArbitroLetturaScrittura arbitroTabella, GestioneTab tabella, Log Logger) {
+    public GestoreComandi(ArbitroLetturaScrittura arbitroLog, ArbitroLetturaScrittura arbitroTabella, GestioneTab tabella, Log logger) {
         this.arbitroLog = arbitroLog;
         this.arbitroTabella = arbitroTabella;
         this.tabella = tabella;
-        this.Logger = Logger;
+        this.logger = logger;
     }
 
     // Loop principale che legge i comandi dalla console
@@ -46,7 +46,7 @@ public class GestoreComandi implements Runnable{
     private void gestisciLog() {
         arbitroLog.inizioLettura();
         try {
-            Logger.stampa();
+            logger.stampa();
         } finally {
             arbitroLog.fineLettura();
         }
