@@ -45,11 +45,8 @@ public class GestoreComandi implements Runnable{
     //Gestisce il comando "Log" del master, Stampa su console il contenuto del file di log del master
     private void gestisciLog() {
         arbitroLog.inizioLettura();
-        try {
             logger.stampa();
-        } finally {
             arbitroLog.fineLettura();
-        }
     }
 
     // Gestisce il comando "listdata" del master, stampando tutte le risorse e i peer associati
