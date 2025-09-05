@@ -26,7 +26,7 @@ public class GestionePeer implements Runnable {
         
         try (Scanner in = new Scanner(socket.getInputStream()); PrintWriter out = new PrintWriter(socket.getOutputStream(), true)) {
             // leggere lista risorse e mandarle a gestione tabella
-            Set<String> risorsePeer = getRisorsePeer();
+            Set<String> risorsePeer = getRisorsePeer(in, out);
             out.println(salvataggioRisorsePeer(indirizzoIpPeer, risorsePeer));
             
             while (in.hasNextLine()) {
@@ -91,8 +91,18 @@ public class GestionePeer implements Runnable {
         }
     }
 
-    private Set<String> getRisorsePeer() {
-        // ...
+    private Set<String> getRisorsePeer(Scanner in, PrintWriter out) {
+        String[] scan = in.nextLine().split(" ");
+        Set<String> risorsePeer = new HashSet<>();
+
+        if (scan[0].equals("REGISTRAZIONE_RISORSE")) {
+            String risorsa;
+            while (in.hasNextLine() && !"FINE".equals(risorsa = in.nextLine().trim())) {
+                risorsePeer.add(risorsa);
+            }
+        }
+
+        return risorsePeer;
     }
 
     private String salvataggioRisorsePeer(String indirizzoIpPeer, Set<String> risorsePeer) {
