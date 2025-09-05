@@ -97,7 +97,7 @@ public class GestionePeer implements Runnable {
         String[] scan = in.nextLine().split(" ");
         Set<String> risorsePeer = new HashSet<>();
 
-        if (scan[0].equals("REGISTRAZIONE_RISORSE")) {
+        if ("REGISTRAZIONE_RISORSE".equals(scan[0])) {
             String risorsa;
             while (in.hasNextLine() && !"FINE".equals(risorsa = in.nextLine().trim())) {
                 risorsePeer.add(risorsa);
@@ -158,12 +158,12 @@ public class GestionePeer implements Runnable {
             if (in.hasNextLine()) { // feedback
                 String risposta = in.nextLine().trim();
 
-                if (risposta.equals("true")) {
+                if ("true".equals(risposta)) {
                     scritturaLog(risorsa, peerSorgente, peerDestinazione, true);
                     out.println("Completato");
                     return;
                 }
-                else if (risposta.equals("false")) {
+                else if ("false".equals(risposta)) {
                     scritturaLog(risorsa, peerSorgente, peerDestinazione, false);
                     rimuoviPeer(peerDestinazione, risorsa);
                 }
