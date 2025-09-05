@@ -14,7 +14,7 @@ public class Log {
     private static Log istanza = null;
 
     // Crea la cartella dei log se non esiste
-    private Log() {
+    public Log() {
         File dir = new File(DIR);
         if (!dir.exists()) {
             dir.mkdir();
