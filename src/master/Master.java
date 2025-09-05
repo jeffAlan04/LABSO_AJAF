@@ -25,8 +25,8 @@ public class Master{
             arbitroLog = new ArbitroLettoreScrittore();
             log = new Log();
 
-            // Avvio del thread di GestioneComandi
-            new Thread(new GestioneComandi(tabella, arbitroTabella, arbitroLog, log)).start();
+            // Avvio del thread di GestoreComandi
+            new Thread(new GestoreComandi(tabella, arbitroTabella, arbitroLog, log)).start();
 
         // Creazionde del ServerSocket    
         try (ServerSocket serverSocket = new ServerSocket(porta)){
@@ -39,7 +39,7 @@ public class Master{
                 
                 System.out.println("Connessione a: " + socket.getRemoteSocketAddress());
 
-                // Creazione di GestorePeer e avvio del thread
+                // Creazione di GestionePeer e avvio del thread
                 GestionePeer gp = new GestionePeer(socket, tabella, arbitroTabella, arbitroLog, log);
                 new Thread(gp).start();
             }
