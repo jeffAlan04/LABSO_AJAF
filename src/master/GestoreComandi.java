@@ -43,7 +43,7 @@ public class GestoreComandi implements Runnable{
     private void gestisciLog() {
         arbitroLog.inizioLettura();
         try {
-            Log.getInstance().stampa();
+            Log.stampa();
         } finally {
             arbitroLog.fineLettura();
         }
