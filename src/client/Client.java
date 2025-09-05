@@ -5,7 +5,7 @@ import java.util.*;
 public class Client {
 
     private static PeerServer server;
-
+    
     public static void main(String[] args) {
         if (args.length < 2) {
             System.out.println("Utilizzo: java Client [indirizzo master] [porta]");
