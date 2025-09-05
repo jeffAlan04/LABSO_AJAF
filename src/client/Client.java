@@ -145,18 +145,7 @@ public class Client {
     public static List<String> registrazioneRisorseLocali() {
       List<String> risorseLocali = new ArrayList<>();
 
-      String indirizzoPeer = null;
-
-      try {
-        // Ottiene l'indirizzo IP locale
-        indirizzoPeer = InetAddress.getLocalHost().getHostAddress();
-      }
-
-      catch (UnknownHostException e) {
-        System.err.println("Errore nel recuper dell'indirizzo IP: " + e.getMessage());
-      }
-
-      risorseLocali.add("REGISTRAZIONE RISORSE " + indirizzoPeer);
+      risorseLocali.add("REGISTRAZIONE_RISORSE ");
 
       // All'interno della cartella risorse, vengono aggiunti alla lista.
       File cartella = new File("src/client/risorse");
