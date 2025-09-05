@@ -10,7 +10,7 @@ public class GestoreComandi implements Runnable{
     // Log per leggere i logging
     private final Master Log;
 
-    public GestoreComandi(ArbitroLetturaScrittura arbitroLog, ArbitroLetturaScrittura arbitroTabella,GestioneTab tabella,Master Log) {
+    public GestoreComandi(ArbitroLetturaScrittura arbitroLog, ArbitroLetturaScrittura arbitroTabella, GestioneTab tabella, Master Log) {
         this.arbitroLog = arbitroLog;
         this.arbitroTabella = arbitroTabella;
         this.tabella = tabella;
