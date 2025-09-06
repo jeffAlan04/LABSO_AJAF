@@ -12,6 +12,16 @@ public class Client {
             return;
         }
 
+        // Blocco per ottenere l'indirizzo del peer
+        String indirizzoIP;
+        try {
+            InetAddress localHost = InetAddress.getLocalHost();
+            indirizzoIP = localHost.getHostAddress();
+        } catch (UnknownHostException e) {
+            indirizzoIP = "localhost";
+        }
+
+
         String indirizzoMaster = args[0];
         int porta = Integer.parseInt(args[1]);
 
@@ -46,7 +56,6 @@ public class Client {
                 // Esegue il comando listdata local
                 else if (inputUtente.equalsIgnoreCase("listdata local")) {
                     GestioneRisorse.eseguiListDataLocal();
-                    break;
                 }
 
                 // Esegue il comando add nome_risorsa contenuto
@@ -134,7 +143,7 @@ public class Client {
 
                 // Da togliere non appena completati tutti i comandi
                 else {
-                    System.out.println("Altri comandi");
+                    System.out.println("Comando non riconosciuto");
                 }
 
             }
@@ -170,7 +179,7 @@ public class Client {
         }
 
         else {
-            System.out.println("cartella risorse non trovata");
+            System.out.println("Cartella risorse non trovata");
         }
 
         risorseLocali.add("FINE");
