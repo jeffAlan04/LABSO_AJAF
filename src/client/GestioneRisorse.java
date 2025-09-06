@@ -1,6 +1,8 @@
 import java.io.File;
 import java.io.FileWriter;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 public class GestioneRisorse {
     private static final String CARTELLA_RISORSE = "risorse";
@@ -34,10 +36,11 @@ public class GestioneRisorse {
       
         File[] risorse = input.listFiles();
 
-        if (risorse == null || risorse.length == 0) {
+        if (risorse == null || risorse.length == 0){
             System.out.println("Nessuna risorsa disponibile");
             return;
         }
+
         System.out.println("Risorse: ");
         for (File f : risorse) {
             if (f.isFile()) {
