@@ -88,7 +88,8 @@ public class GestioneRisorse {
 
             System.out.println(" - " + risorsa + ": " + peers);
         }
-
+    }
+        
     private static void controlloCartella() {
         File cartella = new File(CARTELLA_RISORSE);
         if (!cartella.exists()) {

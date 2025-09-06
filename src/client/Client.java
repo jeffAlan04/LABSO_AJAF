@@ -112,7 +112,7 @@ public class Client {
                             String indirizzoHostPeerAlternativo = inputMaster.nextLine();
 
                             if (indirizzoHostPeerAlternativo.equals("NESSUNO")) {
-                                System.out.println("Download fallito: nessun peer disponibile")
+                                System.out.println("Download fallito: nessun peer disponibile");
                                 break;
                             } else {
                                 PeerClient pcAlternativo = new PeerClient(indirizzoHostPeerAlternativo, porta,
