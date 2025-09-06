@@ -5,7 +5,6 @@ import java.util.*;
 public class Client {
 
     private static PeerServer server;
-    private static Logger logger;
 
     public static void main(String[] args) {
         if (args.length < 2) {
@@ -22,7 +21,6 @@ public class Client {
             indirizzoIP = "localhost";
         }
 
-        logger = new Logger("Client", indirizzoIP);
 
         String indirizzoMaster = args[0];
         int porta = Integer.parseInt(args[1]);
@@ -114,7 +112,7 @@ public class Client {
                             String indirizzoHostPeerAlternativo = inputMaster.nextLine();
 
                             if (indirizzoHostPeerAlternativo.equals("NESSUNO")) {
-                                logger.logErrore("Download fallito: nessun peer disponibile")
+                                System.out.println("Download fallito: nessun peer disponibile")
                                 break;
                             } else {
                                 PeerClient pcAlternativo = new PeerClient(indirizzoHostPeerAlternativo, porta,
@@ -139,7 +137,7 @@ public class Client {
                     }
 
                     else {
-                        logger.logErrore("Nessuna risposta ricevuta");
+                        System.out.println("Nessuna risposta ricevuta");
                     }
                 }
 
@@ -150,7 +148,7 @@ public class Client {
 
             }
         } catch (IOException e) {
-            logger.logErrore("Errore di connessione al master");
+            System.out.println("Errore di connessione al master");
         }
     }
 
@@ -181,7 +179,7 @@ public class Client {
         }
 
         else {
-            logger.logErrore("Cartella risorse non trovata");
+            System.out.println("Cartella risorse non trovata");
         }
 
         risorseLocali.add("FINE");
