@@ -24,12 +24,12 @@ public class GestionePeer implements Runnable {
 
     @Override
     public void run() {
-        String indirizzoIpPeer = this.socket.getInetAddress().getHostAddress();
+        String indirizzoPeer = this.socket.getRemoteSocketAddress().toString();
         
         try (Scanner in = new Scanner(socket.getInputStream()); PrintWriter out = new PrintWriter(socket.getOutputStream(), true)) {
             // leggere lista risorse e mandarle a gestione tabella
             Set<String> risorsePeer = getRisorsePeer(in, out);
-            out.println(salvataggioRisorsePeer(indirizzoIpPeer, risorsePeer));
+            out.println(salvataggioRisorsePeer(indirizzoPeer, risorsePeer));
             
             while (in.hasNextLine()) {
                 String[] richiesta = in.nextLine().split(" ");
@@ -50,7 +50,7 @@ public class GestionePeer implements Runnable {
 
                     case COMANDO_ADD:
                         if (nomeRisorsa != null) {
-                            out.println(addRisorsa(indirizzoIpPeer, Set.of(nomeRisorsa)));
+                            out.println(addRisorsa(indirizzoPeer, Set.of(nomeRisorsa)));
                         }
                         else {
                             out.println("Specifica una risorsa da aggiungere.");
@@ -59,7 +59,7 @@ public class GestionePeer implements Runnable {
 
                     case COMANDO_DOWNLOAD:
                         if (nomeRisorsa != null) {
-                            downloadRisorsa(nomeRisorsa, indirizzoIpPeer, in, out);
+                            downloadRisorsa(nomeRisorsa, indirizzoPeer, in, out);
                         }
                         else {
                             out.println("Specifica una risorsa da scaricare.");
@@ -73,7 +73,7 @@ public class GestionePeer implements Runnable {
             }
         }
         catch (IOException e) {
-            System.out.println("Errore con " + indirizzoIpPeer + " nell'apertura della socket.");
+            System.out.println("Errore con " + indirizzoPeer + " nell'apertura della socket.");
         }
         finally {
             try {
@@ -81,10 +81,10 @@ public class GestionePeer implements Runnable {
                 if (!this.socket.isClosed()) {
                     this.socket.close();
                 }
-                System.out.println(this.gestioneTab.rimuoviPeer(indirizzoIpPeer));
+                System.out.println(this.gestioneTab.rimuoviPeer(indirizzoPeer));
             }
             catch (Exception e) {
-                System.out.println("Errore con " + indirizzoIpPeer + " nella chiusura della socket.");
+                System.out.println("Errore con " + indirizzoPeer + " nella chiusura della socket.");
             }
             finally {
                 this.arbitroTabella.fineScrittura();
@@ -107,10 +107,10 @@ public class GestionePeer implements Runnable {
         return risorsePeer;
     }
 
-    private String salvataggioRisorsePeer(String indirizzoIpPeer, Set<String> risorsePeer) {
+    private String salvataggioRisorsePeer(String indirizzoPeer, Set<String> risorsePeer) {
         try {
             this.arbitroTabella.inizioScrittura();
-            return this.gestioneTab.aggiungiPeer(indirizzoIpPeer, risorsePeer);
+            return this.gestioneTab.aggiungiPeer(indirizzoPeer, risorsePeer);
         }
         finally {
             this.arbitroTabella.fineScrittura();
@@ -133,10 +133,10 @@ public class GestionePeer implements Runnable {
         }
     }
 
-    private String addRisorsa(String indirizzoIpPeer, Set<String> risorse) {
+    private String addRisorsa(String indirizzoPeer, Set<String> risorse) {
         try {
             this.arbitroTabella.inizioScrittura();
-            return this.gestioneTab.aggiungiPeer(indirizzoIpPeer, risorse).trim();
+            return this.gestioneTab.aggiungiPeer(indirizzoPeer, risorse).trim();
         }
         finally {
             this.arbitroTabella.fineScrittura();
@@ -197,10 +197,10 @@ public class GestionePeer implements Runnable {
         }
     }
 
-    private String rimuoviPeer(String indirizzoIpPeer, String risorsa) {
+    private String rimuoviPeer(String indirizzoPeer, String risorsa) {
         try {
             this.arbitroTabella.inizioScrittura();
-            return this.gestioneTab.rimuoviPeerInRisorsa(indirizzoIpPeer, risorsa);
+            return this.gestioneTab.rimuoviPeerInRisorsa(indirizzoPeer, risorsa);
         }
         finally {
             this.arbitroTabella.fineScrittura();
