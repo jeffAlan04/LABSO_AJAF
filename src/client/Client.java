@@ -41,6 +41,10 @@ public class Client {
                 outputMaster.println(riga);
             }
             outputMaster.flush();
+            
+            if (inputMaster.hasNextLine()){
+                String ack = inputMaster.nextLine();
+            }
 
             // Il client aspetta i comandi dell'utente
             while (true) {
