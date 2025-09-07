@@ -83,7 +83,7 @@ public class GestionePeer implements Runnable {
                 }
                 System.out.println(this.gestioneTab.rimuoviPeer(indirizzoPeer));
             }
-            catch (Exception e) {
+            catch (IOException e) {
                 System.out.println("Errore con " + indirizzoPeer + " nella chiusura della socket.");
             }
             finally {
@@ -108,39 +108,29 @@ public class GestionePeer implements Runnable {
     }
 
     private String salvataggioRisorsePeer(String indirizzoPeer, Set<String> risorsePeer) {
-        try {
-            this.arbitroTabella.inizioScrittura();
-            return this.gestioneTab.aggiungiPeer(indirizzoPeer, risorsePeer);
-        }
-        finally {
-            this.arbitroTabella.fineScrittura();
-        }
+        this.arbitroTabella.inizioScrittura();
+        String risposta = this.gestioneTab.aggiungiPeer(indirizzoPeer, risorsePeer);
+        this.arbitroTabella.fineScrittura();
+        return risposta;
     }
     
     private String listDataRemote() {
-        try {
-            this.arbitroTabella.inizioLettura();
-            String risposta = this.gestioneTab.getRisorse();
+        this.arbitroTabella.inizioLettura();
+        String risposta = this.gestioneTab.getRisorse();
 
-            if (risposta == null || risposta.isEmpty()) {
-                return "listdata remote: Nessuna risorsa disponibile.";
-            }
+        if (risposta == null || risposta.isEmpty()) {
+            return "listdata remote: Nessuna risorsa disponibile.";
+        }
 
-            return risposta.trim();
-        }
-        finally {
-            this.arbitroTabella.fineLettura();
-        }
+        this.arbitroTabella.fineLettura();
+        return risposta.trim();
     }
 
     private String addRisorsa(String indirizzoPeer, Set<String> risorse) {
-        try {
-            this.arbitroTabella.inizioScrittura();
-            return this.gestioneTab.aggiungiPeer(indirizzoPeer, risorse).trim();
-        }
-        finally {
-            this.arbitroTabella.fineScrittura();
-        }
+        this.arbitroTabella.inizioScrittura();
+        String risposta = this.gestioneTab.aggiungiPeer(indirizzoPeer, risorse).trim();
+        this.arbitroTabella.fineScrittura();
+        return risposta;
     }
 
     private void downloadRisorsa(String risorsa, String peerSorgente, Scanner in, PrintWriter out) {
@@ -188,22 +178,17 @@ public class GestionePeer implements Runnable {
     }
 
     private String getPeer(String risorsa) {
-        try {
-            this.arbitroTabella.inizioLettura();
-            return this.gestioneTab.getPeers(risorsa);
-        }
-        finally {
-            this.arbitroTabella.fineLettura();
-        }
+        this.arbitroTabella.inizioLettura();
+        String risposta = this.gestioneTab.getPeers(risorsa);
+        this.arbitroTabella.fineLettura();
+        return risposta;
     }
 
     private String rimuoviPeer(String indirizzoPeer, String risorsa) {
-        try {
-            this.arbitroTabella.inizioScrittura();
-            return this.gestioneTab.rimuoviPeerInRisorsa(indirizzoPeer, risorsa);
-        }
-        finally {
-            this.arbitroTabella.fineScrittura();
-        }
+        this.arbitroTabella.inizioScrittura();
+        String risposta = this.gestioneTab.rimuoviPeerInRisorsa(indirizzoPeer, risorsa);
+        this.arbitroTabella.fineScrittura();
+        return risposta;
     }
 }
+
