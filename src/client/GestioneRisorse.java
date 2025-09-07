@@ -30,23 +30,34 @@ public class GestioneRisorse {
 
     // Metodo per il comando listdata local
     public static void eseguiListDataLocal() {
+        List<String> risorseLocali = new ArrayList<>();
         controlloCartella();
 
         File input = new File(CARTELLA_RISORSE);
       
         File[] risorse = input.listFiles();
 
-        if (risorse == null || risorse.length == 0){
-            System.out.println("Nessuna risorsa disponibile");
-            return;
-        }
-
-        System.out.println("Risorse: ");
-        for (File f : risorse) {
-            if (f.isFile()) {
-                System.out.println("- " + f.getName());
+        if (risorse != null){
+            for (File file : risorse){
+                if (file.isFile()){
+                    risorseLocali.add("- " + file.getName());
+                }
             }
         }
+
+        if (risorseLocali.isEmpty()){
+            System.out.println("Nessuna risorsa disponibile");
+        }
+        
+        else{
+            System.out.println("Risorse: ");
+            for (String riga: risorseLocali){
+                if (riga.startsWith("- ")){
+                    System.out.println(riga);
+                }
+            }
+        }
+        
     }
 
     // Metodo per il comando add <nome risorsa> <contenuto>
