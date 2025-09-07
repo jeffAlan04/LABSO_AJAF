@@ -38,6 +38,7 @@ public class GestioneTab {
     }
 
     public String aggiungiPeer(String indirizzoIp, Set<String> risorse) {
+        Map<String, Set<String>> backup = backupTabella(tabella);
         for (String risorsa : risorse) {
             if (tabella.containsKey(risorsa)) { // esiste la risorsa
                 tabella.get(risorsa).add(indirizzoIp);
@@ -51,6 +52,7 @@ public class GestioneTab {
         if (salvaSuFile()) {
             return "Informazioni peer " + indirizzoIp + " aggiunte con successo.";
         } else {
+            tabella = backup;
             return "Errore nel salvataggio dopo l'aggiunta delle informazioni peer " + indirizzoIp + ".";
         }
     }
@@ -59,6 +61,7 @@ public class GestioneTab {
     // RIMOZIONE
     public String rimuoviPeer(String indirizzoIp) {
         int count = 0;
+        Map<String, Set<String>> backup = backupTabella(tabella);
 
         for (String risorsa : tabella.keySet()) {
             if (tabella.get(risorsa).remove(indirizzoIp)) {
@@ -71,6 +74,7 @@ public class GestioneTab {
             if (salvaSuFile()) {
                 return "Rimozione peer " + indirizzoIp + " avvenuta con successo.";
             } else {
+                tabella = backup;
                 return "Errore nel salvataggio dopo la rimozione del peer " + indirizzoIp + ".";
             }
         } else {
@@ -79,10 +83,12 @@ public class GestioneTab {
     }
 
     public String rimuoviPeerInRisorsa(String indirizzoIp, String risorsa) {
+        Map<String, Set<String>> backup = backupTabella(tabella);
         if (tabella.get(risorsa).remove(indirizzoIp)) {
             if (salvaSuFile()) {
                 return "Rimozione " + indirizzoIp + " dalla risorsa " + risorsa + " avvenuta con successo.";
             } else {
+                tabella = backup;
                 return "Errore nel salvataggio dopo la rimozione di " + indirizzoIp + " dalla risorsa " + risorsa + ".";
             }
         }
@@ -93,11 +99,13 @@ public class GestioneTab {
 
     public String rimuoviRisorsa(String risorsa) {
         if (tabella.containsKey(risorsa)) {
+            Map<String, Set<String>> backup = backupTabella(tabella);
             tabella.remove(risorsa);
             if (salvaSuFile()) {
                 return "Rimozione risorsa " + risorsa + " avvenuta con successo.";
             }
             else {
+                tabella = backup;
                 return "Errore nel salvataggio dopo la rimozione della risorsa " + risorsa + ".";
             }
         }
@@ -133,6 +141,14 @@ public class GestioneTab {
         catch (IOException e) {
             return false;
         }
+    }
+
+    private Map<String, Set<String>> backupTabella(Map<String, Set<String>> tabella) {
+        Map<String, Set<String>> backup = new HashMap<>();
+        for (Map.Entry<String, Set<String>> entry : tabella.entrySet()) {
+            backup.put(entry.getKey(), new HashSet<>(entry.getValue()));
+        }
+        return backup;
     }
 }
 
