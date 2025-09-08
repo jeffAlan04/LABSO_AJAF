@@ -84,7 +84,7 @@ public class GestioneRisorse {
             String risorsa = parti[0].trim();
             String peers = parti.length > 1 ? parti[1].trim() : "";
 
-            System.out.println(" - " + risorsa + ": " + peers);
+            System.out.println(risorsa + ": " + peers);
         }
     }
 
