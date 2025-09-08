@@ -38,6 +38,7 @@ public class GestioneTab {
     }
 
     public String aggiungiPeer(String indirizzoIp, Set<String> risorse) {
+        Map<String, Set<String>> backup = backupTabella(tabella);
         for (String risorsa : risorse) {
             if (tabella.containsKey(risorsa)) { // esiste la risorsa
                 tabella.get(risorsa).add(indirizzoIp);
@@ -48,14 +49,19 @@ public class GestioneTab {
             }
         }
 
-        salvaSuFile();
-        return "Informazioni peer " + indirizzoIp + " aggiunte con successo.";
+        if (salvaSuFile()) {
+            return "Informazioni peer " + indirizzoIp + " aggiunte con successo.";
+        } else {
+            tabella = backup;
+            return "Errore nel salvataggio dopo l'aggiunta delle informazioni peer " + indirizzoIp + ".";
+        }
     }
 
 
     // RIMOZIONE
-    public String rimuoviPeer(String indirizzoIp) { // forse da rimuovere
+    public String rimuoviPeer(String indirizzoIp) {
         int count = 0;
+        Map<String, Set<String>> backup = backupTabella(tabella);
 
         for (String risorsa : tabella.keySet()) {
             if (tabella.get(risorsa).remove(indirizzoIp)) {
@@ -65,17 +71,26 @@ public class GestioneTab {
 
         if (count > 0) {
             tabella.entrySet().removeIf(entry -> entry.getValue().isEmpty());
-            salvaSuFile();
-            return "Rimozione peer " + indirizzoIp + " avvenuta con successo.";
+            if (salvaSuFile()) {
+                return "Rimozione peer " + indirizzoIp + " avvenuta con successo.";
+            } else {
+                tabella = backup;
+                return "Errore nel salvataggio dopo la rimozione del peer " + indirizzoIp + ".";
+            }
         } else {
             return "Impossibile rimuovere peer " + indirizzoIp + "... non presente in tabella.";
         }
     }
 
-    // metodo rimuovi peer da una specifica risorsa
     public String rimuoviPeerInRisorsa(String indirizzoIp, String risorsa) {
+        Map<String, Set<String>> backup = backupTabella(tabella);
         if (tabella.get(risorsa).remove(indirizzoIp)) {
-            return "Rimozione " + indirizzoIp + " dalla risorsa " + risorsa + " avvenuta con successo.";
+            if (salvaSuFile()) {
+                return "Rimozione " + indirizzoIp + " dalla risorsa " + risorsa + " avvenuta con successo.";
+            } else {
+                tabella = backup;
+                return "Errore nel salvataggio dopo la rimozione di " + indirizzoIp + " dalla risorsa " + risorsa + ".";
+            }
         }
         else {
             return "Impossibile rimuovere " + indirizzoIp + " dalla risorsa " + risorsa + "... uno dei due non presente.";
@@ -84,9 +99,15 @@ public class GestioneTab {
 
     public String rimuoviRisorsa(String risorsa) {
         if (tabella.containsKey(risorsa)) {
+            Map<String, Set<String>> backup = backupTabella(tabella);
             tabella.remove(risorsa);
-            salvaSuFile();
-            return "Rimozione risorsa " + risorsa + " avvenuta con successo.";
+            if (salvaSuFile()) {
+                return "Rimozione risorsa " + risorsa + " avvenuta con successo.";
+            }
+            else {
+                tabella = backup;
+                return "Errore nel salvataggio dopo la rimozione della risorsa " + risorsa + ".";
+            }
         }
         return "Impossibile rimuovere risorsa " + risorsa + "... non presente in tabella.";
     }
@@ -104,20 +125,30 @@ public class GestioneTab {
 
         try {
             tabella = mapper.readValue(file, new TypeReference<Map<String, Set<String>>>() {});
+            System.out.println("Tabella caricata con successo.");
         }
-        catch (Exception e) {
-            System.out.println("Errore nel caricamento da file della tabella: " + e.getMessage());
+        catch (IOException e) {
+            System.out.println("Errore nel caricamento da file della tabella.");
             tabella = new HashMap<>();
         }
     }
 
-    private void salvaSuFile() {
+    private boolean salvaSuFile() {
         try {
             mapper.writeValue(new File(FILE_PATH), tabella);
+            return true;
         }
-        catch (Exception e) {
-            System.out.println("Errore nel salvataggio su file della tabella.");
+        catch (IOException e) {
+            return false;
         }
+    }
+
+    private Map<String, Set<String>> backupTabella(Map<String, Set<String>> tabella) {
+        Map<String, Set<String>> backup = new HashMap<>();
+        for (Map.Entry<String, Set<String>> entry : tabella.entrySet()) {
+            backup.put(entry.getKey(), new HashSet<>(entry.getValue()));
+        }
+        return backup;
     }
 }
 
