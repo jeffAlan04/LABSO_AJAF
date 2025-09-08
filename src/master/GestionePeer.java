@@ -76,10 +76,7 @@ public class GestionePeer implements Runnable {
             System.out.println("Errore con " + indirizzoPeer + " nell'apertura della socket.");
         }
         finally {
-            if (!quit()) {
-                System.out.println("Errore con la chiusura della socket.");
-            }
-            System.out.println("Chiusura socket avvenuta con successo.");
+            quit(); 
         }
     }
 
@@ -181,15 +178,15 @@ public class GestionePeer implements Runnable {
         return risposta;
     }
 
-    public boolean quit() {
+    public void quit() {
         try {
             if (!this.socket.isClosed()) {
                 this.socket.close();
             }
-            return true;
+            System.out.println("Chiusura socket avvenuta con successo.");
         }
         catch (IOException e) {
-            return false;
+            System.out.println("Errore con la chiusura della socket.");
         }
     }
 }

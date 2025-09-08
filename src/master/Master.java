@@ -9,6 +9,7 @@ public class Master{
     private static ArbitroLetturaScrittura arbitroTabella;
     private static ArbitroLetturaScrittura arbitroLog;
     private static Log log;
+    protected static List<GestionePeer> listaGestoriPeer = Collections.synchronizedList(new ArrayList<>()); 
 
     public static boolean inEsecuzione = true;
 
@@ -41,6 +42,9 @@ public class Master{
 
                 // Creazione di GestionePeer e avvio del thread
                 GestionePeer gp = new GestionePeer(socket, log, arbitroTabella, arbitroLog, tabella);
+                synchronized (listaGestoriPeer) {
+                    listaGestoriPeer.add(gp);
+                }
                 new Thread(gp).start();
             }
         }

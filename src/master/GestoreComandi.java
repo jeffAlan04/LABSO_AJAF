@@ -64,6 +64,10 @@ public class GestoreComandi implements Runnable{
     private void gestisciQuit() {
         System.out.println("Chiusura master in corso...");
         Master.inEsecuzione = false;
-        System.exit(0);
+        synchronized (Master.listaGestoriPeer) {
+            for (GestionePeer gp : Master.listaGestoriPeer) {
+                gp.quit();
+            }
+        }
     }
 }
