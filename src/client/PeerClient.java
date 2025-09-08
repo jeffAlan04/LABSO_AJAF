@@ -6,91 +6,96 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
+import javax.naming.directory.InitialDirContext;
+
 public class PeerClient {
 
-  private String indirizzoHostPeer;
-  private int porta;
-  private String nomeRisorsa;
+    private String indirizzoHostPeer;
+    private int porta;
+    private String nomeRisorsa;
+    private Logger logger;
 
-  public PeerClient(String indirizzoHostPeer, int porta, String nomeRisorsa) {
-    this.indirizzoHostPeer = indirizzoHostPeer;
-    this.porta = porta;
-    this.nomeRisorsa = nomeRisorsa;
-  }
-
-  public boolean avviaConnessione() {
-
-    try (Socket s = new Socket(indirizzoHostPeer, porta)) {
-
-      System.out.println("Connesso al peer " + indirizzoHostPeer);
-      return richiediRisorsa(s);
-
-    } catch (IOException e) {
-
-      System.out.println("Errore nella connessione al peer " + indirizzoHostPeer);
-      return false;
+    public PeerClient(String indirizzoHostPeer, int porta, String nomeRisorsa) {
+        this.indirizzoHostPeer = indirizzoHostPeer;
+        this.porta = porta;
+        this.nomeRisorsa = nomeRisorsa;
+        this.logger = new Logger("PeerClient");
     }
 
-  }
+    public boolean avviaConnessione() {
 
-  private boolean richiediRisorsa(Socket s) {
-    try (Scanner socketOut = new Scanner(s.getInputStream());
-        PrintWriter socketIn = new PrintWriter(s.getOutputStream());) {
+        try (Socket s = new Socket(indirizzoHostPeer, porta)) {
 
-      System.out.println("Richiedo risorsa " + nomeRisorsa);
+            logger.logInfo("Connesso a " + indirizzoHostPeer);
+            return richiediRisorsa(s);
 
-      socketIn.println(nomeRisorsa);
-      socketIn.flush();
+        } catch (IOException e) {
 
-      String rispostaServer = socketOut.nextLine();
+            logger.logErrore("Tentativo di connessione al peer " + indirizzoHostPeer + "fallito");
+            return false;
+        }
 
-      if (rispostaServer.equals("false")) {
-        System.out.println("Risorsa " + nomeRisorsa + " non disponibile");
-        System.out.println("Disconnessione");
-        return false;
-      }
-
-      System.out.println("Disconnessione");
-      return downloadRisorsa(s, nomeRisorsa);
-
-    } catch (IOException e) {
-      System.out.println("Errore nel controllo della risorsa");
-      return false;
-    }
-  }
-
-  private boolean downloadRisorsa(Socket s, String nomeRisorsa) {
-    System.out.println("Inizio il download della risorsa " + nomeRisorsa);
-    try (InputStream is = s.getInputStream();
-        FileOutputStream fos = new FileOutputStream("scaricati/" + nomeRisorsa);
-        BufferedOutputStream bos = new BufferedOutputStream(fos);) {
-
-      byte[] byteArray = new byte[4096]; // Buffer per la scrittura del file in locale
-      int byteRead; // indica il numero di byte letti nel ciclo
-      while ((byteRead = is.read(byteArray)) != -1) {
-        // preleva i dati da byteArray dall'indice 0 a quello di byteRead e li scrive
-        bos.write(byteArray, 0, byteRead);
-      }
-      bos.flush();
-      System.out.println("Risorsa " + nomeRisorsa + " scaricata");
-      return true;
-
-    } catch (IOException e) {
-      System.out.println("Errore nel download della risorsa " + nomeRisorsa);
-      return false;
     }
 
-  }
+    private boolean richiediRisorsa(Socket s) {
+        try (Scanner socketOut = new Scanner(s.getInputStream());
+                PrintWriter socketIn = new PrintWriter(s.getOutputStream());) {
 
-  // Da eliminare, solo per testing
-  public static void main(String[] args) {
-    PeerClient c;
-    if (args.length < 2) {
-      c = new PeerClient("localhost", 9999, "prova.txt");
-    } else {
-      c = new PeerClient(args[0], Integer.parseInt(args[1]), args[2]);
+            logger.logInfo("Richiesta risorsa: " + nomeRisorsa);
+
+            socketIn.println(nomeRisorsa);
+            socketIn.flush();
+
+            String rispostaServer = socketOut.nextLine();
+
+            if (rispostaServer.equals("false")) {
+                logger.logInfo("Il peer " + indirizzoHostPeer + " non possiede la risorsa " + nomeRisorsa);
+                return false;
+            }
+
+            return downloadRisorsa(s, nomeRisorsa);
+
+        } catch (IOException e) {
+            logger.logErrore("Errore nel controllo della risorsa");
+            return false;
+        } finally {
+            logger.logInfo("Disconnesione dal peer " + indirizzoHostPeer);
+        }
     }
-    c.avviaConnessione();
-  }
+
+    private boolean downloadRisorsa(Socket s, String nomeRisorsa) {
+        logger.logInfo("Inizio download risorsa " + nomeRisorsa + " da " + indirizzoHostPeer);
+
+        try (InputStream is = s.getInputStream();
+                FileOutputStream fos = new FileOutputStream("scaricati/" + nomeRisorsa);
+                BufferedOutputStream bos = new BufferedOutputStream(fos);) {
+
+            byte[] byteArray = new byte[4096]; // Buffer per la scrittura del file in locale
+            int byteRead; // indica il numero di byte letti nel ciclo
+            while ((byteRead = is.read(byteArray)) != -1) {
+                // preleva i dati da byteArray dall'indice 0 a quello di byteRead e li scrive
+                bos.write(byteArray, 0, byteRead);
+            }
+            bos.flush();
+            logger.logInfo("Fine download risorsa " + nomeRisorsa + " da " + indirizzoHostPeer);
+            return true;
+
+        } catch (IOException e) {
+            logger.logErrore("Errore nel download della risorsa " + nomeRisorsa);
+            return false;
+        }
+
+    }
+
+    // Da eliminare, solo per testing
+    public static void main(String[] args) {
+        PeerClient c;
+        if (args.length < 2) {
+            c = new PeerClient("localhost", 9999, "prova.txt");
+        } else {
+            c = new PeerClient(args[0], Integer.parseInt(args[1]), args[2]);
+        }
+        c.avviaConnessione();
+    }
 
 }

@@ -4,6 +4,7 @@ import java.util.*;
 
 public class Client {
     private static PeerServer server;
+    private static final int PORTA_PEER_SERVER = 9999;
 
     public static void main(String[] args) {
         if (args.length < 2) {
@@ -93,6 +94,10 @@ public class Client {
                         // Legge la risposta del master che contiene l'indirizzo dell'host peer che
                         // possiede la risorsa indicata.
                         String indirizzoHostPeer = inputMaster.nextLine();
+
+                        indirizzoHostPeer = indirizzoHostPeer.split(":")[0];
+                        int porta = PORTA_PEER_SERVER;
+
                         PeerClient pc = new PeerClient(indirizzoHostPeer, porta, nomeRisorsa);
                         boolean risorsaTrovata = pc.avviaConnessione();
 
@@ -172,7 +177,7 @@ public class Client {
 
     // Crea un thread che esegua PeerServer
     private static void avvioServer() {
-        server = new PeerServer(9999);
+        server = new PeerServer(PORTA_PEER_SERVER);
         Thread threadServer = new Thread(server);
         threadServer.start();
     }
