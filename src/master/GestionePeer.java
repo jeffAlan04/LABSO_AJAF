@@ -40,40 +40,35 @@ public class GestionePeer implements Runnable {
                     nomeRisorsa = richiesta[1];
                 }
 
-                try {
-                    switch (comando) {
-                        case COMANDO_LISTDATAREMOTE:
-                            out.println(listDataRemote());
-                            break;
+                switch (comando) {
+                    case COMANDO_LISTDATAREMOTE:
+                        out.println(listDataRemote());
+                        break;
 
-                        case COMANDO_QUIT:
-                            return;
+                    case COMANDO_QUIT:
+                        return;
 
-                        case COMANDO_ADD:
-                            if (nomeRisorsa != null) {
-                                out.println(addRisorsa(indirizzoPeer, Set.of(nomeRisorsa)));
-                            }
-                            else {
-                                out.println("Specifica una risorsa da aggiungere.");
-                            }
-                            break;
+                    case COMANDO_ADD:
+                        if (nomeRisorsa != null) {
+                            out.println(addRisorsa(indirizzoPeer, Set.of(nomeRisorsa)));
+                        }
+                        else {
+                            out.println("Specifica una risorsa da aggiungere.");
+                        }
+                        break;
 
-                        case COMANDO_DOWNLOAD:
-                            if (nomeRisorsa != null) {
-                                downloadRisorsa(nomeRisorsa, indirizzoPeer, in, out);
-                            }
-                            else {
-                                out.println("Specifica una risorsa da scaricare.");
-                            }
-                            break;
+                    case COMANDO_DOWNLOAD:
+                        if (nomeRisorsa != null) {
+                            downloadRisorsa(nomeRisorsa, indirizzoPeer, in, out);
+                        }
+                        else {
+                            out.println("Specifica una risorsa da scaricare.");
+                        }
+                        break;
 
-                        default:
-                            out.println("Comando non riconosciuto.");
-                            break;
-                    }
-                }
-                catch (IOException e) {
-                    System.out.println("Errore nell'elaborazione del comando " + comando + " da indirizzo peer " + indirizzoPeer);
+                    default:
+                        out.println("Comando non riconosciuto.");
+                        break;
                 }
             }
         }
