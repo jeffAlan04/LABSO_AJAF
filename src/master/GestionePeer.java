@@ -76,13 +76,8 @@ public class GestionePeer implements Runnable {
             System.out.println("Errore con " + indirizzoPeer + " nell'apertura della socket.");
         }
         finally {
-            try {
-                if (!this.socket.isClosed()) {
-                    this.socket.close();
-                }
-            }
-            catch (IOException e) {
-                System.out.println("Errore con " + indirizzoPeer + " nella chiusura della socket.");
+            if (!quit()) {
+                System.out.println("Errore con la chiusura della socket.");
             }
             System.out.println("Chiusura socket avvenuta con successo.");
         }
@@ -184,6 +179,18 @@ public class GestionePeer implements Runnable {
         String risposta = this.gestioneTab.rimuoviPeerInRisorsa(indirizzoPeer, risorsa);
         this.arbitroTabella.fineScrittura();
         return risposta;
+    }
+
+    public boolean quit() {
+        try {
+            if (!this.socket.isClosed()) {
+                this.socket.close();
+            }
+            return true;
+        }
+        catch (IOException e) {
+            return false;
+        }
     }
 }
 
