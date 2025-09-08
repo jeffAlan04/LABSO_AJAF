@@ -28,17 +28,21 @@ public class GestoreComandi implements Runnable{
         ) {
             String messaggio;
             while ((messaggio = in.readLine()) != null) {
-                messaggio = messaggio.trim();
+                //rimuovo gli eventuali spazi e rendo tutta la stringa in maiuscolo
+                messaggio = messaggio.trim().toUpperCase();
 
-                if ("LOG".equalsIgnoreCase(messaggio)) {
-                    gestisciLog();
-                } else if ("LISTDATA".equalsIgnoreCase(messaggio)) {
-                    gestisciListData();
-                } else if ("QUIT".equalsIgnoreCase(messaggio)) {
-                    gestisciQuit();
-                    break;
-                }  else {
-                    System.out.println("Comando non riconosciuto: " + messaggio);
+                switch (messaggio){
+                    case "LOG":
+                        gestisciLog();
+                        break;
+                    case "LISTDATA":
+                        gestisciListData();
+                        break;
+                    case "QUIT":
+                        gestisciQuit();
+                        return; 
+                    default:
+                        System.out.println("Comando non riconosciuto: " + messaggio);
                 }
             }
         } catch (IOException e) {
