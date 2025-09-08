@@ -9,6 +9,7 @@ public class Master{
     private static ArbitroLetturaScrittura arbitroTabella;
     private static ArbitroLetturaScrittura arbitroLog;
     private static Log log;
+    protected static List<GestionePeer> listaGestoriPeer = Collections.synchronizedList(new ArrayList<>()); 
 
     public static boolean inEsecuzione = true;
 
@@ -18,19 +19,18 @@ public class Master{
             return;
         }
             
-            int porta = Integer.parseInt(args[0]);
+        int porta = Integer.parseInt(args[0]);
 
-            tabella = new GestioneTab();
-            arbitroTabella = new ArbitroLetturaScrittura();
-            arbitroLog = new ArbitroLetturaScrittura();
-            log = new Log();
-
-            // Avvio del thread di GestoreComandi
-            new Thread(new GestoreComandi(arbitroLog, arbitroTabella, tabella, log)).start();
+        tabella = new GestioneTab();
+        arbitroTabella = new ArbitroLetturaScrittura();
+        arbitroLog = new ArbitroLetturaScrittura();
+        log = new Log();
 
         // Creazionde del ServerSocket    
         try (ServerSocket serverSocket = new ServerSocket(porta)){
-        
+            // Avvio del thread di GestoreComandi
+            new Thread(new GestoreComandi(arbitroLog, arbitroTabella, tabella, log, serverSocket)).start();
+
             System.out.println("Server in ascolto sulla porta: " + porta);
 
             // Ciclo continuo fino a che inEsecuzione = false
@@ -41,13 +41,15 @@ public class Master{
 
                 // Creazione di GestionePeer e avvio del thread
                 GestionePeer gp = new GestionePeer(socket, log, arbitroTabella, arbitroLog, tabella);
+                synchronized (listaGestoriPeer) {
+                    listaGestoriPeer.add(gp);
+                }
                 new Thread(gp).start();
             }
         }
         
         catch(IOException e){
-            System.err.println("Errore: " + e.getMessage());
-        }    
-    
+            System.out.println("Chiusura master.");
+        }
     }
 }

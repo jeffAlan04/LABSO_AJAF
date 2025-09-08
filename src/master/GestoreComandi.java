@@ -1,4 +1,5 @@
 import java.io.*;
+import java.net.*;
 
 public class GestoreComandi implements Runnable{
     // arbitro per sincronizzare accesso ai log
@@ -9,12 +10,14 @@ public class GestoreComandi implements Runnable{
     private final GestioneTab tabella;
     // Log per leggere i logging
     private final Log logger;
+    private final ServerSocket serverSocket;
 
-    public GestoreComandi(ArbitroLetturaScrittura arbitroLog, ArbitroLetturaScrittura arbitroTabella, GestioneTab tabella, Log logger) {
+    public GestoreComandi(ArbitroLetturaScrittura arbitroLog, ArbitroLetturaScrittura arbitroTabella, GestioneTab tabella, Log logger, ServerSocket serverSocket) {
         this.arbitroLog = arbitroLog;
         this.arbitroTabella = arbitroTabella;
         this.tabella = tabella;
         this.logger = logger;
+        this.serverSocket = serverSocket;
     }
 
     // Loop principale che legge i comandi dalla console
@@ -64,6 +67,16 @@ public class GestoreComandi implements Runnable{
     private void gestisciQuit() {
         System.out.println("Chiusura master in corso...");
         Master.inEsecuzione = false;
-        System.exit(0);
+        synchronized (Master.listaGestoriPeer) {
+            for (GestionePeer gp : Master.listaGestoriPeer) {
+                gp.quit();
+            }
+        }
+        try {
+            this.serverSocket.close();
+        }
+        catch (IOException e) {
+            System.out.println("Errore nella chiusura della server socket del master.");
+        }
     }
 }
