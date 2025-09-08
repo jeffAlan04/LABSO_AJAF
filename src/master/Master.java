@@ -19,19 +19,18 @@ public class Master{
             return;
         }
             
-            int porta = Integer.parseInt(args[0]);
+        int porta = Integer.parseInt(args[0]);
 
-            tabella = new GestioneTab();
-            arbitroTabella = new ArbitroLetturaScrittura();
-            arbitroLog = new ArbitroLetturaScrittura();
-            log = new Log();
-
-            // Avvio del thread di GestoreComandi
-            new Thread(new GestoreComandi(arbitroLog, arbitroTabella, tabella, log)).start();
+        tabella = new GestioneTab();
+        arbitroTabella = new ArbitroLetturaScrittura();
+        arbitroLog = new ArbitroLetturaScrittura();
+        log = new Log();
 
         // Creazionde del ServerSocket    
         try (ServerSocket serverSocket = new ServerSocket(porta)){
-        
+            // Avvio del thread di GestoreComandi
+            new Thread(new GestoreComandi(arbitroLog, arbitroTabella, tabella, log, serverSocket)).start();
+
             System.out.println("Server in ascolto sulla porta: " + porta);
 
             // Ciclo continuo fino a che inEsecuzione = false
@@ -50,8 +49,7 @@ public class Master{
         }
         
         catch(IOException e){
-            System.err.println("Errore: " + e.getMessage());
-        }    
-    
+            System.out.println("Chiusura master.");
+        }
     }
 }
