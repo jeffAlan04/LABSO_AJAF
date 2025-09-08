@@ -31,7 +31,7 @@ public class PeerClient {
 
         } catch (IOException e) {
 
-            logger.logErrore("Tentativo di connessione al peer " + indirizzoHostPeer + "fallito");
+            logger.logErrore("Tentativo di connessione al peer " + indirizzoHostPeer + " fallito");
             return false;
         }
 
