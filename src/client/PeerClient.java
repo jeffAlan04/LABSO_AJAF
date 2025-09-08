@@ -31,7 +31,7 @@ public class PeerClient {
 
         } catch (IOException e) {
 
-            logger.logErrore("Tentativo di connessione al peer " + indirizzoHostPeer "fallito");
+            logger.logErrore("Tentativo di connessione al peer " + indirizzoHostPeer + "fallito");
             return false;
         }
 
@@ -64,7 +64,7 @@ public class PeerClient {
     }
 
     private boolean downloadRisorsa(Socket s, String nomeRisorsa) {
-        logger.logInfo("Inizio download risorsa " + nomeRisorsa + "da " + indirizzoHostPeer);
+        logger.logInfo("Inizio download risorsa " + nomeRisorsa + " da " + indirizzoHostPeer);
 
         try (InputStream is = s.getInputStream();
                 FileOutputStream fos = new FileOutputStream("scaricati/" + nomeRisorsa);
@@ -77,7 +77,7 @@ public class PeerClient {
                 bos.write(byteArray, 0, byteRead);
             }
             bos.flush();
-            logger.logInfo("Fine download risorsa " + nomeRisorsa + "da " + indirizzoHostPeer);
+            logger.logInfo("Fine download risorsa " + nomeRisorsa + " da " + indirizzoHostPeer);
             return true;
 
         } catch (IOException e) {
