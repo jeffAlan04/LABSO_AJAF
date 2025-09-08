@@ -25,11 +25,10 @@ public class Client {
         int porta = Integer.parseInt(args[1]);
 
         try (
-            Socket s = new Socket(indirizzoMaster, porta);
-            Scanner inputMaster = new Scanner(s.getInputStream());
-            PrintWriter outputMaster = new PrintWriter(s.getOutputStream());
-            Scanner tastiera = new Scanner(System.in);
-            ) {
+                Socket s = new Socket(indirizzoMaster, porta);
+                Scanner inputMaster = new Scanner(s.getInputStream());
+                PrintWriter outputMaster = new PrintWriter(s.getOutputStream());
+                Scanner tastiera = new Scanner(System.in);) {
 
             System.out.println("Connessione al master: " + s.getRemoteSocketAddress());
 
@@ -96,9 +95,9 @@ public class Client {
                         String indirizzoHostPeer = inputMaster.nextLine();
 
                         indirizzoHostPeer = indirizzoHostPeer.split(":")[0];
-                        int porta = PORTA_PEER_SERVER;
 
-                        PeerClient pc = new PeerClient(indirizzoHostPeer, porta, nomeRisorsa);
+                        PeerClient pc = new PeerClient(indirizzoHostPeer, PORTA_PEER_SERVER, nomeRisorsa);
+
                         boolean risorsaTrovata = pc.avviaConnessione();
 
                         // Fino a che risorsaTrovata non corrisponde a true, il master deve fornire un
@@ -113,21 +112,20 @@ public class Client {
                                 System.out.println("Download fallito: nessun peer disponibile");
                                 break;
                             } else {
-                                PeerClient pcAlternativo = new PeerClient(indirizzoHostPeerAlternativo, porta, nomeRisorsa);
+                                PeerClient pcAlternativo = new PeerClient(indirizzoHostPeerAlternativo, porta,
+                                        nomeRisorsa);
                                 risorsaTrovata = pcAlternativo.avviaConnessione();
                             }
                         }
                     }
-                }
-                else if (inputUtente.equalsIgnoreCase("listdata remote")) {
+                } else if (inputUtente.equalsIgnoreCase("listdata remote")) {
                     outputMaster.println("LISTDATA_REMOTE");
                     outputMaster.flush();
 
                     if (inputMaster.hasNextLine()) {
                         String risposta = inputMaster.nextLine();
                         GestioneRisorse.eseguiListDataRemote(risposta);
-                    }
-                    else {
+                    } else {
                         System.out.println("Nessuna risposta ricevuta");
                     }
                 }
@@ -158,8 +156,7 @@ public class Client {
                     }
                 }
             }
-        }
-        else {
+        } else {
             System.out.println("Cartella risorse non trovata");
         }
 
