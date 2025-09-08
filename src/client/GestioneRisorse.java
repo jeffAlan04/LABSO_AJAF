@@ -7,7 +7,6 @@ import java.util.List;
 public class GestioneRisorse {
     private static final String CARTELLA_RISORSE = "risorse";
 
-
     // Metodo per verificare la presenza di una risorsa all'interno della cartella
     // risorse
     public static String risorsaPresente(String nome) {
@@ -33,10 +32,10 @@ public class GestioneRisorse {
         controlloCartella();
 
         File input = new File(CARTELLA_RISORSE);
-      
+
         File[] risorse = input.listFiles();
 
-        if (risorse == null || risorse.length == 0){
+        if (risorse == null || risorse.length == 0) {
             System.out.println("Nessuna risorsa disponibile");
             return;
         }
@@ -67,7 +66,6 @@ public class GestioneRisorse {
         }
     }
 
-
     // Metodo per il comando listdata_remote
     public static void eseguiListDataRemote(String risposta) {
         if (risposta == null || risposta.isEmpty()
@@ -76,7 +74,7 @@ public class GestioneRisorse {
             return;
         }
         System.out.println("Risorse: ");
-        String[] righe = risposta.split(";");
+        String[] righe = risposta.split("\n");
 
         for (String riga : righe) {
 
@@ -89,7 +87,7 @@ public class GestioneRisorse {
             System.out.println(" - " + risorsa + ": " + peers);
         }
     }
-        
+
     private static void controlloCartella() {
         File cartella = new File(CARTELLA_RISORSE);
         if (!cartella.exists()) {
