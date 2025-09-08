@@ -22,11 +22,11 @@ public class PeerClient {
 
     public boolean avviaConnessione() {
 
-        logger.logInfo("Tentativo di download della risorsa " + nomeRisorsa + "dal peer " + indirizzoHostPeer);
+        logger.logInfo("Tentativo di download della risorsa " + nomeRisorsa + " dal peer " + indirizzoHostPeer);
 
         try (Socket s = new Socket(indirizzoHostPeer, porta)) {
 
-            logger.logInfo("Connesso al peer " + indirizzoHostPeer);
+            logger.logInfo("Stabilita connessione con peer " + indirizzoHostPeer);
             return richiediRisorsa(s);
 
         } catch (IOException e) {
@@ -41,7 +41,7 @@ public class PeerClient {
         try (Scanner socketOut = new Scanner(s.getInputStream());
                 PrintWriter socketIn = new PrintWriter(s.getOutputStream());) {
 
-            logger.logInfo("Richiedo risorsa " + nomeRisorsa);
+            logger.logInfo("Richista risorsa " + nomeRisorsa);
 
             socketIn.println(nomeRisorsa);
             socketIn.flush();
@@ -64,7 +64,7 @@ public class PeerClient {
     }
 
     private boolean downloadRisorsa(Socket s, String nomeRisorsa) {
-        logger.logInfo("Inizio il download della risorsa " + nomeRisorsa);
+        logger.logInfo("Doownload della risorsa " + nomeRisorsa + "iniziato");
 
         try (InputStream is = s.getInputStream();
                 FileOutputStream fos = new FileOutputStream("scaricati/" + nomeRisorsa);
@@ -77,7 +77,7 @@ public class PeerClient {
                 bos.write(byteArray, 0, byteRead);
             }
             bos.flush();
-            logger.logInfo("Risorsa " + nomeRisorsa + " scaricata");
+            logger.logInfo("Download terminato. Risorsa " + nomeRisorsa + " scaricata");
             return true;
 
         } catch (IOException e) {
