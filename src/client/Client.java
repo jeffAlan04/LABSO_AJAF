@@ -3,7 +3,6 @@ import java.net.*;
 import java.util.*;
 
 public class Client {
-
     private static PeerServer server;
     private static final int PORTA_PEER_SERVER = 9999;
 
@@ -26,10 +25,11 @@ public class Client {
         int porta = Integer.parseInt(args[1]);
 
         try (
-                Socket s = new Socket(indirizzoMaster, porta);
-                Scanner inputMaster = new Scanner(s.getInputStream());
-                PrintWriter outputMaster = new PrintWriter(s.getOutputStream());
-                Scanner tastiera = new Scanner(System.in);) {
+            Socket s = new Socket(indirizzoMaster, porta);
+            Scanner inputMaster = new Scanner(s.getInputStream());
+            PrintWriter outputMaster = new PrintWriter(s.getOutputStream());
+            Scanner tastiera = new Scanner(System.in);
+            ) {
 
             System.out.println("Connessione al master: " + s.getRemoteSocketAddress());
 
@@ -50,14 +50,11 @@ public class Client {
                 if (inputUtente.equalsIgnoreCase("quit")) {
                     eseguiQuit(outputMaster);
                     break;
-
                 }
-
                 // Esegue il comando listdata local
                 else if (inputUtente.equalsIgnoreCase("listdata local")) {
                     GestioneRisorse.eseguiListDataLocal();
                 }
-
                 // Esegue il comando add nome_risorsa contenuto
                 else if (inputUtente.startsWith("add ")) {
                     String[] parti = inputUtente.split("\\s", 3);
@@ -78,7 +75,6 @@ public class Client {
                         outputMaster.flush();
                     }
                 }
-
                 // Esegue il comando donwload nome_risorsa.
                 else if (inputUtente.startsWith("download")) {
                     String[] parti = inputUtente.split("\\s");
@@ -98,11 +94,11 @@ public class Client {
                         // Legge la risposta del master che contiene l'indirizzo dell'host peer che
                         // possiede la risorsa indicata.
                         String indirizzoHostPeer = inputMaster.nextLine();
+
                         indirizzoHostPeer = indirizzoHostPeer.split(":")[0];
                         int porta = PORTA_PEER_SERVER;
 
                         PeerClient pc = new PeerClient(indirizzoHostPeer, porta, nomeRisorsa);
-
                         boolean risorsaTrovata = pc.avviaConnessione();
 
                         // Fino a che risorsaTrovata non corrisponde a true, il master deve fornire un
@@ -117,18 +113,12 @@ public class Client {
                                 System.out.println("Download fallito: nessun peer disponibile");
                                 break;
                             } else {
-                                PeerClient pcAlternativo = new PeerClient(indirizzoHostPeerAlternativo, porta,
-                                        nomeRisorsa);
-
+                                PeerClient pcAlternativo = new PeerClient(indirizzoHostPeerAlternativo, porta, nomeRisorsa);
                                 risorsaTrovata = pcAlternativo.avviaConnessione();
                             }
-
                         }
-
                     }
-
                 }
-
                 else if (inputUtente.equalsIgnoreCase("listdata remote")) {
                     outputMaster.println("LISTDATA_REMOTE");
                     outputMaster.flush();
@@ -137,17 +127,14 @@ public class Client {
                         String risposta = inputMaster.nextLine();
                         GestioneRisorse.eseguiListDataRemote(risposta);
                     }
-
                     else {
                         System.out.println("Nessuna risposta ricevuta");
                     }
                 }
-
                 // Da togliere non appena completati tutti i comandi
                 else {
                     System.out.println("Comando non riconosciuto");
                 }
-
             }
         } catch (IOException e) {
             System.out.println("Errore di connessione al master");
@@ -165,27 +152,18 @@ public class Client {
             File[] f = cartella.listFiles();
 
             if (f != null) {
-
                 for (File file : f) {
-
                     if (file.isFile()) {
-
                         risorseLocali.add("- " + file.getName());
-
                     }
-
                 }
-
             }
-
         }
-
         else {
             System.out.println("Cartella risorse non trovata");
         }
 
         risorseLocali.add("FINE");
-
         return risorseLocali;
     }
 
@@ -194,9 +172,7 @@ public class Client {
         outputMaster.println("QUIT");
         outputMaster.flush();
         System.out.println("Disconnessione in corso");
-
         server.terminaServer(); // termina PeerServer
-
     }
 
     // Crea un thread che esegua PeerServer
