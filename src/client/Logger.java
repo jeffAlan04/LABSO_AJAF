@@ -76,7 +76,7 @@ public class Logger {
 
     // da eliminare, solo per testing
     public static void main(String[] args) {
-        Logger prova = new Logger("Logger", "1");
+        Logger prova = new Logger("Logger");
         prova.logInfo("Sto facendo una prova");
         prova.close();
     }
