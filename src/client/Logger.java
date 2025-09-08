@@ -9,11 +9,9 @@ import java.io.File;
 public class Logger {
     private PrintWriter scrittore;
     private String classe;
-    private String identificativo;
 
     public Logger(String classe, String identificativo) {
         this.classe = classe;
-        this.identificativo = identificativo;
 
         PrintWriter scrittoreTemporaneo;
         try {
@@ -33,7 +31,7 @@ public class Logger {
         String dataOra = momento.format(formattatore);
 
         // Formato: <nome_classe>_<identificativo>_<data>_<ora>.log
-        return "log/" + classe + "_" + identificativo + "_" + dataOra + ".log";
+        return "log/" + classe + "_" + dataOra + ".log";
     }
 
     public static String stampaMomento() {
