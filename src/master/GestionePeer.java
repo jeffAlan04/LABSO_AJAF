@@ -24,12 +24,12 @@ public class GestionePeer implements Runnable {
 
     @Override
     public void run() {
-        String indirizzoIpPeer = this.socket.getInetAddress().getHostAddress();
+        String indirizzoPeer = this.socket.getRemoteSocketAddress().toString();
         
-        try (Scanner in = new Scanner(socket.getInputStream()); PrintWriter out = new PrintWriter(socket.getOutputStream(), true)) {
+        try (Scanner in = new Scanner(this.socket.getInputStream()); PrintWriter out = new PrintWriter(this.socket.getOutputStream(), true)) {
             // leggere lista risorse e mandarle a gestione tabella
             Set<String> risorsePeer = getRisorsePeer(in, out);
-            out.println(salvataggioRisorsePeer(indirizzoIpPeer, risorsePeer));
+            out.println(salvataggioRisorsePeer(indirizzoPeer, risorsePeer));
             
             while (in.hasNextLine()) {
                 String[] richiesta = in.nextLine().split(" ");
@@ -40,54 +40,54 @@ public class GestionePeer implements Runnable {
                     nomeRisorsa = richiesta[1];
                 }
 
-                switch (comando) {
-                    case COMANDO_LISTDATAREMOTE:
-                        out.println(listDataRemote());
-                        break;
+                try {
+                    switch (comando) {
+                        case COMANDO_LISTDATAREMOTE:
+                            out.println(listDataRemote());
+                            break;
 
-                    case COMANDO_QUIT:
-                        return;
+                        case COMANDO_QUIT:
+                            return;
 
-                    case COMANDO_ADD:
-                        if (nomeRisorsa != null) {
-                            out.println(addRisorsa(indirizzoIpPeer, Set.of(nomeRisorsa)));
-                        }
-                        else {
-                            out.println("Specifica una risorsa da aggiungere.");
-                        }
-                        break;
+                        case COMANDO_ADD:
+                            if (nomeRisorsa != null) {
+                                out.println(addRisorsa(indirizzoPeer, Set.of(nomeRisorsa)));
+                            }
+                            else {
+                                out.println("Specifica una risorsa da aggiungere.");
+                            }
+                            break;
 
-                    case COMANDO_DOWNLOAD:
-                        if (nomeRisorsa != null) {
-                            downloadRisorsa(nomeRisorsa, indirizzoIpPeer, in, out);
-                        }
-                        else {
-                            out.println("Specifica una risorsa da scaricare.");
-                        }
-                        break;
+                        case COMANDO_DOWNLOAD:
+                            if (nomeRisorsa != null) {
+                                downloadRisorsa(nomeRisorsa, indirizzoPeer, in, out);
+                            }
+                            else {
+                                out.println("Specifica una risorsa da scaricare.");
+                            }
+                            break;
 
-                    default:
-                        out.println("Comando non riconosciuto.");
-                        break;
+                        default:
+                            out.println("Comando non riconosciuto.");
+                            break;
+                    }
+                }
+                catch (IOException e) {
+                    System.out.println("Errore nell'elaborazione del comando " + comando + " da indirizzo peer " + indirizzoPeer);
                 }
             }
         }
         catch (IOException e) {
-            System.out.println("Errore con " + indirizzoIpPeer + " nell'apertura della socket.");
+            System.out.println("Errore con " + indirizzoPeer + " nell'apertura della socket.");
         }
         finally {
             try {
-                this.arbitroTabella.inizioScrittura();
                 if (!this.socket.isClosed()) {
                     this.socket.close();
                 }
-                System.out.println(this.gestioneTab.rimuoviPeer(indirizzoIpPeer));
             }
-            catch (Exception e) {
-                System.out.println("Errore con " + indirizzoIpPeer + " nella chiusura della socket.");
-            }
-            finally {
-                this.arbitroTabella.fineScrittura();
+            catch (IOException e) {
+                System.out.println("Errore con " + indirizzoPeer + " nella chiusura della socket.");
             }
             System.out.println("Chiusura socket avvenuta con successo.");
         }
@@ -107,40 +107,30 @@ public class GestionePeer implements Runnable {
         return risorsePeer;
     }
 
-    private String salvataggioRisorsePeer(String indirizzoIpPeer, Set<String> risorsePeer) {
-        try {
-            this.arbitroTabella.inizioScrittura();
-            return this.gestioneTab.aggiungiPeer(indirizzoIpPeer, risorsePeer);
-        }
-        finally {
-            this.arbitroTabella.fineScrittura();
-        }
+    private String salvataggioRisorsePeer(String indirizzoPeer, Set<String> risorsePeer) {
+        this.arbitroTabella.inizioScrittura();
+        String risposta = this.gestioneTab.aggiungiPeer(indirizzoPeer, risorsePeer);
+        this.arbitroTabella.fineScrittura();
+        return risposta;
     }
     
     private String listDataRemote() {
-        try {
-            this.arbitroTabella.inizioLettura();
-            String risposta = this.gestioneTab.getRisorse();
+        this.arbitroTabella.inizioLettura();
+        String risposta = this.gestioneTab.getRisorse();
 
-            if (risposta == null || risposta.isEmpty()) {
-                return "listdata remote: Nessuna risorsa disponibile.";
-            }
+        if (risposta == null || risposta.isEmpty()) {
+            return "listdata remote: Nessuna risorsa disponibile.";
+        }
 
-            return risposta.trim();
-        }
-        finally {
-            this.arbitroTabella.fineLettura();
-        }
+        this.arbitroTabella.fineLettura();
+        return risposta.trim();
     }
 
-    private String addRisorsa(String indirizzoIpPeer, Set<String> risorse) {
-        try {
-            this.arbitroTabella.inizioScrittura();
-            return this.gestioneTab.aggiungiPeer(indirizzoIpPeer, risorse).trim();
-        }
-        finally {
-            this.arbitroTabella.fineScrittura();
-        }
+    private String addRisorsa(String indirizzoPeer, Set<String> risorse) {
+        this.arbitroTabella.inizioScrittura();
+        String risposta = this.gestioneTab.aggiungiPeer(indirizzoPeer, risorse).trim();
+        this.arbitroTabella.fineScrittura();
+        return risposta;
     }
 
     private void downloadRisorsa(String risorsa, String peerSorgente, Scanner in, PrintWriter out) {
@@ -148,7 +138,7 @@ public class GestionePeer implements Runnable {
             String peerDestinazione = getPeer(risorsa);
 
             if (peerDestinazione == null) {
-                out.println("Non disponibile");
+                out.println("Risorsa non disponibile sulla rete.");
                 scritturaLog(risorsa, peerSorgente, peerDestinazione, false);
                 return;
             }
@@ -188,22 +178,17 @@ public class GestionePeer implements Runnable {
     }
 
     private String getPeer(String risorsa) {
-        try {
-            this.arbitroTabella.inizioLettura();
-            return this.gestioneTab.getPeers(risorsa);
-        }
-        finally {
-            this.arbitroTabella.fineLettura();
-        }
+        this.arbitroTabella.inizioLettura();
+        String risposta = this.gestioneTab.getPeers(risorsa);
+        this.arbitroTabella.fineLettura();
+        return risposta;
     }
 
-    private String rimuoviPeer(String indirizzoIpPeer, String risorsa) {
-        try {
-            this.arbitroTabella.inizioScrittura();
-            return this.gestioneTab.rimuoviPeerInRisorsa(indirizzoIpPeer, risorsa);
-        }
-        finally {
-            this.arbitroTabella.fineScrittura();
-        }
+    private String rimuoviPeer(String indirizzoPeer, String risorsa) {
+        this.arbitroTabella.inizioScrittura();
+        String risposta = this.gestioneTab.rimuoviPeerInRisorsa(indirizzoPeer, risorsa);
+        this.arbitroTabella.fineScrittura();
+        return risposta;
     }
 }
+
