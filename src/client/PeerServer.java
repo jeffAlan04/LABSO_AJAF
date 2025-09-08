@@ -19,16 +19,7 @@ public class PeerServer implements Runnable {
 
     public PeerServer(int porta) {
         this.porta = porta;
-
-        String indirizzoIP;
-        try {
-            InetAddress localHost = InetAddress.getLocalHost();
-            indirizzoIP = localHost.getHostAddress();
-        } catch (UnknownHostException e) {
-            indirizzoIP = "localhost";
-        }
-
-        logger = new Logger("PeerServer", indirizzoIP);
+        this.logger = new Logger("PeerServer");
     }
 
     @Override
