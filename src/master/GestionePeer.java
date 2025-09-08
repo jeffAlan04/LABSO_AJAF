@@ -77,17 +77,12 @@ public class GestionePeer implements Runnable {
         }
         finally {
             try {
-                this.arbitroTabella.inizioScrittura();
                 if (!this.socket.isClosed()) {
                     this.socket.close();
                 }
-                System.out.println(this.gestioneTab.rimuoviPeer(indirizzoPeer));
             }
             catch (IOException e) {
                 System.out.println("Errore con " + indirizzoPeer + " nella chiusura della socket.");
-            }
-            finally {
-                this.arbitroTabella.fineScrittura();
             }
             System.out.println("Chiusura socket avvenuta con successo.");
         }
@@ -138,7 +133,7 @@ public class GestionePeer implements Runnable {
             String peerDestinazione = getPeer(risorsa);
 
             if (peerDestinazione == null) {
-                out.println("Non disponibile");
+                out.println("Risorsa non disponibile sulla rete.");
                 scritturaLog(risorsa, peerSorgente, peerDestinazione, false);
                 return;
             }
