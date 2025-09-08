@@ -10,7 +10,7 @@ public class Logger {
     private PrintWriter scrittore;
     private String classe;
 
-    public Logger(String classe, String identificativo) {
+    public Logger(String classe) {
         this.classe = classe;
 
         PrintWriter scrittoreTemporaneo;
