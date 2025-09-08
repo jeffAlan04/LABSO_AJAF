@@ -29,7 +29,7 @@ public class GestionePeer implements Runnable {
         try (Scanner in = new Scanner(this.socket.getInputStream()); PrintWriter out = new PrintWriter(this.socket.getOutputStream(), true)) {
             // leggere lista risorse e mandarle a gestione tabella
             Set<String> risorsePeer = getRisorsePeer(in, out);
-            out.println(salvataggioRisorsePeer(indirizzoPeer, risorsePeer));
+            System.out.println(salvataggioRisorsePeer(indirizzoPeer, risorsePeer));
             
             while (in.hasNextLine()) {
                 String[] richiesta = in.nextLine().split(" ");
