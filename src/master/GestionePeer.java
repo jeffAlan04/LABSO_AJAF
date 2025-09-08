@@ -72,7 +72,7 @@ public class GestionePeer implements Runnable {
                             break;
                     }
                 }
-                catch (Exception e) {
+                catch (IOException e) {
                     System.out.println("Errore nell'elaborazione del comando " + comando + " da indirizzo peer " + indirizzoPeer);
                 }
             }
