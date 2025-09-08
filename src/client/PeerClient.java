@@ -6,6 +6,8 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
+import javax.naming.directory.InitialDirContext;
+
 public class PeerClient {
 
     private String indirizzoHostPeer;
@@ -22,16 +24,14 @@ public class PeerClient {
 
     public boolean avviaConnessione() {
 
-        logger.logInfo("Tentativo di download della risorsa " + nomeRisorsa + " dal peer " + indirizzoHostPeer);
-
         try (Socket s = new Socket(indirizzoHostPeer, porta)) {
 
-            logger.logInfo("Stabilita connessione con peer " + indirizzoHostPeer);
+            logger.logInfo("Connesso a " + indirizzoHostPeer);
             return richiediRisorsa(s);
 
         } catch (IOException e) {
 
-            logger.logErrore("Errore nella connessione al peer " + indirizzoHostPeer);
+            logger.logErrore("Tentativo di connessione al peer " + indirizzoHostPeer "fallito");
             return false;
         }
 
@@ -41,7 +41,7 @@ public class PeerClient {
         try (Scanner socketOut = new Scanner(s.getInputStream());
                 PrintWriter socketIn = new PrintWriter(s.getOutputStream());) {
 
-            logger.logInfo("Richista risorsa " + nomeRisorsa);
+            logger.logInfo("Richiesta risorsa: " + nomeRisorsa);
 
             socketIn.println(nomeRisorsa);
             socketIn.flush();
@@ -59,12 +59,12 @@ public class PeerClient {
             logger.logErrore("Errore nel controllo della risorsa");
             return false;
         } finally {
-            logger.logInfo("Disconnnesione");
+            logger.logInfo("Disconnesione dal peer " + indirizzoHostPeer);
         }
     }
 
     private boolean downloadRisorsa(Socket s, String nomeRisorsa) {
-        logger.logInfo("Doownload della risorsa " + nomeRisorsa + "iniziato");
+        logger.logInfo("Inizio download risorsa " + nomeRisorsa + "da " + indirizzoHostPeer);
 
         try (InputStream is = s.getInputStream();
                 FileOutputStream fos = new FileOutputStream("scaricati/" + nomeRisorsa);
@@ -77,7 +77,7 @@ public class PeerClient {
                 bos.write(byteArray, 0, byteRead);
             }
             bos.flush();
-            logger.logInfo("Download terminato. Risorsa " + nomeRisorsa + " scaricata");
+            logger.logInfo("Fine download risorsa " + nomeRisorsa + "da " + indirizzoHostPeer);
             return true;
 
         } catch (IOException e) {
