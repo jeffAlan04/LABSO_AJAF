@@ -6,8 +6,6 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
-import javax.naming.directory.InitialDirContext;
-
 public class PeerClient {
 
     private String indirizzoHostPeer;
