@@ -20,12 +20,12 @@ public class Log {
     }
 
     //Metodo per scrivere i download riuscito
-    public synchronized  void downloadSuccesso(String risorsa, String peerSorgente, String peerDestinazione){
+    public void downloadSuccesso(String risorsa, String peerSorgente, String peerDestinazione){
         scriviLog(risorsa, peerSorgente, peerDestinazione, true);
     }
 
     //Metodo per scrivere i download falliti
-    public synchronized  void downloadFallito(String risorsa, String peerSorgente, String peerDestinazione){
+    public void downloadFallito(String risorsa, String peerSorgente, String peerDestinazione){
         scriviLog(risorsa, peerSorgente, peerDestinazione, false);
     }
 
@@ -45,7 +45,7 @@ public class Log {
     }
 
     // Stampa tutto il contenuto del file di Log
-    public synchronized  void stampa(){
+    public void stampa(){
         System.out.println("Risorse scaricati: ");
         try(BufferedReader br = new BufferedReader(new FileReader(FILE))) {
             String linea;
