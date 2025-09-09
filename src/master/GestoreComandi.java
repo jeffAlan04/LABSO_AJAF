@@ -63,7 +63,7 @@ public class GestoreComandi implements Runnable{
         try {
             System.out.println("=== Tabella Risorse ===");
 
-            String dati = tabella.getRisorse;
+            String dati = tabella.getRisorse();
 
             String[] array = dati.split(";");
 
