@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.*;
+import java.util.*;
 
 public class GestoreComandi implements Runnable{
     // arbitro per sincronizzare accesso ai log
@@ -61,7 +62,17 @@ public class GestoreComandi implements Runnable{
         arbitroTabella.inizioLettura();
         try {
             System.out.println("=== Tabella Risorse ===");
-            System.out.println(tabella.getRisorse());
+
+            String dati = tabella.getRisorse;
+
+            String[] array = dati.split(";");
+
+            ArrayList<String> listaRisorse = new ArrayList<>(Arrays.asList(array));
+
+            for (String risorsa : listaRisorse) {
+                System.out.println(risorsa);
+            }
+
         } finally {
             arbitroTabella.fineLettura();
         }
