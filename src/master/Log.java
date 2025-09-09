@@ -10,8 +10,6 @@ public class Log {
     private final String FILE = DIR + "/log.txt";
     // formattazione orario (formattato HH:mm)
     private final DateTimeFormatter FormattoOrario = DateTimeFormatter.ofPattern("HH:mm");
-    // unica istanza condivisa
-    private static Log istanza = null;
 
     // Crea la cartella dei log se non esiste
     public Log() {
