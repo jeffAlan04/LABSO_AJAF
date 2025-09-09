@@ -83,27 +83,25 @@ public class Client {
                         // Legge la risposta del master che contiene l'indirizzo dell'host peer che
                         // possiede la risorsa indicata.
                         String indirizzoHostPeer = inputMaster.nextLine();
-                        indirizzoHostPeer = indirizzoHostPeer.split(":")[0];
+                        while (!"non_disponibile".equals(indirizzoHostPeer)) {
+                            indirizzoHostPeer = indirizzoHostPeer.split(":")[0];
 
-                        PeerClient pc = new PeerClient(indirizzoHostPeer, PORTA_PEER_SERVER, nomeRisorsa);
-                        boolean risorsaTrovata = pc.avviaConnessione();
-
-                        // Fino a che risorsaTrovata non corrisponde a true, il master deve fornire un
-                        // host peer alternativo, a meno che questo sia "NESSUNO" uscendo dal ciclo.
-                        while (!risorsaTrovata) {
-                            outputMaster.println("Risorsa non disponibile dal Peer: " + indirizzoHostPeer);
-                            outputMaster.flush();
-
-                            String indirizzoHostPeerAlternativo = inputMaster.nextLine();
-
-                            if (indirizzoHostPeerAlternativo.equals("NESSUNO")) {
-                                System.out.println("Download fallito: nessun peer disponibile");
+                            PeerClient pc = new PeerClient(indirizzoHostPeer, PORTA_PEER_SERVER, nomeRisorsa);
+                            if (pc.avviaConnessione()) {
+                                outputMaster.println("true");
+                                outputMaster.flush();
                                 break;
-                            } else {
-                                PeerClient pcAlternativo = new PeerClient(indirizzoHostPeerAlternativo, porta,
-                                        nomeRisorsa);
-                                risorsaTrovata = pcAlternativo.avviaConnessione();
                             }
+                            
+                            outputMaster.println("false");
+                            outputMaster.flush();
+                            indirizzoHostPeer = inputMaster.nextLine();
+                        }
+                        if ("non_disponibile".equals(indirizzoHostPeer)) {
+                            System.out.println("Download fallito: nessun peer disponibile");
+                        }
+                        else {
+                            System.out.println("Download avvenuto con successo");
                         }
                     }
                 } else if (inputUtente.equalsIgnoreCase("listdata remote")) {
