@@ -38,8 +38,8 @@ public class Client {
 
             for (String riga : risorseLocali) {
                 outputMaster.println(riga);
+                outputMaster.flush();
             }
-            outputMaster.flush();
 
             // Il client aspetta i comandi dell'utente
             while (true) {
@@ -152,7 +152,7 @@ public class Client {
             if (f != null) {
                 for (File file : f) {
                     if (file.isFile()) {
-                        risorseLocali.add("- " + file.getName());
+                        risorseLocali.add(file.getName());
                     }
                 }
             }
