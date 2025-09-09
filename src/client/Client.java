@@ -83,7 +83,6 @@ public class Client {
                         // Legge la risposta del master che contiene l'indirizzo dell'host peer che
                         // possiede la risorsa indicata.
                         String indirizzoHostPeer = inputMaster.nextLine();
-                        System.out.println(indirizzoHostPeer);
                         while (!"non_disponibile".equals(indirizzoHostPeer)) {
                             indirizzoHostPeer = indirizzoHostPeer.split(":")[0];
 

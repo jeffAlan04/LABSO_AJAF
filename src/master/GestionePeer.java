@@ -134,7 +134,6 @@ public class GestionePeer implements Runnable {
                 return;
             }
 
-            System.out.println(peerDestinazione);
             out.println(peerDestinazione); // primo peer disponibile
 
             if (in.hasNextLine()) { // feedback
