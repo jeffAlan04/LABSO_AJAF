@@ -74,17 +74,10 @@ public class GestioneRisorse {
             return;
         }
         System.out.println("Risorse: ");
-        String[] righe = risposta.split("\n");
+        String[] righe = risposta.split(";");
 
         for (String riga : righe) {
-
-            // Divide la stringa in due parti: risosa (prima dei :) e peers (dopo :)
-            String[] parti = riga.split(":", 2);
-
-            String risorsa = parti[0].trim();
-            String peers = parti.length > 1 ? parti[1].trim() : "";
-
-            System.out.println(risorsa + ": " + peers);
+            System.out.println("- " riga);
         }
     }
 
