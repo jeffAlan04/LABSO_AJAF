@@ -130,28 +130,28 @@ public class GestionePeer implements Runnable {
             String peerDestinazione = getPeer(risorsa);
 
             if (peerDestinazione == null) {
-                out.println("Risorsa non disponibile sulla rete.");
                 scritturaLog(risorsa, peerSorgente, peerDestinazione, false);
+                out.println("non_disponibile");
                 return;
             }
 
-            out.println("Disponibile: " + peerDestinazione); // primo peer disponibile
+            out.println(peerDestinazione); // primo peer disponibile
 
             if (in.hasNextLine()) { // feedback
                 String risposta = in.nextLine().trim();
 
                 if ("true".equals(risposta)) {
                     scritturaLog(risorsa, peerSorgente, peerDestinazione, true);
-                    out.println("Completato");
                     return;
                 }
                 else if ("false".equals(risposta)) {
                     scritturaLog(risorsa, peerSorgente, peerDestinazione, false);
+                    out.println("non_disponibile");
                     rimuoviPeer(peerDestinazione, risorsa);
                 }
                 else {
                     scritturaLog(risorsa, peerSorgente, peerDestinazione, false);
-                    out.println("Fallito");
+                    out.println("non_disponibile");
                     return;
                 }
             }

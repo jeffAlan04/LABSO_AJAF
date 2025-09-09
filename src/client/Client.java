@@ -61,11 +61,6 @@ public class Client {
                         System.out.println("Uso corretto: add nome_risorsa contenuto");
                     } else {
                         String nomeFile = parti[1];
-
-                        // Se nome_risorsa inserito dall'utente non contiene ".txt", viene aggiunto.
-                        if (!nomeFile.contains(".txt")) {
-                            nomeFile = nomeFile + ".txt";
-                        }
                         String contenuto = parti[2];
 
                         GestioneRisorse.eseguiAdd(nomeFile, contenuto);
@@ -82,40 +77,31 @@ public class Client {
                     } else {
                         String nomeRisorsa = parti[1];
 
-                        // Se nome_risorsa inserito dall'utente non contiene ".txt", viene aggiunto.
-                        if (!nomeRisorsa.contains(".txt")) {
-                            nomeRisorsa = nomeRisorsa + ".txt";
-                        }
-
                         outputMaster.println("DOWNLOAD " + nomeRisorsa);
                         outputMaster.flush();
 
                         // Legge la risposta del master che contiene l'indirizzo dell'host peer che
                         // possiede la risorsa indicata.
                         String indirizzoHostPeer = inputMaster.nextLine();
+                        while (!"non_disponibile".equals(indirizzoHostPeer)) {
+                            indirizzoHostPeer = indirizzoHostPeer.split(":")[0];
 
-                        indirizzoHostPeer = indirizzoHostPeer.split(":")[0];
-
-                        PeerClient pc = new PeerClient(indirizzoHostPeer, PORTA_PEER_SERVER, nomeRisorsa);
-
-                        boolean risorsaTrovata = pc.avviaConnessione();
-
-                        // Fino a che risorsaTrovata non corrisponde a true, il master deve fornire un
-                        // host peer alternativo, a meno che questo sia "NESSUNO" uscendo dal ciclo.
-                        while (!risorsaTrovata) {
-                            outputMaster.println("Risorsa non disponibile dal Peer: " + indirizzoHostPeer);
-                            outputMaster.flush();
-
-                            String indirizzoHostPeerAlternativo = inputMaster.nextLine();
-
-                            if (indirizzoHostPeerAlternativo.equals("NESSUNO")) {
-                                System.out.println("Download fallito: nessun peer disponibile");
+                            PeerClient pc = new PeerClient(indirizzoHostPeer, PORTA_PEER_SERVER, nomeRisorsa);
+                            if (pc.avviaConnessione()) {
+                                outputMaster.println("true");
+                                outputMaster.flush();
                                 break;
-                            } else {
-                                PeerClient pcAlternativo = new PeerClient(indirizzoHostPeerAlternativo, porta,
-                                        nomeRisorsa);
-                                risorsaTrovata = pcAlternativo.avviaConnessione();
                             }
+                            
+                            outputMaster.println("false");
+                            outputMaster.flush();
+                            indirizzoHostPeer = inputMaster.nextLine();
+                        }
+                        if ("non_disponibile".equals(indirizzoHostPeer)) {
+                            System.out.println("Download fallito: nessun peer disponibile");
+                        }
+                        else {
+                            System.out.println("Download avvenuto con successo");
                         }
                     }
                 } else if (inputUtente.equalsIgnoreCase("listdata remote")) {
