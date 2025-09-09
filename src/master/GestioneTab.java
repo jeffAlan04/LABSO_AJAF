@@ -85,6 +85,7 @@ public class GestioneTab {
     public String rimuoviPeerInRisorsa(String indirizzoIp, String risorsa) {
         Map<String, Set<String>> backup = backupTabella(tabella);
         if (tabella.get(risorsa).remove(indirizzoIp)) {
+            tabella.entrySet().removeIf(entry -> entry.getValue().isEmpty());
             if (salvaSuFile()) {
                 return "Rimozione " + indirizzoIp + " dalla risorsa " + risorsa + " avvenuta con successo.";
             } else {
