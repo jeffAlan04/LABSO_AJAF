@@ -77,7 +77,7 @@ public class GestioneRisorse {
         String[] righe = risposta.split(";");
 
         for (String riga : righe) {
-            System.out.println("- " riga);
+            System.out.println("- " + riga);
         }
     }
 
