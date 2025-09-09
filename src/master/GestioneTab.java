@@ -17,7 +17,7 @@ public class GestioneTab {
         String risposta = "";
         
         for (String risorsa : tabella.keySet()) {
-            risposta += risorsa + ": " + tabella.get(risorsa) + "\n";
+            risposta += risorsa + ": " + tabella.get(risorsa) + ";";
         }
 
         return risposta;
