@@ -2,7 +2,8 @@
 *.class
 
 #Risorse per il test
-*.txt
+src/client/risorse/*
+src/client/scaricati/*
 
 # jar
 *.jar
