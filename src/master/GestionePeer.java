@@ -4,7 +4,7 @@ import java.net.*;
 
 public class GestionePeer implements Runnable {
     private final Socket socket;
-    private final Log logger;
+    private final LogMaster logger;
     private final ArbitroLetturaScrittura arbitroTabella;
     private final ArbitroLetturaScrittura arbitroLog;
     private final GestioneTab gestioneTab;
@@ -14,7 +14,7 @@ public class GestionePeer implements Runnable {
     private final String COMANDO_ADD = "ADD";
     private final String COMANDO_DOWNLOAD = "DOWNLOAD";
 
-    public GestionePeer(Socket socket, Log logger, ArbitroLetturaScrittura arbitroLog, ArbitroLetturaScrittura arbitroTabella, GestioneTab gestioneTab) {
+    public GestionePeer(Socket socket, LogMaster logger, ArbitroLetturaScrittura arbitroLog, ArbitroLetturaScrittura arbitroTabella, GestioneTab gestioneTab) {
         this.socket = socket;
         this.logger = logger;
         this.arbitroLog = arbitroLog;
