@@ -42,17 +42,14 @@ public class Client {
             }
 
             // Il client aspetta i comandi dell'utente
-            BufferedReader in = new BufferedReader(new InputStreamReader(System.in));{
-            String messaggio;
-            while ((messaggio = in.readLine()) != null) {
-                    messaggio = messaggio.trim().toUpperCase();
+            while (true) {
+                    String messaggio = tastiera.nextLine().trim();
 
-                    switch(messaggio){
+                    switch(messaggio.toUpperCase()){
                         case "QUIT":
                             gestisciQuit(outputMaster);
                             break;
 
-                        
                         case "LISTDATA_LOCAL": 
                             GestioneRisorse.eseguiListDataLocal();
                             break;
@@ -71,11 +68,11 @@ public class Client {
 
                         default:
                             System.out.println("Comando non riconosciuto: " + messaggio);
-
+                            break;
                     }
                 }
             }
-        } catch (IOException e) {
+        catch (IOException e) {
             System.out.println("Errore di connessione al master");
         }
     }
@@ -130,7 +127,7 @@ public class Client {
         }
     }
     
-    // gestore del comando add
+    // Gestore del comando add
     private static void gestisciAdd(String messaggio, PrintWriter outputMaster){
         String[] parti = messaggio.split("\\s+", 3);
         if (parti.length < 3) {
