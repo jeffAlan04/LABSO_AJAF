@@ -59,29 +59,6 @@ public class GestioneTab {
 
 
     // RIMOZIONE
-    public String rimuoviPeer(String indirizzoIp) {
-        int count = 0;
-        Map<String, Set<String>> backup = backupTabella(tabella);
-
-        for (String risorsa : tabella.keySet()) {
-            if (tabella.get(risorsa).remove(indirizzoIp)) {
-                count++;
-            }
-        }
-
-        if (count > 0) {
-            tabella.entrySet().removeIf(entry -> entry.getValue().isEmpty());
-            if (salvaSuFile()) {
-                return "Rimozione peer " + indirizzoIp + " avvenuta con successo.";
-            } else {
-                tabella = backup;
-                return "Errore nel salvataggio dopo la rimozione del peer " + indirizzoIp + ".";
-            }
-        } else {
-            return "Impossibile rimuovere peer " + indirizzoIp + "... non presente in tabella.";
-        }
-    }
-
     public String rimuoviPeerInRisorsa(String indirizzoIp, String risorsa) {
         Map<String, Set<String>> backup = backupTabella(tabella);
         if (tabella.get(risorsa).remove(indirizzoIp)) {
@@ -96,21 +73,6 @@ public class GestioneTab {
         else {
             return "Impossibile rimuovere " + indirizzoIp + " dalla risorsa " + risorsa + "... uno dei due non presente.";
         }
-    }
-
-    public String rimuoviRisorsa(String risorsa) {
-        if (tabella.containsKey(risorsa)) {
-            Map<String, Set<String>> backup = backupTabella(tabella);
-            tabella.remove(risorsa);
-            if (salvaSuFile()) {
-                return "Rimozione risorsa " + risorsa + " avvenuta con successo.";
-            }
-            else {
-                tabella = backup;
-                return "Errore nel salvataggio dopo la rimozione della risorsa " + risorsa + ".";
-            }
-        }
-        return "Impossibile rimuovere risorsa " + risorsa + "... non presente in tabella.";
     }
 
 
