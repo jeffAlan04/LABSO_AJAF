@@ -3,20 +3,20 @@ import java.io.*;
 import java.net.*;
 
 public class GestionePeer implements Runnable {
-    private final Socket socket;
-    private final Log logger;
-    private final ArbitroLetturaScrittura arbitroTabella;
-    private final ArbitroLetturaScrittura arbitroLog;
-    private final GestioneTab gestioneTab;
+    private Socket socket;
+    private Log loggerDownload;
+    private ArbitroLetturaScrittura arbitroTabella;
+    private ArbitroLetturaScrittura arbitroLog;
+    private GestioneTab gestioneTab;
 
     private final String COMANDO_LISTDATAREMOTE = "LISTDATA_REMOTE";
     private final String COMANDO_QUIT = "QUIT";
     private final String COMANDO_ADD = "ADD";
     private final String COMANDO_DOWNLOAD = "DOWNLOAD";
 
-    public GestionePeer(Socket socket, Log logger, ArbitroLetturaScrittura arbitroLog, ArbitroLetturaScrittura arbitroTabella, GestioneTab gestioneTab) {
+    public GestionePeer(Socket socket, Log loggerDownload, ArbitroLetturaScrittura arbitroLog, ArbitroLetturaScrittura arbitroTabella, GestioneTab gestioneTab) {
         this.socket = socket;
-        this.logger = logger;
+        this.loggerDownload = loggerDownload;
         this.arbitroLog = arbitroLog;
         this.arbitroTabella = arbitroTabella;
         this.gestioneTab = gestioneTab;
@@ -51,9 +51,11 @@ public class GestionePeer implements Runnable {
                     case COMANDO_ADD:
                         if (nomeRisorsa != null) {
                             out.println(addRisorsa(indirizzoPeer, Set.of(nomeRisorsa)));
+                            //log risorsa agigunta
                         }
                         else {
                             out.println("Specifica una risorsa da aggiungere.");
+                            //log errore mancata risorsa
                         }
                         break;
 
@@ -154,10 +156,10 @@ public class GestionePeer implements Runnable {
     private void scritturaLog(String risorsa, String peerSorgente, String peerDestinazione, boolean esito) {
         this.arbitroLog.inizioScrittura();
         if (esito) {
-            this.logger.downloadSuccesso(risorsa, peerSorgente, peerDestinazione);
+            this.loggerDownload.downloadSuccesso(risorsa, peerSorgente, peerDestinazione);
         }
         else {
-            this.logger.downloadFallito(risorsa, peerSorgente, peerDestinazione);
+            this.loggerDownload.downloadFallito(risorsa, peerSorgente, peerDestinazione);
         }
         this.arbitroLog.fineScrittura();
     }
