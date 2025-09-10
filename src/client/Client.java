@@ -145,24 +145,24 @@ public class Client {
         String nomeFile = parti[1];
         String contenuto = parti[2];
 
-        GestioneRisorse.eseguiAdd(nomeFile, contenuto);
+        if (!GestioneRisorse.eseguiAdd(nomeFile, contenuto)) {
+            return; // in caso di errore nella creazione in locale interrompe il metodo
+        }
+
+        outputMaster.println("ADD " + nomeFile);
+        outputMaster.flush();
 
         if (inputMaster.hasNextLine()) {
             String risposta = inputMaster.nextLine().trim();
 
             if ("aggiunto".equalsIgnoreCase(risposta)) {
-                System.out.println("File: " + nomeFile + " aggiunto con successo");
-            } else if ("non_aggiunto".equalsIgnoreCase(risposta)) {
-                System.out.println("File: " + nomeFile + " non aggiunto");
+                System.out.println("File " + nomeFile + " aggiunto con successo");
             } else {
-                System.out.println("Risposta non riconosciuta");
+                System.out.println("Errore. Aggiunta file " + nomeFile + " non comunicata al master");
             }
         } else {
-            System.out.println("Risposta non ricevuta");
+            System.out.println("Errore. Aggiunta file " + nomeFile + " non comunicata al master");
         }
-
-        outputMaster.println("ADD " + nomeFile);
-        outputMaster.flush();
     }
 
     // Gestore del comando quit

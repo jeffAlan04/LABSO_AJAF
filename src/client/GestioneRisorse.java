@@ -50,21 +50,18 @@ public class GestioneRisorse {
     }
 
     // Metodo per il comando add <nome risorsa> <contenuto>
-    public static void eseguiAdd(String nomeFile, String contenuto) {
+    public static boolean eseguiAdd(String nomeFile, String contenuto) {
         try {
-
             controlloCartella();
-
             File nuovoFile = new File(new File(CARTELLA_RISORSE), nomeFile);
-
             FileWriter writer = new FileWriter(nuovoFile);
             writer.write(contenuto);
             writer.close();
-
-            System.out.println("File: " + nomeFile + " creato con successo");
+            return true;
 
         } catch (Exception e) {
-            System.out.println("Errore nella creazione della risorsa");
+            System.out.println("Errore nella creazione del file " + nomeFile + " in locale");
+            return false;
         }
     }
 
