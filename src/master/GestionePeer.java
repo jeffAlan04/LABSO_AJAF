@@ -17,11 +17,10 @@ public class GestionePeer implements Runnable {
 
     public GestionePeer(Socket socket, Log loggerDownload, ArbitroLetturaScrittura arbitroLog, ArbitroLetturaScrittura arbitroTabella, GestioneTab gestioneTab) {
         this.socket = socket;
-        this.loggerDownload = loggerDownload;
+        this.logger = logger;
         this.arbitroLog = arbitroLog;
         this.arbitroTabella = arbitroTabella;
         this.gestioneTab = gestioneTab;
-        logger = new Logger("GestionePeer"); 
     }
 
     @Override
@@ -29,15 +28,15 @@ public class GestionePeer implements Runnable {
         String indirizzoPeer = this.socket.getRemoteSocketAddress().toString();
         
         try (Scanner in = new Scanner(this.socket.getInputStream()); PrintWriter out = new PrintWriter(this.socket.getOutputStream(), true)) {
+            // leggere lista risorse e mandarle a gestione tabella
             Set<String> risorsePeer = getRisorsePeer(in, out);
-            salvataggioRisorsePeer(indirizzoPeer, risorsePeer);
-            logger.logInfo("Informazioni peer " + indirizzoPeer + " aggiunte con successo.");
+            System.out.println(salvataggioRisorsePeer(indirizzoPeer, risorsePeer));
             
             while (in.hasNextLine()) {
                 String[] richiesta = in.nextLine().split(" ");
                 String comando = richiesta[0];
                 String nomeRisorsa = null;
-
+                
                 if (richiesta.length > 1) {
                     nomeRisorsa = richiesta[1];
                 }
@@ -45,7 +44,6 @@ public class GestionePeer implements Runnable {
                 switch (comando) {
                     case COMANDO_LISTDATAREMOTE:
                         out.println(listDataRemote());
-                        logger.logInfo("Stampato elenco risorse disponibili.");
                         break;
 
                     case COMANDO_QUIT:
@@ -54,39 +52,36 @@ public class GestionePeer implements Runnable {
                     case COMANDO_ADD:
                         if (nomeRisorsa != null) {
                             out.println(addRisorsa(indirizzoPeer, Set.of(nomeRisorsa)));
-                            logger.logInfo("Risorsa aggiunta.");
                         }
                         else {
-                            out.println("non_aggiunto");
-                            logger.logErrore("Risorsa non specificata.");
+                            out.println("Specifica una risorsa da aggiungere.");
                         }
                         break;
 
                     case COMANDO_DOWNLOAD:
                         if (nomeRisorsa != null) {
                             downloadRisorsa(nomeRisorsa, indirizzoPeer, in, out);
-                        } else {
+                        }
+                        else {
                             out.println("Specifica una risorsa da scaricare.");
-                            logger.logErrore("Risorsa non specificata.");
                         }
                         break;
 
                     default:
                         out.println("Comando non riconosciuto.");
-                        logger.logErrore("Comando non riconosciuto.");
                         break;
                 }
             }
         }
         catch (IOException e) {
-            logger.logErrore("Errore con " + indirizzoPeer + " nell'apertura della socket.");
+            System.out.println("Errore con " + indirizzoPeer + " nell'apertura della socket.");
         }
         finally {
             if (quit()) {
-                logger.logInfo("Chiusura socket di " + indirizzoPeer + " avvenuta con successo.");
+                System.out.println("Chiusura socket di " + indirizzoPeer + " avvenuta con successo.");
             }
             else {
-                logger.logErrore("Errore con la chiusura della socket di " + indirizzoPeer + ".");
+                System.out.println("Errore con la chiusura della socket di " + indirizzoPeer + ".");
             } 
         }
     }
@@ -105,19 +100,19 @@ public class GestionePeer implements Runnable {
         return risorsePeer;
     }
 
-    private void salvataggioRisorsePeer(String indirizzoPeer, Set<String> risorsePeer) {
+    private String salvataggioRisorsePeer(String indirizzoPeer, Set<String> risorsePeer) {
         this.arbitroTabella.inizioScrittura();
-        this.gestioneTab.aggiungiPeer(indirizzoPeer, risorsePeer);
+        String risposta = this.gestioneTab.aggiungiPeer(indirizzoPeer, risorsePeer);
         this.arbitroTabella.fineScrittura();
+        return risposta;
     }
-
+    
     private String listDataRemote() {
         this.arbitroTabella.inizioLettura();
         String risposta = this.gestioneTab.getRisorse();
 
         if (risposta == null || risposta.isEmpty()) {
-            logger.logErrore("Nessuna risorsa disponibile.");
-            return "listdata remote: nessuna risorsa disponibile.";
+            return "listdata remote: Nessuna risorsa disponibile.";
         }
 
         this.arbitroTabella.fineLettura();
@@ -126,7 +121,7 @@ public class GestionePeer implements Runnable {
 
     private String addRisorsa(String indirizzoPeer, Set<String> risorse) {
         this.arbitroTabella.inizioScrittura();
-        String risposta = this.gestioneTab.aggiungiPeer(indirizzoPeer, risorse);
+        String risposta = this.gestioneTab.aggiungiPeer(indirizzoPeer, risorse).trim();
         this.arbitroTabella.fineScrittura();
         return risposta;
     }
@@ -137,7 +132,6 @@ public class GestionePeer implements Runnable {
 
             if (peerDestinazione == null) {
                 out.println("non_disponibile");
-                logger.logErrore("Peer non disponibile.");
                 return;
             }
 
@@ -148,11 +142,10 @@ public class GestionePeer implements Runnable {
 
                 if ("true".equals(risposta)) {
                     scritturaLog(risorsa, peerSorgente, peerDestinazione, true);
-                    logger.logInfo("Download effettuato con successo da: " + peerDestinazione);
                     return;
-                } else {
+                }
+                else {
                     scritturaLog(risorsa, peerSorgente, peerDestinazione, false);
-                    logger.logErrore("Impossibile effettuare download da: " + peerDestinazione);
                     rimuoviPeer(peerDestinazione, risorsa);
                 }
             }
@@ -162,25 +155,26 @@ public class GestionePeer implements Runnable {
     private void scritturaLog(String risorsa, String peerSorgente, String peerDestinazione, boolean esito) {
         this.arbitroLog.inizioScrittura();
         if (esito) {
-            this.loggerDownload.downloadSuccesso(risorsa, peerSorgente, peerDestinazione);
+            this.logger.downloadSuccesso(risorsa, peerSorgente, peerDestinazione);
         }
         else {
-            this.loggerDownload.downloadFallito(risorsa, peerSorgente, peerDestinazione);
+            this.logger.downloadFallito(risorsa, peerSorgente, peerDestinazione);
         }
         this.arbitroLog.fineScrittura();
     }
 
     private String getPeer(String risorsa) {
         this.arbitroTabella.inizioLettura();
-        String risposta = this.gestioneTab.getPrimoPeer(risorsa);
+        String risposta = this.gestioneTab.getPeers(risorsa);
         this.arbitroTabella.fineLettura();
         return risposta;
     }
 
-    private void rimuoviPeer(String indirizzoPeer, String risorsa) {
+    private String rimuoviPeer(String indirizzoPeer, String risorsa) {
         this.arbitroTabella.inizioScrittura();
-        this.gestioneTab.rimuoviPeerInRisorsa(indirizzoPeer, risorsa);
+        String risposta = this.gestioneTab.rimuoviPeerInRisorsa(indirizzoPeer, risorsa);
         this.arbitroTabella.fineScrittura();
+        return risposta;
     }
 
     public boolean quit() {
@@ -189,8 +183,10 @@ public class GestionePeer implements Runnable {
                 this.socket.close();
             }
             return true;
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             return false;
         }
     }
 }
+
