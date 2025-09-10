@@ -7,7 +7,7 @@ public class LogMaster {
     // Nome cartella Salvatagio
     private final String DIR = "LogOut";
     // Nome del file delle informazioni
-    private final String FILE = DIR + "/LogMaster.log";
+    private final String FILE = DIR + "/log.txt";
     // formattazione orario (formattato HH:mm)
     private final DateTimeFormatter FormattoOrario = DateTimeFormatter.ofPattern("HH:mm");
 
