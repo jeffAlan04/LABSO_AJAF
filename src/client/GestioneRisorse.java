@@ -3,6 +3,7 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Scanner;
 
 public class GestioneRisorse {
     private static final String CARTELLA_RISORSE = "risorse";
@@ -49,20 +50,18 @@ public class GestioneRisorse {
     }
 
     // Metodo per il comando add <nome risorsa> <contenuto>
-    public static void eseguiAdd(String nomeFile, String contenuto) {
+    public static boolean eseguiAdd(String nomeFile, String contenuto) {
         try {
-
             controlloCartella();
-
             File nuovoFile = new File(new File(CARTELLA_RISORSE), nomeFile);
-
             FileWriter writer = new FileWriter(nuovoFile);
             writer.write(contenuto);
             writer.close();
+            return true;
 
-            System.out.println("File: " + nomeFile + " creato con successo");
         } catch (Exception e) {
-            System.out.println("Errore nella creazione della risorsa");
+            System.out.println("Errore nella creazione del file " + nomeFile + " in locale");
+            return false;
         }
     }
 
