@@ -43,15 +43,16 @@ public class Client {
 
             // Il client aspetta i comandi dell'utente
             while (true) {
+                System.out.print("> ");
                 String messaggio = tastiera.nextLine().trim();
 
-                switch (messaggio.toUpperCase()) {
+                switch (messaggio.split(" ")[0].toUpperCase()) {
                     case "QUIT":
                         gestisciQuit(outputMaster);
                         break;
 
-                    case "LISTDATA_LOCAL":
-                        GestioneRisorse.eseguiListDataLocal();
+                    case "LISTDATA":
+                        tipoListData(messaggio, inputMaster, outputMaster);
                         break;
 
                     case "DOWNLOAD":
@@ -60,10 +61,6 @@ public class Client {
 
                     case "ADD":
                         gestisciAdd(messaggio, outputMaster);
-                        break;
-
-                    case "LISTDATA_REMOTE":
-                        gestisciListDataRemote(outputMaster, inputMaster);
                         break;
 
                     default:
@@ -76,8 +73,20 @@ public class Client {
         }
     }
 
+    private static void tipoListData(String messaggio, Scanner inputMaster, PrintWriter outputMaster) {
+        String tipo = messaggio.split(" ")[1].toUpperCase();
+
+        if ("REMOTE".equals(tipo)) {
+            gestisciListDataRemote(inputMaster, outputMaster);
+        } else if ("LOCAL".equals(tipo)) {
+            GestioneRisorse.eseguiListDataLocal();
+        } else {
+            System.out.println("Comando non riconosciuto " + messaggio);
+        }
+    }
+
     // Gestore del comando listdata_remote
-    private static void gestisciListDataRemote(PrintWriter outputMaster, Scanner inputMaster) {
+    private static void gestisciListDataRemote(Scanner inputMaster, PrintWriter outputMaster) {
         outputMaster.println("LISTDATA_REMOTE");
         outputMaster.flush();
 
