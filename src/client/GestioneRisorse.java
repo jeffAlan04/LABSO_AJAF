@@ -50,7 +50,7 @@ public class GestioneRisorse {
     }
 
     // Metodo per il comando add <nome risorsa> <contenuto>
-    public static void eseguiAdd(String nomeFile, String contenuto, Scanner inputMaster) {
+    public static void eseguiAdd(String nomeFile, String contenuto) {
         try {
 
             controlloCartella();
@@ -61,22 +61,7 @@ public class GestioneRisorse {
             writer.write(contenuto);
             writer.close();
 
-            if (inputMaster.hasNextLine()){
-                String risposta = inputMaster.nextLine().trim();
-
-                if ("aggiunto".equalsIgnoreCase(risposta)){
-                    System.out.println("File: " + nomeFile + " aggiunto con successo");
-                }
-                else if ("non_aggiunto".equalsIgnoreCase(risposta)){
-                    System.out.println("File: " + nomeFile + " non aggiunto");
-                }
-                else{
-                    System.out.println("Risposta non riconosciuta");
-                }
-            }
-            else{
-                System.out.println("Nessuna risposta ricevuta");
-            }
+            System.out.println("File: " + nomeFile + " creato con successo");
 
         } catch (Exception e) {
             System.out.println("Errore nella creazione della risorsa");
