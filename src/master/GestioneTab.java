@@ -17,7 +17,7 @@ public class GestioneTab {
     // GET
     public String getRisorse() { // restituisci tutte le risorse (comando `listdata remote`)
         String risposta = "";
-        
+
         for (String risorsa : tabella.keySet()) {
             risposta += risorsa + ": " + tabella.get(risorsa) + ";";
         }
@@ -33,19 +33,17 @@ public class GestioneTab {
         return peers.iterator().next();
     }
 
-
     // AGGIUNTA
     private void aggiungiRisorsa(String risorsa) {
         tabella.put(risorsa, new HashSet<String>());
     }
 
-    public void aggiungiPeer(String indirizzoIp, Set<String> risorse) {
+    public String aggiungiPeer(String indirizzoIp, Set<String> risorse) {
         Map<String, Set<String>> backup = backupTabella();
         for (String risorsa : risorse) {
             if (tabella.containsKey(risorsa)) { // esiste la risorsa
                 tabella.get(risorsa).add(indirizzoIp);
-            }
-            else { // non esiste la risorsa
+            } else { // non esiste la risorsa
                 aggiungiRisorsa(risorsa);
                 tabella.get(risorsa).add(indirizzoIp);
             }
@@ -53,12 +51,13 @@ public class GestioneTab {
 
         if (salvaSuFile()) {
             logger.logInfo("Informazioni peer " + indirizzoIp + " aggiunte con successo.");
+            return "aggiunto";
         } else {
             tabella = backup;
             logger.logErrore("Errore nel salvataggio dopo l'aggiunta delle informazioni peer " + indirizzoIp + ".");
+            return "non_aggiunto";
         }
     }
-
 
     // RIMOZIONE
     public void rimuoviPeerInRisorsa(String indirizzoIp, String risorsa) {
@@ -77,7 +76,6 @@ public class GestioneTab {
         }
     }
 
-
     // SALVATAGGIO E CARICAMENTO DATI
     private void caricaDaFile() {
         File file = new File(FILE_PATH);
@@ -94,6 +92,7 @@ public class GestioneTab {
         }
         catch (IOException e) {
             logger.logErrore("Errore nel caricamento da file della tabella.");
+
             tabella = new HashMap<>();
         }
     }
@@ -102,8 +101,7 @@ public class GestioneTab {
         try {
             mapper.writeValue(new File(FILE_PATH), tabella);
             return true;
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             return false;
         }
     }

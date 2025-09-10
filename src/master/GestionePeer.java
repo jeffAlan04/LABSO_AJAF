@@ -37,7 +37,7 @@ public class GestionePeer implements Runnable {
                 String[] richiesta = in.nextLine().split(" ");
                 String comando = richiesta[0];
                 String nomeRisorsa = null;
-                
+
                 if (richiesta.length > 1) {
                     nomeRisorsa = richiesta[1];
                 }
@@ -53,12 +53,11 @@ public class GestionePeer implements Runnable {
 
                     case COMANDO_ADD:
                         if (nomeRisorsa != null) {
-                            addRisorsa(indirizzoPeer, risorsePeer);
-                            out.println("Risorsa aggiunta.");
+                            out.println(addRisorsa(indirizzoPeer, Set.of(nomeRisorsa)));
                             logger.logInfo("Risorsa aggiunta.");
                         }
                         else {
-                            out.println("Specifica una risorsa da aggiungere.");
+                            out.println("non_aggiunto");
                             logger.logErrore("Risorsa non specificata.");
                         }
                         break;
@@ -66,8 +65,7 @@ public class GestionePeer implements Runnable {
                     case COMANDO_DOWNLOAD:
                         if (nomeRisorsa != null) {
                             downloadRisorsa(nomeRisorsa, indirizzoPeer, in, out);
-                        }
-                        else {
+                        } else {
                             out.println("Specifica una risorsa da scaricare.");
                             logger.logErrore("Risorsa non specificata.");
                         }
@@ -82,16 +80,13 @@ public class GestionePeer implements Runnable {
         }
         catch (IOException e) {
             logger.logErrore("Errore con " + indirizzoPeer + " nell'apertura della socket.");
-            //System.out.println("Errore con " + indirizzoPeer + " nell'apertura della socket.");
         }
         finally {
             if (quit()) {
                 logger.logInfo("Chiusura socket di " + indirizzoPeer + " avvenuta con successo.");
-                //System.out.println("Chiusura socket di " + indirizzoPeer + " avvenuta con successo.");
             }
             else {
                 logger.logErrore("Errore con la chiusura della socket di " + indirizzoPeer + ".");
-                //System.out.println("Errore con la chiusura della socket di " + indirizzoPeer + ".");
             } 
         }
     }
@@ -115,7 +110,7 @@ public class GestionePeer implements Runnable {
         this.gestioneTab.aggiungiPeer(indirizzoPeer, risorsePeer);
         this.arbitroTabella.fineScrittura();
     }
-    
+
     private String listDataRemote() {
         this.arbitroTabella.inizioLettura();
         String risposta = this.gestioneTab.getRisorse();
@@ -129,10 +124,11 @@ public class GestionePeer implements Runnable {
         return risposta.trim();
     }
 
-    private void addRisorsa(String indirizzoPeer, Set<String> risorse) {
+    private String addRisorsa(String indirizzoPeer, Set<String> risorse) {
         this.arbitroTabella.inizioScrittura();
-        this.gestioneTab.aggiungiPeer(indirizzoPeer, risorse);
+        String risposta = this.gestioneTab.aggiungiPeer(indirizzoPeer, risorse);
         this.arbitroTabella.fineScrittura();
+        return risposta;
     }
 
     private void downloadRisorsa(String risorsa, String peerSorgente, Scanner in, PrintWriter out) {
@@ -154,8 +150,7 @@ public class GestionePeer implements Runnable {
                     scritturaLog(risorsa, peerSorgente, peerDestinazione, true);
                     logger.logInfo("Download effettuato con successo da: " + peerDestinazione);
                     return;
-                }
-                else {
+                } else {
                     scritturaLog(risorsa, peerSorgente, peerDestinazione, false);
                     logger.logErrore("Impossibile effettuare download da: " + peerDestinazione);
                     rimuoviPeer(peerDestinazione, risorsa);
@@ -194,10 +189,8 @@ public class GestionePeer implements Runnable {
                 this.socket.close();
             }
             return true;
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             return false;
         }
     }
 }
-
