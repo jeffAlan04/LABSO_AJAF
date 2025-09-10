@@ -49,7 +49,7 @@ public class Client {
                 switch (messaggio.split(" ")[0].toUpperCase()) {
                     case "QUIT":
                         gestisciQuit(outputMaster);
-                        break;
+                        return;
 
                     case "LISTDATA":
                         tipoListData(messaggio, inputMaster, outputMaster);
