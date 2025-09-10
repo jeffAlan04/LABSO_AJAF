@@ -164,16 +164,15 @@ public class GestionePeer implements Runnable {
 
     private String getPeer(String risorsa) {
         this.arbitroTabella.inizioLettura();
-        String risposta = this.gestioneTab.getPeers(risorsa);
+        String risposta = this.gestioneTab.getPrimoPeer(risorsa);
         this.arbitroTabella.fineLettura();
         return risposta;
     }
 
-    private String rimuoviPeer(String indirizzoPeer, String risorsa) {
+    private void rimuoviPeer(String indirizzoPeer, String risorsa) {
         this.arbitroTabella.inizioScrittura();
-        String risposta = this.gestioneTab.rimuoviPeerInRisorsa(indirizzoPeer, risorsa);
+        this.gestioneTab.rimuoviPeerInRisorsa(indirizzoPeer, risorsa);
         this.arbitroTabella.fineScrittura();
-        return risposta;
     }
 
     public boolean quit() {

@@ -23,7 +23,7 @@ public class GestioneTab {
         return risposta;
     }
 
-    public String getPeers(String risorsa) { // restituisci il primo peer che ha quella risorsa
+    public String getPrimoPeer(String risorsa) { // restituisci il primo peer che ha quella risorsa
         Set<String> peers = tabella.get(risorsa);
         if (peers == null || peers.isEmpty()) {
             return null;
