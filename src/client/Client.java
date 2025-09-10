@@ -60,7 +60,7 @@ public class Client {
                         break;
 
                     case "ADD":
-                        gestisciAdd(messaggio, outputMaster);
+                        gestisciAdd(messaggio, outputMaster, inputMaster);
                         break;
 
                     default:
@@ -136,7 +136,7 @@ public class Client {
     }
 
     // Gestore del comando add
-    private static void gestisciAdd(String messaggio, PrintWriter outputMaster) {
+    private static void gestisciAdd(String messaggio, PrintWriter outputMaster, Scanner inputMaster) {
         String[] parti = messaggio.split("\\s+", 3);
         if (parti.length < 3) {
             System.out.println("Uso corretto: add nome_risorsa contenuto");
@@ -146,6 +146,23 @@ public class Client {
         String contenuto = parti[2];
 
         GestioneRisorse.eseguiAdd(nomeFile, contenuto);
+        
+        if (inputMaster.hasNextLine()){
+            String risposta = inputMaster.nextLine().trim();
+
+            if ("aggiunto".equalsIgnoreCase(risposta)){
+                System.out.println("File: " + nomeFile + " aggiunto con successo");
+            }
+            else if ("non_aggiunto".equalsIgnoreCase(risposta)){
+                System.out.println("File: " + nomeFile + " non aggiunto");
+            }
+            else{
+                System.out.println("Risposta non riconosciuto");
+            }
+        }
+        else{
+            System.out.println("Risposta non ricevuta");
+        }
 
         outputMaster.println("ADD " + nomeFile);
         outputMaster.flush();
