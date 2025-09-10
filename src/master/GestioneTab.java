@@ -10,8 +10,8 @@ public class GestioneTab {
     private Logger logger;
 
     public GestioneTab() {
-        caricaDaFile();
         logger = new Logger("GestioneTab");
+        caricaDaFile();
     }
 
     // GET
@@ -68,11 +68,12 @@ public class GestioneTab {
                 logger.logInfo("Rimozione " + indirizzoIp + " dalla risorsa " + risorsa + " avvenuta con successo.");
             } else {
                 tabella = backup;
-                logger.logErrore("Errore nel salvataggio dopo la rimozione di " + indirizzoIp + " dalla risorsa " + risorsa + ".");
+                logger.logErrore("Errore nel salvataggio dopo la rimozione di " + indirizzoIp + " dalla risorsa "
+                        + risorsa + ".");
             }
-        }
-        else {
-            logger.logErrore("Impossibile rimuovere " + indirizzoIp + " dalla risorsa " + risorsa + "... uno dei due non presente.");
+        } else {
+            logger.logErrore("Impossibile rimuovere " + indirizzoIp + " dalla risorsa " + risorsa
+                    + "... uno dei due non presente.");
         }
     }
 
@@ -87,10 +88,10 @@ public class GestioneTab {
         }
 
         try {
-            tabella = mapper.readValue(file, new TypeReference<Map<String, Set<String>>>() {});
+            tabella = mapper.readValue(file, new TypeReference<Map<String, Set<String>>>() {
+            });
             logger.logInfo("Tabella caricata con successo.");
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             logger.logErrore("Errore nel caricamento da file della tabella.");
 
             tabella = new HashMap<>();
