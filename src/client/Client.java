@@ -43,86 +43,115 @@ public class Client {
 
             // Il client aspetta i comandi dell'utente
             while (true) {
-                System.out.print("> ");
-                String inputUtente = tastiera.nextLine().trim();
+                    String messaggio = tastiera.nextLine().trim();
 
-                if (inputUtente.equalsIgnoreCase("quit")) {
-                    eseguiQuit(outputMaster);
-                    break;
-                }
-                // Esegue il comando listdata local
-                else if (inputUtente.equalsIgnoreCase("listdata local")) {
-                    GestioneRisorse.eseguiListDataLocal();
-                }
-                // Esegue il comando add nome_risorsa contenuto
-                else if (inputUtente.startsWith("add ")) {
-                    String[] parti = inputUtente.split("\\s", 3);
-                    if (parti.length < 3) {
-                        System.out.println("Uso corretto: add nome_risorsa contenuto");
-                    } else {
-                        String nomeFile = parti[1];
-                        String contenuto = parti[2];
+                    switch(messaggio.toUpperCase()){
+                        case "QUIT":
+                            gestisciQuit(outputMaster);
+                            break;
 
-                        GestioneRisorse.eseguiAdd(nomeFile, contenuto);
+                        case "LISTDATA_LOCAL": 
+                            GestioneRisorse.eseguiListDataLocal();
+                            break;
+                        
+                        case "DOWNLOAD":
+                            gestisciDownload(messaggio, inputMaster, outputMaster, PORTA_PEER_SERVER);
+                            break;
 
-                        outputMaster.println("ADD " + nomeFile);
-                        outputMaster.flush();
+                        case "ADD":
+                            gestisciAdd(messaggio, outputMaster);
+                            break;
+
+                        case "LISTDATA_REMOTE" :
+                            gestisciListDataRemote(outputMaster, inputMaster);
+                            break;
+
+                        default:
+                            System.out.println("Comando non riconosciuto: " + messaggio);
+                            break;
                     }
-                }
-                // Esegue il comando donwload nome_risorsa.
-                else if (inputUtente.startsWith("download")) {
-                    String[] parti = inputUtente.split("\\s");
-                    if (parti.length != 2) {
-                        System.out.println("Uso corretto: download nome_risorsa");
-                    } else {
-                        String nomeRisorsa = parti[1];
-
-                        outputMaster.println("DOWNLOAD " + nomeRisorsa);
-                        outputMaster.flush();
-
-                        // Legge la risposta del master che contiene l'indirizzo dell'host peer che
-                        // possiede la risorsa indicata.
-                        String indirizzoHostPeer = inputMaster.nextLine();
-                        while (!"non_disponibile".equals(indirizzoHostPeer)) {
-                            indirizzoHostPeer = indirizzoHostPeer.split(":")[0];
-
-                            PeerClient pc = new PeerClient(indirizzoHostPeer, PORTA_PEER_SERVER, nomeRisorsa);
-                            if (pc.avviaConnessione()) {
-                                outputMaster.println("true");
-                                outputMaster.flush();
-                                break;
-                            }
-                            
-                            outputMaster.println("false");
-                            outputMaster.flush();
-                            indirizzoHostPeer = inputMaster.nextLine();
-                        }
-                        if ("non_disponibile".equals(indirizzoHostPeer)) {
-                            System.out.println("Download fallito: nessun peer disponibile");
-                        }
-                        else {
-                            System.out.println("Download avvenuto con successo");
-                        }
-                    }
-                } else if (inputUtente.equalsIgnoreCase("listdata remote")) {
-                    outputMaster.println("LISTDATA_REMOTE");
-                    outputMaster.flush();
-
-                    if (inputMaster.hasNextLine()) {
-                        String risposta = inputMaster.nextLine();
-                        GestioneRisorse.eseguiListDataRemote(risposta);
-                    } else {
-                        System.out.println("Nessuna risposta ricevuta");
-                    }
-                }
-                // Da togliere non appena completati tutti i comandi
-                else {
-                    System.out.println("Comando non riconosciuto");
                 }
             }
-        } catch (IOException e) {
+        catch (IOException e) {
             System.out.println("Errore di connessione al master");
         }
+    }
+
+    // Gestore del comando listdata_remote
+    private static void gestisciListDataRemote(PrintWriter outputMaster, Scanner inputMaster) {
+        outputMaster.println("LISTDATA_REMOTE");
+        outputMaster.flush();
+
+        if (inputMaster.hasNextLine()) {
+            String risposta = inputMaster.nextLine();
+            GestioneRisorse.eseguiListDataRemote(risposta);
+        } else {
+            System.out.println("Nessuna risposta ricevuta");
+        }
+    }
+    
+    // Gestore del comando download
+    private static void gestisciDownload(String messaggio, Scanner inputMaster, PrintWriter outputMaster,
+            int portaPeerServer) {
+
+        String[] parti = messaggio.split("\\s+");
+        if (parti.length != 2) {
+            System.out.println("Uso corretto: download <nome_risorsa>");
+            return;
+        }
+        String nomeRisorsa = parti[1];
+        outputMaster.println("DOWNLOAD " + nomeRisorsa);
+        outputMaster.flush();
+
+        // Legge la risposta del master che contiene l'indirizzo dell'host peer che
+        // possiede la risorsa indicata.
+        String indirizzoHostPeer = inputMaster.nextLine();
+        while (!"non_disponibile".equals(indirizzoHostPeer)) {
+            indirizzoHostPeer = indirizzoHostPeer.split(":")[0];
+
+            PeerClient pc = new PeerClient(indirizzoHostPeer, PORTA_PEER_SERVER, nomeRisorsa);
+            if (pc.avviaConnessione()) {
+                outputMaster.println("true");
+                outputMaster.flush();
+                break;
+            }
+
+            outputMaster.println("false");
+            outputMaster.flush();
+            indirizzoHostPeer = inputMaster.nextLine();
+        }
+        if ("non_disponibile".equals(indirizzoHostPeer)) {
+            System.out.println("Download fallito: nessun peer disponibile");
+        } else {
+            System.out.println("Download avvenuto con successo");
+        }
+    }
+    
+    // Gestore del comando add
+    private static void gestisciAdd(String messaggio, PrintWriter outputMaster){
+        String[] parti = messaggio.split("\\s+", 3);
+        if (parti.length < 3) {
+            System.out.println("Uso corretto: add nome_risorsa contenuto");
+            return;
+        } 
+        String nomeFile = parti[1];
+        String contenuto = parti[2];
+
+        if (!nomeFile.endsWith(".txt")){
+            nomeFile += ".txt";
+        }
+        GestioneRisorse.eseguiAdd(nomeFile, contenuto);
+
+        outputMaster.println("ADD " + nomeFile);
+        outputMaster.flush();
+    }
+
+    // Gestore del comando quit
+    private static void gestisciQuit(PrintWriter outputMaster) {
+        outputMaster.println("QUIT");
+        outputMaster.flush();
+        System.out.println("Disconnessione in corso");
+        server.terminaServer(); // termina PeerServer
     }
 
     public static List<String> registrazioneRisorseLocali() {
@@ -148,14 +177,6 @@ public class Client {
 
         risorseLocali.add("FINE");
         return risorseLocali;
-    }
-
-    // Metodo per il comando quit
-    private static void eseguiQuit(PrintWriter outputMaster) {
-        outputMaster.println("QUIT");
-        outputMaster.flush();
-        System.out.println("Disconnessione in corso");
-        server.terminaServer(); // termina PeerServer
     }
 
     // Crea un thread che esegua PeerServer
