@@ -43,42 +43,50 @@ public class Client {
 
             // Il client aspetta i comandi dell'utente
             while (true) {
-                    String messaggio = tastiera.nextLine().trim();
+                System.out.print("> ");
+                String messaggio = tastiera.nextLine().trim();
 
-                    switch(messaggio.toUpperCase()){
-                        case "QUIT":
-                            gestisciQuit(outputMaster);
-                            break;
+                switch (messaggio.split(" ")[0].toUpperCase()) {
+                    case "QUIT":
+                        gestisciQuit(outputMaster);
+                        return;
 
-                        case "LISTDATA_LOCAL": 
-                            GestioneRisorse.eseguiListDataLocal();
-                            break;
-                        
-                        case "DOWNLOAD":
-                            gestisciDownload(messaggio, inputMaster, outputMaster, PORTA_PEER_SERVER);
-                            break;
+                    case "LISTDATA":
+                        tipoListData(messaggio, inputMaster, outputMaster);
+                        break;
 
-                        case "ADD":
-                            gestisciAdd(messaggio, outputMaster);
-                            break;
+                    case "DOWNLOAD":
+                        gestisciDownload(messaggio, inputMaster, outputMaster, PORTA_PEER_SERVER);
+                        break;
 
-                        case "LISTDATA_REMOTE" :
-                            gestisciListDataRemote(outputMaster, inputMaster);
-                            break;
+                    case "ADD":
+                        gestisciAdd(messaggio, outputMaster);
+                        break;
 
-                        default:
-                            System.out.println("Comando non riconosciuto: " + messaggio);
-                            break;
-                    }
+                    default:
+                        System.out.println("Comando non riconosciuto: " + messaggio);
+                        break;
                 }
             }
-        catch (IOException e) {
+        } catch (IOException e) {
             System.out.println("Errore di connessione al master");
         }
     }
 
+    private static void tipoListData(String messaggio, Scanner inputMaster, PrintWriter outputMaster) {
+        String tipo = messaggio.split(" ")[1].toUpperCase();
+
+        if ("REMOTE".equals(tipo)) {
+            gestisciListDataRemote(inputMaster, outputMaster);
+        } else if ("LOCAL".equals(tipo)) {
+            GestioneRisorse.eseguiListDataLocal();
+        } else {
+            System.out.println("Comando non riconosciuto " + messaggio);
+        }
+    }
+
     // Gestore del comando listdata_remote
-    private static void gestisciListDataRemote(PrintWriter outputMaster, Scanner inputMaster) {
+    private static void gestisciListDataRemote(Scanner inputMaster, PrintWriter outputMaster) {
         outputMaster.println("LISTDATA_REMOTE");
         outputMaster.flush();
 
@@ -89,7 +97,7 @@ public class Client {
             System.out.println("Nessuna risposta ricevuta");
         }
     }
-    
+
     // Gestore del comando download
     private static void gestisciDownload(String messaggio, Scanner inputMaster, PrintWriter outputMaster,
             int portaPeerServer) {
@@ -107,7 +115,7 @@ public class Client {
         // possiede la risorsa indicata.
         String indirizzoHostPeer = inputMaster.nextLine();
         while (!"non_disponibile".equals(indirizzoHostPeer)) {
-            indirizzoHostPeer = indirizzoHostPeer.split(":")[0];
+            indirizzoHostPeer = indirizzoHostPeer.split(":")[0].replace("/", "");
 
             PeerClient pc = new PeerClient(indirizzoHostPeer, PORTA_PEER_SERVER, nomeRisorsa);
             if (pc.avviaConnessione()) {
@@ -126,20 +134,17 @@ public class Client {
             System.out.println("Download avvenuto con successo");
         }
     }
-    
+
     // Gestore del comando add
-    private static void gestisciAdd(String messaggio, PrintWriter outputMaster){
+    private static void gestisciAdd(String messaggio, PrintWriter outputMaster) {
         String[] parti = messaggio.split("\\s+", 3);
         if (parti.length < 3) {
             System.out.println("Uso corretto: add nome_risorsa contenuto");
             return;
-        } 
+        }
         String nomeFile = parti[1];
         String contenuto = parti[2];
 
-        if (!nomeFile.endsWith(".txt")){
-            nomeFile += ".txt";
-        }
         GestioneRisorse.eseguiAdd(nomeFile, contenuto);
 
         outputMaster.println("ADD " + nomeFile);
