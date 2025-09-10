@@ -145,9 +145,6 @@ public class Client {
         String nomeFile = parti[1];
         String contenuto = parti[2];
 
-        if (!nomeFile.endsWith(".txt")) {
-            nomeFile += ".txt";
-        }
         GestioneRisorse.eseguiAdd(nomeFile, contenuto);
 
         outputMaster.println("ADD " + nomeFile);
