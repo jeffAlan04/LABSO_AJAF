@@ -1,5 +1,3 @@
-package master;
-
 import java.io.*;
 import java.net.*;
 
@@ -29,10 +27,9 @@ public class GestoreComandi implements Runnable {
         try (
                 BufferedReader in = new BufferedReader(new InputStreamReader(System.in));) {
             String messaggio;
-            while (true) {
+            while ((messaggio = in.readLine()) != null) {
                 System.out.print("> ");
                 // rimuovo gli eventuali spazi e rendo tutta la stringa in maiuscolo
-                messaggio = in.readLine();
                 messaggio = messaggio.trim().toUpperCase();
 
                 switch (messaggio) {
