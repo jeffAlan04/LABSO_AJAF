@@ -3,6 +3,7 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Scanner;
 
 public class GestioneRisorse {
     private static final String CARTELLA_RISORSE = "risorse";
@@ -49,7 +50,7 @@ public class GestioneRisorse {
     }
 
     // Metodo per il comando add <nome risorsa> <contenuto>
-    public static void eseguiAdd(String nomeFile, String contenuto) {
+    public static void eseguiAdd(String nomeFile, String contenuto, Scanner inputMaster) {
         try {
 
             controlloCartella();
@@ -60,7 +61,23 @@ public class GestioneRisorse {
             writer.write(contenuto);
             writer.close();
 
-            System.out.println("File: " + nomeFile + " creato con successo");
+            if (inputMaster.hasNextLine()){
+                String risposta = inputMaster.nextLine().trim();
+
+                if ("aggiunto".equalsIgnoreCase(risposta)){
+                    System.out.println("File: " + nomeFile + " aggiunto con successo");
+                }
+                else if ("non_aggiunto".equalsIgnoreCase(risposta)){
+                    System.out.println("File: " + nomeFile + " non aggiunto");
+                }
+                else{
+                    System.out.println("Risposta non riconosciuta");
+                }
+            }
+            else{
+                System.out.println("Nessuna risposta ricevuta");
+            }
+
         } catch (Exception e) {
             System.out.println("Errore nella creazione della risorsa");
         }
