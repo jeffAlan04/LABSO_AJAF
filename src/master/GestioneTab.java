@@ -15,7 +15,7 @@ public class GestioneTab {
     // GET
     public String getRisorse() { // restituisci tutte le risorse (comando `listdata remote`)
         String risposta = "";
-        
+
         for (String risorsa : tabella.keySet()) {
             risposta += risorsa + ": " + tabella.get(risorsa) + ";";
         }
@@ -31,7 +31,6 @@ public class GestioneTab {
         return peers.iterator().next();
     }
 
-
     // AGGIUNTA
     private void aggiungiRisorsa(String risorsa) {
         tabella.put(risorsa, new HashSet<String>());
@@ -42,21 +41,22 @@ public class GestioneTab {
         for (String risorsa : risorse) {
             if (tabella.containsKey(risorsa)) { // esiste la risorsa
                 tabella.get(risorsa).add(indirizzoIp);
-            }
-            else { // non esiste la risorsa
+            } else { // non esiste la risorsa
                 aggiungiRisorsa(risorsa);
                 tabella.get(risorsa).add(indirizzoIp);
             }
         }
 
         if (salvaSuFile()) {
-            return "Informazioni peer " + indirizzoIp + " aggiunte con successo.";
+            // return "Informazioni peer " + indirizzoIp + " aggiunte con successo.";
+            return "aggiunto";
         } else {
             tabella = backup;
-            return "Errore nel salvataggio dopo l'aggiunta delle informazioni peer " + indirizzoIp + ".";
+            // return "Errore nel salvataggio dopo l'aggiunta delle informazioni peer " +
+            // indirizzoIp + ".";
+            return "non_aggiunto";
         }
     }
-
 
     // RIMOZIONE
     public String rimuoviPeer(String indirizzoIp) {
@@ -92,9 +92,9 @@ public class GestioneTab {
                 tabella = backup;
                 return "Errore nel salvataggio dopo la rimozione di " + indirizzoIp + " dalla risorsa " + risorsa + ".";
             }
-        }
-        else {
-            return "Impossibile rimuovere " + indirizzoIp + " dalla risorsa " + risorsa + "... uno dei due non presente.";
+        } else {
+            return "Impossibile rimuovere " + indirizzoIp + " dalla risorsa " + risorsa
+                    + "... uno dei due non presente.";
         }
     }
 
@@ -104,15 +104,13 @@ public class GestioneTab {
             tabella.remove(risorsa);
             if (salvaSuFile()) {
                 return "Rimozione risorsa " + risorsa + " avvenuta con successo.";
-            }
-            else {
+            } else {
                 tabella = backup;
                 return "Errore nel salvataggio dopo la rimozione della risorsa " + risorsa + ".";
             }
         }
         return "Impossibile rimuovere risorsa " + risorsa + "... non presente in tabella.";
     }
-
 
     // SALVATAGGIO E CARICAMENTO DATI
     private void caricaDaFile() {
@@ -125,10 +123,10 @@ public class GestioneTab {
         }
 
         try {
-            tabella = mapper.readValue(file, new TypeReference<Map<String, Set<String>>>() {});
+            tabella = mapper.readValue(file, new TypeReference<Map<String, Set<String>>>() {
+            });
             System.out.println("Tabella caricata con successo.");
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             System.out.println("Errore nel caricamento da file della tabella.");
             tabella = new HashMap<>();
         }
@@ -138,8 +136,7 @@ public class GestioneTab {
         try {
             mapper.writeValue(new File(FILE_PATH), tabella);
             return true;
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             return false;
         }
     }
@@ -152,6 +149,3 @@ public class GestioneTab {
         return backup;
     }
 }
-
-
-
