@@ -39,7 +39,7 @@ public class GestioneTab {
         tabella.put(risorsa, new HashSet<String>());
     }
 
-    public String aggiungiPeer(String indirizzoIp, Set<String> risorse) {
+    public void aggiungiPeer(String indirizzoIp, Set<String> risorse) {
         Map<String, Set<String>> backup = backupTabella();
         for (String risorsa : risorse) {
             if (tabella.containsKey(risorsa)) { // esiste la risorsa
@@ -61,7 +61,7 @@ public class GestioneTab {
 
 
     // RIMOZIONE
-    public String rimuoviPeerInRisorsa(String indirizzoIp, String risorsa) {
+    public void rimuoviPeerInRisorsa(String indirizzoIp, String risorsa) {
         Map<String, Set<String>> backup = backupTabella();
         if (tabella.get(risorsa).remove(indirizzoIp)) {
             tabella.entrySet().removeIf(entry -> entry.getValue().isEmpty());
