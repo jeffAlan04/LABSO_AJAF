@@ -11,11 +11,21 @@ public class LogMaster {
     // formattazione orario (formattato HH:mm)
     private final DateTimeFormatter FormattoOrario = DateTimeFormatter.ofPattern("HH:mm");
 
-    // Crea la cartella dei log se non esiste
     public LogMaster() {
+        // Crea la cartella dei log se non esiste
         File dir = new File(DIR);
         if (!dir.exists()) {
             dir.mkdir();
+        }
+
+        // Crea il file dei log se non esiste
+        File logFile = new File(FILE);
+        try {
+            if (!logFile.exists()) {
+                logFile.createNewFile(); // crea il file vuoto
+            }
+        } catch (IOException e) {
+            System.err.println("Errore creazione file di log: " + e.getMessage());
         }
     }
 
