@@ -146,21 +146,18 @@ public class Client {
         String contenuto = parti[2];
 
         GestioneRisorse.eseguiAdd(nomeFile, contenuto);
-        
-        if (inputMaster.hasNextLine()){
+
+        if (inputMaster.hasNextLine()) {
             String risposta = inputMaster.nextLine().trim();
 
-            if ("aggiunto".equalsIgnoreCase(risposta)){
+            if ("aggiunto".equalsIgnoreCase(risposta)) {
                 System.out.println("File: " + nomeFile + " aggiunto con successo");
-            }
-            else if ("non_aggiunto".equalsIgnoreCase(risposta)){
+            } else if ("non_aggiunto".equalsIgnoreCase(risposta)) {
                 System.out.println("File: " + nomeFile + " non aggiunto");
+            } else {
+                System.out.println("Risposta non riconosciuta");
             }
-            else{
-                System.out.println("Risposta non riconosciuto");
-            }
-        }
-        else{
+        } else {
             System.out.println("Risposta non ricevuta");
         }
 
