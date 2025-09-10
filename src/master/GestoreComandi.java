@@ -29,6 +29,7 @@ public class GestoreComandi implements Runnable {
                 BufferedReader in = new BufferedReader(new InputStreamReader(System.in));) {
             String messaggio;
             while ((messaggio = in.readLine()) != null) {
+                System.out.print("> ");
                 // rimuovo gli eventuali spazi e rendo tutta la stringa in maiuscolo
                 messaggio = messaggio.trim().toUpperCase();
 
