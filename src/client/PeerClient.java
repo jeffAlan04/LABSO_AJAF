@@ -21,18 +21,14 @@ public class PeerClient {
     }
 
     public boolean avviaConnessione() {
-
-        try (Socket s = new Socket(indirizzoHostPeer, porta)) {
-
+        try (Socket s = new Socket()) {
+            s.connect(new java.net.InetSocketAddress(indirizzoHostPeer, porta), 5000);
             logger.logInfo("Connesso a " + indirizzoHostPeer);
             return richiediRisorsa(s);
-
         } catch (IOException e) {
-
             logger.logErrore("Tentativo di connessione al peer " + indirizzoHostPeer + " fallito");
             return false;
         }
-
     }
 
     private boolean richiediRisorsa(Socket s) {
