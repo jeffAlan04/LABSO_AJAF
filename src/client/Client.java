@@ -6,6 +6,12 @@ public class Client {
     private static PeerServer server;
     private static final int PORTA_PEER_SERVER = 9999;
 
+    private final String COMANDO_LISTDATA = "LISTDATA";
+    private final String COMANDO_LISTDATAREMOTE = "LISTDATA_REMOTE";
+    private final String COMANDO_QUIT = "QUIT";
+    private final String COMANDO_ADD = "ADD";
+    private final String COMANDO_DOWNLOAD = "DOWNLOAD";
+
     public static void main(String[] args) {
         if (args.length < 2) {
             System.out.println("Utilizzo: java Client [indirizzo master] [porta]");
@@ -47,19 +53,19 @@ public class Client {
                 String messaggio = tastiera.nextLine().trim();
 
                 switch (messaggio.split(" ")[0].toUpperCase()) {
-                    case "QUIT":
+                    case COMANDO_QUIT:
                         gestisciQuit(outputMaster);
                         return;
 
-                    case "LISTDATA":
+                    case COMANDO_LISTDATA:
                         tipoListData(messaggio, inputMaster, outputMaster);
                         break;
 
-                    case "DOWNLOAD":
+                    case COMANDO_DOWNLOAD:
                         gestisciDownload(messaggio, inputMaster, outputMaster, PORTA_PEER_SERVER);
                         break;
 
-                    case "ADD":
+                    case COMANDO_ADD:
                         gestisciAdd(messaggio, outputMaster, inputMaster);
                         break;
 
@@ -87,7 +93,7 @@ public class Client {
 
     // Gestore del comando listdata_remote
     private static void gestisciListDataRemote(Scanner inputMaster, PrintWriter outputMaster) {
-        outputMaster.println("LISTDATA_REMOTE");
+        outputMaster.println(COMANDO_LISTDATAREMOTE);
         outputMaster.flush();
 
         if (inputMaster.hasNextLine()) {
@@ -108,7 +114,7 @@ public class Client {
             return;
         }
         String nomeRisorsa = parti[1];
-        outputMaster.println("DOWNLOAD " + nomeRisorsa);
+        outputMaster.println(COMANDO_DOWNLOAD + " " + nomeRisorsa);
         outputMaster.flush();
 
         // Legge la risposta del master che contiene l'indirizzo dell'host peer che
@@ -149,7 +155,7 @@ public class Client {
             return; // in caso di errore nella creazione in locale interrompe il metodo
         }
 
-        outputMaster.println("ADD " + nomeFile);
+        outputMaster.println(COMANDO_ADD + " " + nomeFile);
         outputMaster.flush();
 
         if (inputMaster.hasNextLine()) {
@@ -167,7 +173,7 @@ public class Client {
 
     // Gestore del comando quit
     private static void gestisciQuit(PrintWriter outputMaster) {
-        outputMaster.println("QUIT");
+        outputMaster.println(COMANDO_QUIT);
         outputMaster.flush();
         System.out.println("Disconnessione in corso");
         server.terminaServer(); // termina PeerServer
@@ -176,7 +182,7 @@ public class Client {
     public static List<String> registrazioneRisorseLocali() {
         List<String> risorseLocali = new ArrayList<>();
 
-        risorseLocali.add("REGISTRAZIONE_RISORSE ");
+        risorseLocali.add("REGISTRAZIONE_RISORSE");
 
         // All'interno della cartella risorse, vengono aggiunti alla lista.
         File cartella = new File("risorse/");
