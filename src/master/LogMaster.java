@@ -17,16 +17,6 @@ public class LogMaster {
         if (!dir.exists()) {
             dir.mkdir();
         }
-
-        // Crea il file dei log se non esiste
-        File logFile = new File(FILE);
-        try {
-            if (!logFile.exists()) {
-                logFile.createNewFile(); // crea il file vuoto
-            }
-        } catch (IOException e) {
-            System.err.println("Errore creazione file di log: " + e.getMessage());
-        }
     }
 
     //Metodo per scrivere i download riuscito
