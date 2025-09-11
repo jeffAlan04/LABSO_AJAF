@@ -12,7 +12,7 @@ public class PeerClient {
     private int porta;
     private String nomeRisorsa;
     private Logger logger;
-    private finale String CARTELLA_RISORSE="risorse/";
+    private final String CARTELLA_RISORSE = "risorse/";
 
     public PeerClient(String indirizzoHostPeer, int porta, String nomeRisorsa) {
         this.indirizzoHostPeer = indirizzoHostPeer;
