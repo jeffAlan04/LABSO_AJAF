@@ -49,7 +49,7 @@ public class GestioneRisorse {
         }
     }
 
-    // Metodo per il comando add <nome risorsa> <contenuto>
+    // Metodo per aggiungere una risorsa in locale
     public static boolean eseguiAdd(String nomeFile, String contenuto) {
         try {
             controlloCartella();
@@ -65,7 +65,7 @@ public class GestioneRisorse {
         }
     }
 
-    // Metodo per il comando listdata_remote
+    // Metodo per la stampa della tabella di master
     public static void eseguiListDataRemote(String risposta) {
         if (risposta == null || risposta.isEmpty()
                 || risposta.trim().toLowerCase().contains("nessuna risorsa disponibile")) {
@@ -80,11 +80,11 @@ public class GestioneRisorse {
         }
     }
 
+    // Metodo per il controllo della presenza della cartella /risorse
     private static void controlloCartella() {
         File cartella = new File(CARTELLA_RISORSE);
         if (!cartella.exists()) {
             cartella.mkdirs();
         }
-
     }
 }
