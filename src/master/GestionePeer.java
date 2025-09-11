@@ -15,24 +15,26 @@ public class GestionePeer implements Runnable {
     private final String COMANDO_ADD = "ADD";
     private final String COMANDO_DOWNLOAD = "DOWNLOAD";
 
-    public GestionePeer(Socket socket, LogMaster loggerDownload, ArbitroLetturaScrittura arbitroLog, ArbitroLetturaScrittura arbitroTabella, GestioneTab gestioneTab) {
+    public GestionePeer(Socket socket, LogMaster loggerDownload, ArbitroLetturaScrittura arbitroLog,
+            ArbitroLetturaScrittura arbitroTabella, GestioneTab gestioneTab) {
         this.socket = socket;
         this.loggerDownload = loggerDownload;
         this.arbitroLog = arbitroLog;
         this.arbitroTabella = arbitroTabella;
         this.gestioneTab = gestioneTab;
-        logger = new Logger("GestionePeer"); 
+        logger = new Logger("GestionePeer");
     }
 
     @Override
     public void run() {
         String indirizzoPeer = this.socket.getRemoteSocketAddress().toString();
-        
-        try (Scanner in = new Scanner(this.socket.getInputStream()); PrintWriter out = new PrintWriter(this.socket.getOutputStream(), true)) {
+
+        try (Scanner in = new Scanner(this.socket.getInputStream());
+                PrintWriter out = new PrintWriter(this.socket.getOutputStream(), true)) {
             Set<String> risorsePeer = getRisorsePeer(in, out);
             salvataggioRisorsePeer(indirizzoPeer, risorsePeer);
             logger.logInfo("Informazioni peer " + indirizzoPeer + " aggiunte con successo.");
-            
+
             while (in.hasNextLine()) {
                 String[] richiesta = in.nextLine().split(" ");
                 String comando = richiesta[0];
@@ -55,8 +57,7 @@ public class GestionePeer implements Runnable {
                         if (nomeRisorsa != null) {
                             out.println(addRisorsa(indirizzoPeer, Set.of(nomeRisorsa)));
                             logger.logInfo("Risorsa aggiunta.");
-                        }
-                        else {
+                        } else {
                             out.println("non_aggiunto");
                             logger.logErrore("Risorsa non specificata.");
                         }
@@ -77,17 +78,14 @@ public class GestionePeer implements Runnable {
                         break;
                 }
             }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             logger.logErrore("Errore con " + indirizzoPeer + " nell'apertura della socket.");
-        }
-        finally {
+        } finally {
             if (quit()) {
                 logger.logInfo("Chiusura socket di " + indirizzoPeer + " avvenuta con successo.");
-            }
-            else {
+            } else {
                 logger.logErrore("Errore con la chiusura della socket di " + indirizzoPeer + ".");
-            } 
+            }
         }
     }
 
@@ -149,6 +147,7 @@ public class GestionePeer implements Runnable {
                 if ("true".equals(risposta)) {
                     scritturaLog(risorsa, peerSorgente, peerDestinazione, true);
                     logger.logInfo("Download effettuato con successo da: " + peerDestinazione);
+                    addRisorsa(peerSorgente, new HashSet<>(Set.of(risorsa)));
                     return;
                 } else {
                     scritturaLog(risorsa, peerSorgente, peerDestinazione, false);
@@ -163,8 +162,7 @@ public class GestionePeer implements Runnable {
         this.arbitroLog.inizioScrittura();
         if (esito) {
             this.loggerDownload.downloadSuccesso(risorsa, peerSorgente, peerDestinazione);
-        }
-        else {
+        } else {
             this.loggerDownload.downloadFallito(risorsa, peerSorgente, peerDestinazione);
         }
         this.arbitroLog.fineScrittura();
