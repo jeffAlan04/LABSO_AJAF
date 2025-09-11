@@ -1,3 +1,0 @@
-18:26 R0 da: peer0 a: peer1 Ok
-18:26 R1 da: peer1 a: peer0 Fallito
-18:26 R2 da: peer0 a: peer1 Ok

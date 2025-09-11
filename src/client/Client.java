@@ -60,7 +60,7 @@ public class Client {
                         break;
 
                     case "ADD":
-                        gestisciAdd(messaggio, outputMaster, inputMaster);
+                        gestisciAdd(messaggio, outputMaster);
                         break;
 
                     default:
@@ -136,7 +136,7 @@ public class Client {
     }
 
     // Gestore del comando add
-    private static void gestisciAdd(String messaggio, PrintWriter outputMaster, Scanner inputMaster) {
+    private static void gestisciAdd(String messaggio, PrintWriter outputMaster) {
         String[] parti = messaggio.split("\\s+", 3);
         if (parti.length < 3) {
             System.out.println("Uso corretto: add nome_risorsa contenuto");
@@ -145,24 +145,10 @@ public class Client {
         String nomeFile = parti[1];
         String contenuto = parti[2];
 
-        if (!GestioneRisorse.eseguiAdd(nomeFile, contenuto)) {
-            return; // in caso di errore nella creazione in locale interrompe il metodo
-        }
+        GestioneRisorse.eseguiAdd(nomeFile, contenuto);
 
         outputMaster.println("ADD " + nomeFile);
         outputMaster.flush();
-
-        if (inputMaster.hasNextLine()) {
-            String risposta = inputMaster.nextLine().trim();
-
-            if ("aggiunto".equalsIgnoreCase(risposta)) {
-                System.out.println("File " + nomeFile + " aggiunto con successo");
-            } else {
-                System.out.println("Errore. Aggiunta file " + nomeFile + " non comunicata al master");
-            }
-        } else {
-            System.out.println("Errore. Aggiunta file " + nomeFile + " non comunicata al master");
-        }
     }
 
     // Gestore del comando quit

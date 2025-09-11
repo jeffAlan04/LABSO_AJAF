@@ -2,17 +2,17 @@ import java.io.*;
 import java.time.*;
 import java.time.format.*;
 
-public class LogMaster {
+public class Log {
 
     // Nome cartella Salvatagio
     private final String DIR = "LogOut";
     // Nome del file delle informazioni
-    private final String FILE = DIR + "/LogMaster.log";
+    private final String FILE = DIR + "/log.txt";
     // formattazione orario (formattato HH:mm)
     private final DateTimeFormatter FormattoOrario = DateTimeFormatter.ofPattern("HH:mm");
 
-    public LogMaster() {
-        // Crea la cartella dei log se non esiste
+    // Crea la cartella dei log se non esiste
+    public Log() {
         File dir = new File(DIR);
         if (!dir.exists()) {
             dir.mkdir();
