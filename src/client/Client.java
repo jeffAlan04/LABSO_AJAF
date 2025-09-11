@@ -67,12 +67,10 @@ public class Client {
                         break;
                 }
             }
-        } 
-        catch (IOException e) {
+        } catch (IOException e) {
             System.out.println("Errore di connessione al master.");
             server.terminaServer();
-        }
-        catch (NoSuchElementException e) {
+        } catch (NoSuchElementException e) {
             System.out.println("Master disconnesso.");
             server.terminaServer();
         }
@@ -137,6 +135,13 @@ public class Client {
             return;
         }
         String nomeRisorsa = parti[1];
+
+        // Se la risorsa è già presente in locale non viene scaricata
+        if ("true".equals(GestioneRisorse.risorsaPresente(nomeRisorsa))) {
+            System.out.println("Risorsa presente in locale");
+            return;
+        }
+
         outputMaster.println(COMANDO_DOWNLOAD + " " + nomeRisorsa);
         outputMaster.flush();
 
