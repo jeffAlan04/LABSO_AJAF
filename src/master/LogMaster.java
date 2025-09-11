@@ -2,7 +2,7 @@ import java.io.*;
 import java.time.*;
 import java.time.format.*;
 
-public class Log {
+public class LogMaster {
 
     // Nome cartella Salvatagio
     private final String DIR = "LogOut";
@@ -12,7 +12,7 @@ public class Log {
     private final DateTimeFormatter FormattoOrario = DateTimeFormatter.ofPattern("HH:mm");
 
     // Crea la cartella dei log se non esiste
-    public Log() {
+    public LogMaster() {
         File dir = new File(DIR);
         if (!dir.exists()) {
             dir.mkdir();
@@ -56,8 +56,8 @@ public class Log {
 
     // Stampa tutto il contenuto del file di Log
     public void stampa(){
-        System.out.println("Risorse scaricati: ");
         try(BufferedReader br = new BufferedReader(new FileReader(FILE))) {
+            System.out.println("Risorse scaricati: ");
             String linea;
             // Legge riga per riga e stampa
             while ((linea = br.readLine()) != null) {
