@@ -8,7 +8,7 @@ public class Master{
     private static GestioneTab tabella;
     private static ArbitroLetturaScrittura arbitroTabella;
     private static ArbitroLetturaScrittura arbitroLog;
-    private static Log log;
+    private static LogMaster logMaster;
     protected static List<GestionePeer> listaGestoriPeer = Collections.synchronizedList(new ArrayList<>()); 
 
     public static boolean inEsecuzione = true;
@@ -24,15 +24,17 @@ public class Master{
         tabella = new GestioneTab();
         arbitroTabella = new ArbitroLetturaScrittura();
         arbitroLog = new ArbitroLetturaScrittura();
-        log = new Log();
+        logMaster = new LogMaster();
 
         // Creazionde del ServerSocket    
         try (ServerSocket serverSocket = new ServerSocket(porta)){
-
+          
             System.out.println("Server in ascolto sulla porta: " + porta);
 
             // Avvio del thread di GestoreComandi
-            new Thread(new GestoreComandi(arbitroLog, arbitroTabella, tabella, log, serverSocket)).start();
+            new Thread(new GestoreComandi(arbitroLog, arbitroTabella, tabella, logMaster, serverSocket)).start();
+
+
 
             // Ciclo continuo fino a che inEsecuzione = false
             while(inEsecuzione){
@@ -41,7 +43,7 @@ public class Master{
                 System.out.println("Connessione a: " + socket.getRemoteSocketAddress());
 
                 // Creazione di GestionePeer e avvio del thread
-                GestionePeer gp = new GestionePeer(socket, log, arbitroTabella, arbitroLog, tabella);
+                GestionePeer gp = new GestionePeer(socket, logMaster, arbitroTabella, arbitroLog, tabella);
                 synchronized (listaGestoriPeer) {
                     listaGestoriPeer.add(gp);
                 }

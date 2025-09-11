@@ -1,6 +1,5 @@
 import java.io.*;
 import java.net.*;
-import java.util.*;
 
 public class GestoreComandi implements Runnable {
     // arbitro per sincronizzare accesso ai log
@@ -10,11 +9,11 @@ public class GestoreComandi implements Runnable {
     // riferimento alla tabella delle risorse
     private final GestioneTab tabella;
     // Log per leggere i logging
-    private final Log logger;
+    private final LogMaster logger;
     private final ServerSocket serverSocket;
 
     public GestoreComandi(ArbitroLetturaScrittura arbitroLog, ArbitroLetturaScrittura arbitroTabella,
-            GestioneTab tabella, Log logger, ServerSocket serverSocket) {
+                          GestioneTab tabella, LogMaster logger, ServerSocket serverSocket) {
         this.arbitroLog = arbitroLog;
         this.arbitroTabella = arbitroTabella;
         this.tabella = tabella;
