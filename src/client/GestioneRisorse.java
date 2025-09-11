@@ -63,7 +63,7 @@ public class GestioneRisorse {
     // Metodo per la stampa della tabella di master
     public static void eseguiListDataRemote(String risposta) {
         if (risposta == null || risposta.isEmpty()
-                || risposta.trim().toLowerCase().contains("nessuna risorsa disponibile")) {
+                || risposta.trim().toLowerCase().contains("non_disponibile")) {
             System.out.println("Nessuna risorsa disponibile");
             return;
         }
