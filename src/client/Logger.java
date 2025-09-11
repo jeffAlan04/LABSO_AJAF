@@ -20,7 +20,7 @@ public class Logger {
             FileWriter f = new FileWriter(new File(generaNome()), true);
             scrittoreTemporaneo = new PrintWriter(f);
         } catch (IOException e) {
-            System.out.println("Errore nella creazione del file di log. I loge verranno stampati su console");
+            System.out.println("Errore nella creazione del file di log. I log verranno stampati su console");
             scrittoreTemporaneo = new ConsolePrintWriter();
         }
 
