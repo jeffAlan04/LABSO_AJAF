@@ -6,11 +6,11 @@ public class Client {
     private static PeerServer server;
     private static final int PORTA_PEER_SERVER = 9999;
 
-    private final String COMANDO_LISTDATA = "LISTDATA";
-    private final String COMANDO_LISTDATAREMOTE = "LISTDATA_REMOTE";
-    private final String COMANDO_QUIT = "QUIT";
-    private final String COMANDO_ADD = "ADD";
-    private final String COMANDO_DOWNLOAD = "DOWNLOAD";
+    private final static String COMANDO_LISTDATA = "LISTDATA";
+    private final static String COMANDO_LISTDATAREMOTE = "LISTDATA_REMOTE";
+    private final static String COMANDO_QUIT = "QUIT";
+    private final static String COMANDO_ADD = "ADD";
+    private final static String COMANDO_DOWNLOAD = "DOWNLOAD";
 
     public static void main(String[] args) {
         if (args.length < 2) {
@@ -39,15 +39,8 @@ public class Client {
             System.out.println("Connessione al master: " + s.getRemoteSocketAddress());
 
             avvioServer(); // Avvia PeerServer in contemporanea
+            registrazioneRisorseLocali(outputMaster); // invio della lista delle risorse locali al master
 
-            List<String> risorseLocali = registrazioneRisorseLocali();
-
-            for (String riga : risorseLocali) {
-                outputMaster.println(riga);
-                outputMaster.flush();
-            }
-
-            // Il client aspetta i comandi dell'utente
             while (true) {
                 System.out.print("> ");
                 String messaggio = tastiera.nextLine().trim();
@@ -79,15 +72,43 @@ public class Client {
         }
     }
 
+    // Gestore della registraizone delle risorse locali
+    private static void registrazioneRisorseLocali(PrintWriter outputMaster) {
+        List<String> risorseLocali = new ArrayList<>();
+        risorseLocali.add("REGISTRAZIONE_RISORSE");
+        risorseLocali.addAll(GestioneRisorse.getRisorseLocali());
+        risorseLocali.add("FINE");
+
+        for (String riga : risorseLocali) {
+            outputMaster.println(riga);
+            outputMaster.flush();
+        }
+    }
+
     private static void tipoListData(String messaggio, Scanner inputMaster, PrintWriter outputMaster) {
         String tipo = messaggio.split(" ")[1].toUpperCase();
 
         if ("REMOTE".equals(tipo)) {
             gestisciListDataRemote(inputMaster, outputMaster);
         } else if ("LOCAL".equals(tipo)) {
-            GestioneRisorse.eseguiListDataLocal();
+            gestisciListDataLocal();
         } else {
             System.out.println("Comando non riconosciuto " + messaggio);
+        }
+    }
+
+    // Gestore del comando listdata_local
+    private static void gestisciListDataLocal() {
+        ArrayList<String> risorseLocali = GestioneRisorse.getRisorseLocali();
+
+        if (risorseLocali.isEmpty()) {
+            System.out.println("Nessuna risorsa presente");
+            return;
+        }
+
+        System.out.println("Risorse: ");
+        for (String risorsa : risorseLocali) {
+            System.out.println("- " + risorsa);
         }
     }
 
@@ -177,31 +198,6 @@ public class Client {
         outputMaster.flush();
         System.out.println("Disconnessione in corso");
         server.terminaServer(); // termina PeerServer
-    }
-
-    public static List<String> registrazioneRisorseLocali() {
-        List<String> risorseLocali = new ArrayList<>();
-
-        risorseLocali.add("REGISTRAZIONE_RISORSE");
-
-        // All'interno della cartella risorse, vengono aggiunti alla lista.
-        File cartella = new File("risorse/");
-        if (cartella.exists() && cartella.isDirectory()) {
-            File[] f = cartella.listFiles();
-
-            if (f != null) {
-                for (File file : f) {
-                    if (file.isFile()) {
-                        risorseLocali.add(file.getName());
-                    }
-                }
-            }
-        } else {
-            System.out.println("Cartella risorse non trovata");
-        }
-
-        risorseLocali.add("FINE");
-        return risorseLocali;
     }
 
     // Crea un thread che esegua PeerServer

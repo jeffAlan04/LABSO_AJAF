@@ -14,7 +14,6 @@ public class GestioneRisorse {
         controlloCartella();
 
         File directory = new File(CARTELLA_RISORSE);
-
         File[] risorse = directory.listFiles();
 
         if (risorse != null && risorse.length != 0) {
@@ -28,25 +27,21 @@ public class GestioneRisorse {
         return "false";
     }
 
-    // Metodo per il comando listdata local
-    public static void eseguiListDataLocal() {
+    // Metodo per elencare le risorse presenti nella cartella risorse
+    public static ArrayList<String> getRisorseLocali() {
+
         controlloCartella();
-
         File input = new File(CARTELLA_RISORSE);
-
         File[] risorse = input.listFiles();
+        ArrayList<String> elencoRisorse = new ArrayList<String>();
 
-        if (risorse == null || risorse.length == 0) {
-            System.out.println("Nessuna risorsa disponibile");
-            return;
-        }
-
-        System.out.println("Risorse: ");
         for (File f : risorse) {
             if (f.isFile()) {
-                System.out.println("- " + f.getName());
+                elencoRisorse.add(f.getName());
             }
         }
+
+        return elencoRisorse;
     }
 
     // Metodo per aggiungere una risorsa in locale
