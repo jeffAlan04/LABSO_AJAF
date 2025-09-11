@@ -67,8 +67,14 @@ public class Client {
                         break;
                 }
             }
-        } catch (IOException e) {
-            System.out.println("Errore di connessione al master");
+        } 
+        catch (IOException e) {
+            System.out.println("Errore di connessione al master.");
+            server.terminaServer();
+        }
+        catch (NoSuchElementException e) {
+            System.out.println("Master disconnesso.");
+            server.terminaServer();
         }
     }
 
@@ -117,12 +123,8 @@ public class Client {
         outputMaster.println(COMANDO_LISTDATAREMOTE);
         outputMaster.flush();
 
-        if (inputMaster.hasNextLine()) {
-            String risposta = inputMaster.nextLine();
-            GestioneRisorse.eseguiListDataRemote(risposta);
-        } else {
-            System.out.println("Nessuna risposta ricevuta");
-        }
+        String risposta = inputMaster.nextLine();
+        GestioneRisorse.eseguiListDataRemote(risposta);
     }
 
     // Gestore del comando download
@@ -179,14 +181,10 @@ public class Client {
         outputMaster.println(COMANDO_ADD + " " + nomeFile);
         outputMaster.flush();
 
-        if (inputMaster.hasNextLine()) {
-            String risposta = inputMaster.nextLine().trim();
+        String risposta = inputMaster.nextLine().trim();
 
-            if ("aggiunto".equalsIgnoreCase(risposta)) {
-                System.out.println("File " + nomeFile + " aggiunto con successo");
-            } else {
-                System.out.println("Errore. Aggiunta file " + nomeFile + " non comunicata al master");
-            }
+        if ("aggiunto".equalsIgnoreCase(risposta)) {
+            System.out.println("File " + nomeFile + " aggiunto con successo");
         } else {
             System.out.println("Errore. Aggiunta file " + nomeFile + " non comunicata al master");
         }
