@@ -28,10 +28,13 @@ public class Master{
 
         // Creazionde del ServerSocket    
         try (ServerSocket serverSocket = new ServerSocket(porta)){
+          
+            System.out.println("Server in ascolto sulla porta: " + porta);
+
             // Avvio del thread di GestoreComandi
             new Thread(new GestoreComandi(arbitroLog, arbitroTabella, tabella, logMaster, serverSocket)).start();
 
-            System.out.println("Server in ascolto sulla porta: " + porta);
+
 
             // Ciclo continuo fino a che inEsecuzione = false
             while(inEsecuzione){
