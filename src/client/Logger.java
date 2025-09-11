@@ -9,12 +9,14 @@ import java.io.File;
 public class Logger {
     private PrintWriter scrittore;
     private String classe;
+    private final String CARTELLA_LOG = ".log/";
 
     public Logger(String classe) {
         this.classe = classe;
 
         PrintWriter scrittoreTemporaneo;
         try {
+            controlloEsistenzaCartellaLog();
             FileWriter f = new FileWriter(new File(generaNome()), true);
             scrittoreTemporaneo = new PrintWriter(f);
         } catch (IOException e) {
@@ -25,13 +27,20 @@ public class Logger {
         this.scrittore = scrittoreTemporaneo;
     }
 
+    private void controlloEsistenzaCartellaLog() {
+        File cartella = new File(CARTELLA_LOG);
+        if (!cartella.exists()) {
+            cartella.mkdirs();
+        }
+    }
+
     private String generaNome() {
         LocalDateTime momento = LocalDateTime.now();
         DateTimeFormatter formattatore = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
         String dataOra = momento.format(formattatore);
 
         // Formato: <nome_classe>_<identificativo>_<data>_<ora>.log
-        return "log/" + classe + "_" + dataOra + ".log";
+        return CARTELLA_LOG + classe + "_" + dataOra + ".log";
     }
 
     public static String stampaMomento() {

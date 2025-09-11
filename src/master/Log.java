@@ -5,9 +5,9 @@ import java.time.format.*;
 public class Log {
 
     // Nome cartella Salvatagio
-    private final String DIR = "LogOut";
+    private final String DIR = ".log/";
     // Nome del file delle informazioni
-    private final String FILE = DIR + "/log.txt";
+    private final String FILE = DIR + "log.txt";
     // formattazione orario (formattato HH:mm)
     private final DateTimeFormatter FormattoOrario = DateTimeFormatter.ofPattern("HH:mm");
 
@@ -19,13 +19,13 @@ public class Log {
         }
     }
 
-    //Metodo per scrivere i download riuscito
-    public void downloadSuccesso(String risorsa, String peerSorgente, String peerDestinazione){
+    // Metodo per scrivere i download riuscito
+    public void downloadSuccesso(String risorsa, String peerSorgente, String peerDestinazione) {
         scriviLog(risorsa, peerSorgente, peerDestinazione, true);
     }
 
-    //Metodo per scrivere i download falliti
-    public void downloadFallito(String risorsa, String peerSorgente, String peerDestinazione){
+    // Metodo per scrivere i download falliti
+    public void downloadFallito(String risorsa, String peerSorgente, String peerDestinazione) {
         scriviLog(risorsa, peerSorgente, peerDestinazione, false);
     }
 
@@ -36,18 +36,18 @@ public class Log {
                 " da: " + peerSorgente +
                 " a: " + peerDestinazione +
                 (esito ? " Ok" : " Fallito");
-        try(BufferedWriter bw = new BufferedWriter(new FileWriter(FILE, true))){
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILE, true))) {
             bw.write(riga);
             bw.newLine();
-        }catch (IOException e){
+        } catch (IOException e) {
             System.err.println("Errore scrittura log: " + e.getMessage());
         }
     }
 
     // Stampa tutto il contenuto del file di Log
-    public void stampa(){
+    public void stampa() {
         System.out.println("Risorse scaricati: ");
-        try(BufferedReader br = new BufferedReader(new FileReader(FILE))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(FILE))) {
             String linea;
             // Legge riga per riga e stampa
             while ((linea = br.readLine()) != null) {
