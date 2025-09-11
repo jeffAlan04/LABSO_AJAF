@@ -37,8 +37,6 @@ public class Master{
             while(inEsecuzione){
                 socket = serverSocket.accept();
                 
-                System.out.println("Connessione a: " + socket.getRemoteSocketAddress());
-
                 // Creazione di GestionePeer e avvio del thread
                 GestionePeer gp = new GestionePeer(socket, log, arbitroTabella, arbitroLog, tabella);
                 synchronized (listaGestoriPeer) {
