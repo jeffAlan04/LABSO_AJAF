@@ -8,7 +8,7 @@ public class Master{
     private static GestioneTab tabella;
     private static ArbitroLetturaScrittura arbitroTabella;
     private static ArbitroLetturaScrittura arbitroLog;
-    private static Log log;
+    private static LogMaster log;
     protected static List<GestionePeer> listaGestoriPeer = Collections.synchronizedList(new ArrayList<>()); 
 
     public static boolean inEsecuzione = true;
