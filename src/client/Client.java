@@ -135,6 +135,13 @@ public class Client {
             return;
         }
         String nomeRisorsa = parti[1];
+
+        // Se la risorsa è già presente in locale non viene scaricata
+        if ("true".equals(GestioneRisorse.risorsaPresente(nomeRisorsa))) {
+            System.out.println("Risorsa presente in locale");
+            return;
+        }
+
         outputMaster.println(COMANDO_DOWNLOAD + " " + nomeRisorsa);
         outputMaster.flush();
 

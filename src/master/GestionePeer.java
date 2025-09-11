@@ -147,6 +147,7 @@ public class GestionePeer implements Runnable {
                 if ("true".equals(risposta)) {
                     scritturaLog(risorsa, peerSorgente, peerDestinazione, true);
                     logger.logInfo("Download effettuato con successo da: " + peerDestinazione);
+                    addRisorsa(peerSorgente, new HashSet<>(Set.of(risorsa)));
                     return;
                 } else {
                     scritturaLog(risorsa, peerSorgente, peerDestinazione, false);

@@ -16,6 +16,7 @@ public class PeerServer implements Runnable {
     private ServerSocket serverSocket;
     private boolean running;
     private Logger logger;
+    private final String CARTELLA_RISORSE = "risorse/";
 
     public PeerServer(int porta) {
         this.porta = porta;
@@ -78,7 +79,7 @@ public class PeerServer implements Runnable {
     }
 
     private void uploadRisorsa(Socket s, String nomeRisorsa) {
-        File f = new File("risorse/" + nomeRisorsa);
+        File f = new File(CARTELLA_RISORSE + nomeRisorsa);
         byte[] byteArray = new byte[(int) f.length()];
 
         try (FileInputStream fis = new FileInputStream(f);

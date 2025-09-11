@@ -12,6 +12,7 @@ public class PeerClient {
     private int porta;
     private String nomeRisorsa;
     private Logger logger;
+    private final String CARTELLA_RISORSE = "risorse/";
 
     public PeerClient(String indirizzoHostPeer, int porta, String nomeRisorsa) {
         this.indirizzoHostPeer = indirizzoHostPeer;
@@ -61,7 +62,7 @@ public class PeerClient {
         logger.logInfo("Inizio download risorsa " + nomeRisorsa + " da " + indirizzoHostPeer);
 
         try (InputStream is = s.getInputStream();
-                FileOutputStream fos = new FileOutputStream("scaricati/" + nomeRisorsa);
+                FileOutputStream fos = new FileOutputStream(CARTELLA_RISORSE + nomeRisorsa);
                 BufferedOutputStream bos = new BufferedOutputStream(fos);) {
 
             byte[] byteArray = new byte[4096]; // Buffer per la scrittura del file in locale
