@@ -5,15 +5,15 @@ import java.time.format.*;
 public class LogMaster {
 
     // Nome cartella Salvatagio
-    private final String DIR = ".log/";
+    private final String CARTELLA_LOG = ".log/";
     // Nome del file delle informazioni
-    private final String FILE = DIR + "logMaster.log";
+    private final String FILE_LOG = CARTELLA_LOG + "logMaster.log";
     // formattazione orario (formattato HH:mm)
     private final DateTimeFormatter FormattoOrario = DateTimeFormatter.ofPattern("HH:mm");
 
     // Crea la cartella dei log se non esiste
     public LogMaster() {
-        File dir = new File(DIR);
+        File dir = new File(CARTELLA_LOG);
         if (!dir.exists()) {
             dir.mkdir();
         }
@@ -36,7 +36,7 @@ public class LogMaster {
                 " da: " + peerSorgente +
                 " a: " + peerDestinazione +
                 (esito ? " Ok" : " Fallito");
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILE, true))) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_LOG, true))) {
             bw.write(riga);
             bw.newLine();
         } catch (IOException e) {
@@ -46,7 +46,14 @@ public class LogMaster {
 
     // Stampa tutto il contenuto del file di Log
     public void stampa() {
-        try (BufferedReader br = new BufferedReader(new FileReader(FILE))) {
+        File fileLog = new File(FILE_LOG);
+
+        if (!fileLog.exists()) {
+            System.out.println("Non ci sono log al momento");
+            return;
+        }
+
+        try (BufferedReader br = new BufferedReader(new FileReader(FILE_LOG))) {
             System.out.println("Risorse scaricati: ");
             String linea;
             // Legge riga per riga e stampa
