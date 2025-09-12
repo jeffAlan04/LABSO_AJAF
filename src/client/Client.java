@@ -39,7 +39,13 @@ public class Client {
             System.out.println("Connessione al master: " + s.getRemoteSocketAddress());
 
             avvioServer(); // Avvia PeerServer in contemporanea
-            registrazioneRisorseLocali(outputMaster); // invio della lista delle risorse locali al master
+
+            if (!registrazioneRisorseLocali(inputMaster, outputMaster)) { // invio delle risorse locali al master
+                System.out.println("Errore nella trasmissione delle risorse");
+                server.terminaServer();
+                return; // in caso di errore termina l'esecuzione
+            }
+            ;
 
             while (true) {
                 System.out.print("> ");
@@ -77,15 +83,24 @@ public class Client {
     }
 
     // Gestore della registraizone delle risorse locali
-    private static void registrazioneRisorseLocali(PrintWriter outputMaster) {
+    private static boolean registrazioneRisorseLocali(Scanner inputMaster, PrintWriter outputMaster) {
         List<String> risorseLocali = new ArrayList<>();
         risorseLocali.add("REGISTRAZIONE_RISORSE");
         risorseLocali.addAll(GestioneRisorse.getRisorseLocali());
         risorseLocali.add("FINE");
 
+        // Invio della lista delle risorse
         for (String riga : risorseLocali) {
             outputMaster.println(riga);
             outputMaster.flush();
+        }
+
+        // Ricezione del risultato dell'operazione su master
+        String risposta = inputMaster.nextLine();
+        if ("aggiunto".equals(risposta)) {
+            return true;
+        } else {
+            return false;
         }
     }
 
