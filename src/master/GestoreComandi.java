@@ -63,17 +63,19 @@ public class GestoreComandi implements Runnable {
     private void gestisciListData() {
         arbitroTabella.inizioLettura();
 
-        System.out.println("=== Tabella Risorse ===");
-
         String dati = tabella.getRisorse();
-        String[] arrayRisorse = dati.split(";");
+        if(dati.isEmpty()){
+            System.out.println(("Nessuna risorsa disponibile."));
+        }else {
+            System.out.println("=== Tabella Risorse ===");
 
-        for (String risorsa : arrayRisorse) {
-            System.out.println("- " + risorsa);
+            String[] arrayRisorse = dati.split(";");
+
+            for (String risorsa : arrayRisorse) {
+                System.out.println("- " + risorsa);
+            }
         }
-
         arbitroTabella.fineLettura();
-
     }
 
     // Gestisce il comando "quit" del master, fermando l'esecuzione e chiudendo la
