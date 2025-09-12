@@ -9,6 +9,7 @@ public class GestionePeer implements Runnable {
     private ArbitroLetturaScrittura arbitroLog;
     private GestioneTab gestioneTab;
     private Logger logger;
+    private String indirizzoPeer;
 
     private final String COMANDO_LISTDATAREMOTE = "LISTDATA_REMOTE";
     private final String COMANDO_QUIT = "QUIT";
@@ -27,13 +28,19 @@ public class GestionePeer implements Runnable {
 
     @Override
     public void run() {
-        String indirizzoPeer = this.socket.getRemoteSocketAddress().toString();
+        indirizzoPeer = this.socket.getRemoteSocketAddress().toString();
 
-        try (Scanner in = new Scanner(this.socket.getInputStream());
-                PrintWriter out = new PrintWriter(this.socket.getOutputStream(), true)) {
+        try (Scanner in = new Scanner(this.socket.getInputStream()); PrintWriter out = new PrintWriter(this.socket.getOutputStream(), true)) {
             Set<String> risorsePeer = getRisorsePeer(in, out);
-            salvataggioRisorsePeer(indirizzoPeer, risorsePeer);
-            logger.logInfo("Informazioni peer " + indirizzoPeer + " aggiunte con successo.");
+            String risposta = addRisorsa(risorsePeer);
+            out.println(risposta);
+            if ("aggiunto".equals(risposta)) {
+                logger.logInfo("Informazioni peer " + indirizzoPeer + " aggiunte con successo.");
+            }
+            else {
+                logger.logErrore("Errore aggiunta informazioni peer " + indirizzoPeer + ".");
+                quit();
+            }
 
             while (in.hasNextLine()) {
                 String[] richiesta = in.nextLine().split(" ");
@@ -55,7 +62,7 @@ public class GestionePeer implements Runnable {
 
                     case COMANDO_ADD:
                         if (nomeRisorsa != null) {
-                            out.println(addRisorsa(indirizzoPeer, Set.of(nomeRisorsa)));
+                            out.println(addRisorsa(Set.of(nomeRisorsa)));
                             logger.logInfo("Risorsa aggiunta.");
                         } else {
                             out.println("non_aggiunto");
@@ -65,7 +72,7 @@ public class GestionePeer implements Runnable {
 
                     case COMANDO_DOWNLOAD:
                         if (nomeRisorsa != null) {
-                            downloadRisorsa(nomeRisorsa, indirizzoPeer, in, out);
+                            downloadRisorsa(nomeRisorsa, in, out);
                         } else {
                             out.println("Specifica una risorsa da scaricare.");
                             logger.logErrore("Risorsa non specificata.");
@@ -81,11 +88,7 @@ public class GestionePeer implements Runnable {
         } catch (IOException e) {
             logger.logErrore("Errore con " + indirizzoPeer + " nell'apertura della socket.");
         } finally {
-            if (quit()) {
-                logger.logInfo("Chiusura socket di " + indirizzoPeer + " avvenuta con successo.");
-            } else {
-                logger.logErrore("Errore con la chiusura della socket di " + indirizzoPeer + ".");
-            }
+            quit();
         }
     }
 
@@ -103,12 +106,6 @@ public class GestionePeer implements Runnable {
         return risorsePeer;
     }
 
-    private void salvataggioRisorsePeer(String indirizzoPeer, Set<String> risorsePeer) {
-        this.arbitroTabella.inizioScrittura();
-        this.gestioneTab.aggiungiPeer(indirizzoPeer, risorsePeer);
-        this.arbitroTabella.fineScrittura();
-    }
-
     private String listDataRemote() {
         this.arbitroTabella.inizioLettura();
         String risposta = this.gestioneTab.getRisorse();
@@ -122,14 +119,14 @@ public class GestionePeer implements Runnable {
         return risposta.trim();
     }
 
-    private String addRisorsa(String indirizzoPeer, Set<String> risorse) {
+    private String addRisorsa(Set<String> risorse) {
         this.arbitroTabella.inizioScrittura();
         String risposta = this.gestioneTab.aggiungiPeer(indirizzoPeer, risorse);
         this.arbitroTabella.fineScrittura();
         return risposta;
     }
 
-    private void downloadRisorsa(String risorsa, String peerSorgente, Scanner in, PrintWriter out) {
+    private void downloadRisorsa(String risorsa, Scanner in, PrintWriter out) {
         while (true) {
             String peerDestinazione = getPeer(risorsa);
 
@@ -145,12 +142,12 @@ public class GestionePeer implements Runnable {
                 String risposta = in.nextLine().trim();
 
                 if ("true".equals(risposta)) {
-                    scritturaLog(risorsa, peerSorgente, peerDestinazione, true);
+                    scritturaLog(risorsa, peerDestinazione, true);
                     logger.logInfo("Download effettuato con successo da: " + peerDestinazione);
-                    addRisorsa(peerSorgente, new HashSet<>(Set.of(risorsa)));
+                    addRisorsa(new HashSet<>(Set.of(risorsa)));
                     return;
                 } else {
-                    scritturaLog(risorsa, peerSorgente, peerDestinazione, false);
+                    scritturaLog(risorsa, peerDestinazione, false);
                     logger.logErrore("Impossibile effettuare download da: " + peerDestinazione);
                     rimuoviPeer(peerDestinazione, risorsa);
                 }
@@ -158,12 +155,12 @@ public class GestionePeer implements Runnable {
         }
     }
 
-    private void scritturaLog(String risorsa, String peerSorgente, String peerDestinazione, boolean esito) {
+    private void scritturaLog(String risorsa, String peerDestinazione, boolean esito) {
         this.arbitroLog.inizioScrittura();
         if (esito) {
-            this.loggerDownload.downloadSuccesso(risorsa, peerSorgente, peerDestinazione);
+            this.loggerDownload.downloadSuccesso(risorsa, indirizzoPeer, peerDestinazione);
         } else {
-            this.loggerDownload.downloadFallito(risorsa, peerSorgente, peerDestinazione);
+            this.loggerDownload.downloadFallito(risorsa, indirizzoPeer, peerDestinazione);
         }
         this.arbitroLog.fineScrittura();
     }
@@ -175,20 +172,20 @@ public class GestionePeer implements Runnable {
         return risposta;
     }
 
-    private void rimuoviPeer(String indirizzoPeer, String risorsa) {
+    private void rimuoviPeer(String indirizzoPeerDaRimuovere, String risorsa) {
         this.arbitroTabella.inizioScrittura();
-        this.gestioneTab.rimuoviPeerInRisorsa(indirizzoPeer, risorsa);
+        this.gestioneTab.rimuoviPeerInRisorsa(indirizzoPeerDaRimuovere, risorsa);
         this.arbitroTabella.fineScrittura();
     }
 
-    public boolean quit() {
+    public void quit() {
         try {
             if (!this.socket.isClosed()) {
                 this.socket.close();
             }
-            return true;
+            logger.logInfo("Chiusura socket di " + indirizzoPeer + " avvenuta con successo.");            
         } catch (IOException e) {
-            return false;
+            logger.logErrore("Errore con la chiusura della socket di " + indirizzoPeer + ".");
         }
     }
 }
