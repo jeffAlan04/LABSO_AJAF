@@ -29,11 +29,21 @@ public class GestionePeer implements Runnable {
     public void run() {
         String indirizzoPeer = this.socket.getRemoteSocketAddress().toString();
 
-        try (Scanner in = new Scanner(this.socket.getInputStream());
-                PrintWriter out = new PrintWriter(this.socket.getOutputStream(), true)) {
+        try (Scanner in = new Scanner(this.socket.getInputStream()); PrintWriter out = new PrintWriter(this.socket.getOutputStream(), true)) {
             Set<String> risorsePeer = getRisorsePeer(in, out);
-            salvataggioRisorsePeer(indirizzoPeer, risorsePeer);
-            logger.logInfo("Informazioni peer " + indirizzoPeer + " aggiunte con successo.");
+            String risposta = addRisorsa(indirizzoPeer, risorsePeer);
+            out.println(risposta);
+            if ("aggiunto".equals(risposta)) {
+                logger.logInfo("Informazioni peer " + indirizzoPeer + " aggiunte con successo.");
+            }
+            else {
+                logger.logErrore("Errore aggiunta informazioni peer " + indirizzoPeer + ".");
+                if (quit()) {
+                    logger.logInfo("Chiusura socket di " + indirizzoPeer + "... errore nel salvataggio iniziale delle sue risorse.");
+                } else {
+                    logger.logErrore("Errore con la chiusura della socket di " + indirizzoPeer + " per errore nel salvataggio iniziale delle sue risorse.");
+                }
+            }
 
             while (in.hasNextLine()) {
                 String[] richiesta = in.nextLine().split(" ");
@@ -101,12 +111,6 @@ public class GestionePeer implements Runnable {
         }
 
         return risorsePeer;
-    }
-
-    private void salvataggioRisorsePeer(String indirizzoPeer, Set<String> risorsePeer) {
-        this.arbitroTabella.inizioScrittura();
-        this.gestioneTab.aggiungiPeer(indirizzoPeer, risorsePeer);
-        this.arbitroTabella.fineScrittura();
     }
 
     private String listDataRemote() {
