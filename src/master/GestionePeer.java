@@ -184,13 +184,19 @@ public class GestionePeer implements Runnable {
         // sostituisce localhost con indirizzo ip privato
         if ("/127.0.0.1".equals(ip.split(":")[0])) {
             try {
+                String porta = ip.split(":")[1];
                 ip = InetAddress.getLocalHost().toString();
+                ip = ip + ":" + porta; // mantiene la porta
             } catch (UnknownHostException e) {
                 // Mantiene localhost
             }
         }
 
-        ip = ip.split("/")[1];
+        // rimozione dello / davanti all'indirizzo
+        String[] parti = ip.split("/");
+        if (parti.length > 1) {
+            ip = parti[1];
+        }
 
         return ip;
     }
