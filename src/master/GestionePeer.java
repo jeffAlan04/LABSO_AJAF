@@ -28,16 +28,16 @@ public class GestionePeer implements Runnable {
 
     @Override
     public void run() {
-        indirizzoPeer = this.socket.getRemoteSocketAddress().toString();
+        indirizzoPeer = assegnaIP();
 
-        try (Scanner in = new Scanner(this.socket.getInputStream()); PrintWriter out = new PrintWriter(this.socket.getOutputStream(), true)) {
+        try (Scanner in = new Scanner(this.socket.getInputStream());
+                PrintWriter out = new PrintWriter(this.socket.getOutputStream(), true)) {
             Set<String> risorsePeer = getRisorsePeer(in, out);
             String risposta = addRisorsa(risorsePeer);
             out.println(risposta);
             if ("aggiunto".equals(risposta)) {
                 logger.logInfo("Informazioni peer " + indirizzoPeer + " aggiunte con successo.");
-            }
-            else {
+            } else {
                 logger.logErrore("Errore aggiunta informazioni peer " + indirizzoPeer + ".");
                 quit();
             }
@@ -178,12 +178,29 @@ public class GestionePeer implements Runnable {
         this.arbitroTabella.fineScrittura();
     }
 
+    private String assegnaIP() {
+        String ip = this.socket.getRemoteSocketAddress().toString();
+
+        // sostituisce localhost con indirizzo ip privato
+        if ("/127.0.0.1".equals(ip.split(":")[0])) {
+            try {
+                ip = InetAddress.getLocalHost().toString();
+            } catch (UnknownHostException e) {
+                // Mantiene localhost
+            }
+        }
+
+        ip = ip.split("/")[1];
+
+        return ip;
+    }
+
     public void quit() {
         try {
             if (!this.socket.isClosed()) {
                 this.socket.close();
             }
-            logger.logInfo("Chiusura socket di " + indirizzoPeer + " avvenuta con successo.");            
+            logger.logInfo("Chiusura socket di " + indirizzoPeer + " avvenuta con successo.");
         } catch (IOException e) {
             logger.logErrore("Errore con la chiusura della socket di " + indirizzoPeer + ".");
         }
