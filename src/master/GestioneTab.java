@@ -4,10 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 public class GestioneTab {
-    private final String FILE_PATH = "risorse/tabella.json";
     private ObjectMapper mapper = new ObjectMapper();
     private Map<String, Set<String>> tabella = new HashMap<>();
     private Logger logger;
+
+    private final String FILE_PATH = "risorse/tabella.json";
+    private final String CARTELLA_RISORSE = "risorse";
 
     public GestioneTab() {
         logger = new Logger("GestioneTab");
@@ -79,21 +81,23 @@ public class GestioneTab {
 
     // SALVATAGGIO E CARICAMENTO DATI
     private void caricaDaFile() {
+        File cartella = new File(CARTELLA_RISORSE);
+        if (!cartella.exists()) {
+            cartella.mkdirs();
+        }
+        
         File file = new File(FILE_PATH);
-
         if (!file.exists() || file.length() == 0) {
-            logger.logErrore("File JSON vuoto o non trovato. Inizializzo tabella vuota.");
+            logger.logInfo("File JSON vuoto o non trovato. Inizializzo tabella vuota.");
             tabella = new HashMap<>();
             return;
         }
 
         try {
-            tabella = mapper.readValue(file, new TypeReference<Map<String, Set<String>>>() {
-            });
+            tabella = mapper.readValue(file, new TypeReference<Map<String, Set<String>>>() {});
             logger.logInfo("Tabella caricata con successo.");
         } catch (IOException e) {
             logger.logErrore("Errore nel caricamento da file della tabella.");
-
             tabella = new HashMap<>();
         }
     }
