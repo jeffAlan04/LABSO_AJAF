@@ -9,6 +9,7 @@ public class GestionePeer implements Runnable {
     private ArbitroLetturaScrittura arbitroLog;
     private GestioneTab gestioneTab;
     private Logger logger;
+    private String indirizzoPeer;
 
     private final String COMANDO_LISTDATAREMOTE = "LISTDATA_REMOTE";
     private final String COMANDO_QUIT = "QUIT";
@@ -27,7 +28,7 @@ public class GestionePeer implements Runnable {
 
     @Override
     public void run() {
-        String indirizzoPeer = this.socket.getRemoteSocketAddress().toString();
+        indirizzoPeer = this.socket.getRemoteSocketAddress().toString();
 
         try (Scanner in = new Scanner(this.socket.getInputStream()); PrintWriter out = new PrintWriter(this.socket.getOutputStream(), true)) {
             Set<String> risorsePeer = getRisorsePeer(in, out);
@@ -38,11 +39,7 @@ public class GestionePeer implements Runnable {
             }
             else {
                 logger.logErrore("Errore aggiunta informazioni peer " + indirizzoPeer + ".");
-                if (quit()) {
-                    logger.logInfo("Chiusura socket di " + indirizzoPeer + "... errore nel salvataggio iniziale delle sue risorse.");
-                } else {
-                    logger.logErrore("Errore con la chiusura della socket di " + indirizzoPeer + " per errore nel salvataggio iniziale delle sue risorse.");
-                }
+                quit();
             }
 
             while (in.hasNextLine()) {
@@ -91,11 +88,7 @@ public class GestionePeer implements Runnable {
         } catch (IOException e) {
             logger.logErrore("Errore con " + indirizzoPeer + " nell'apertura della socket.");
         } finally {
-            if (quit()) {
-                logger.logInfo("Chiusura socket di " + indirizzoPeer + " avvenuta con successo.");
-            } else {
-                logger.logErrore("Errore con la chiusura della socket di " + indirizzoPeer + ".");
-            }
+            quit();
         }
     }
 
@@ -185,14 +178,14 @@ public class GestionePeer implements Runnable {
         this.arbitroTabella.fineScrittura();
     }
 
-    public boolean quit() {
+    public void quit() {
         try {
             if (!this.socket.isClosed()) {
                 this.socket.close();
             }
-            return true;
+            logger.logInfo("Chiusura socket di " + indirizzoPeer + " avvenuta con successo.");            
         } catch (IOException e) {
-            return false;
+            logger.logErrore("Errore con la chiusura della socket di " + indirizzoPeer + ".");
         }
     }
 }
