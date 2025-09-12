@@ -164,7 +164,7 @@ public class Client {
         // possiede la risorsa indicata.
         String indirizzoHostPeer = inputMaster.nextLine();
         while (!"non_disponibile".equals(indirizzoHostPeer)) {
-            indirizzoHostPeer = indirizzoHostPeer.split(":")[0].replace("/", "");
+            indirizzoHostPeer = indirizzoHostPeer.split(":")[0];
 
             PeerClient pc = new PeerClient(indirizzoHostPeer, PORTA_PEER_SERVER, nomeRisorsa);
             if (pc.avviaConnessione()) {
