@@ -19,14 +19,14 @@ public class PeerServer implements Runnable {
     private final String CARTELLA_RISORSE = "risorse/";
 
     public PeerServer(int porta) {
-        this.porta = porta;
         this.logger = new Logger("PeerServer");
     }
 
     @Override
     public void run() {
         try {
-            this.serverSocket = new ServerSocket(porta);
+            this.serverSocket = new ServerSocket(0);
+            this.porta = serverSocket.getLocalPort();
             logger.logInfo("Server in ascolto sulla porta " + porta);
             running = true;
 
@@ -95,6 +95,10 @@ public class PeerServer implements Runnable {
         } catch (IOException e) {
             logger.logErrore("Errore durante upload della risorsa " + nomeRisorsa);
         }
+    }
+
+    public int getPorta() {
+        return this.porta;
     }
 
     public void terminaServer() {
