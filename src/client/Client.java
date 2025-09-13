@@ -17,16 +17,6 @@ public class Client {
             System.out.println("Utilizzo: java Client [indirizzo master] [porta]");
             return;
         }
-
-        // Blocco per ottenere l'indirizzo del peer
-        String indirizzoIP;
-        try {
-            InetAddress localHost = InetAddress.getLocalHost();
-            indirizzoIP = localHost.getHostAddress();
-        } catch (UnknownHostException e) {
-            indirizzoIP = "localhost";
-        }
-
         String indirizzoMaster = args[0];
         int porta = Integer.parseInt(args[1]);
 

@@ -18,7 +18,7 @@ public class PeerServer implements Runnable {
     private Logger logger;
     private final String CARTELLA_RISORSE = "risorse/";
 
-    public PeerServer(int porta) {
+    public PeerServer() {
         this.logger = new Logger("PeerServer");
     }
 
