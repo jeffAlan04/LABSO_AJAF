@@ -4,7 +4,7 @@ import java.util.*;
 
 public class Client {
     private static PeerServer server;
-    private static final int PORTA_PEER_SERVER = 9999;
+    private static int portaPeerServer;
 
     private final static String COMANDO_LISTDATA = "LISTDATA";
     private final static String COMANDO_LISTDATAREMOTE = "LISTDATA_REMOTE";
@@ -30,12 +30,10 @@ public class Client {
 
             avvioServer(); // Avvia PeerServer in contemporanea
 
-            if (!registrazioneRisorseLocali(inputMaster, outputMaster)) { // invio delle risorse locali al master
-                System.out.println("Errore nella trasmissione delle risorse");
+            if (!trasmettiPorta(inputMaster, outputMaster) || !registrazioneRisorseLocali(inputMaster, outputMaster)) {
                 server.terminaServer();
-                return; // in caso di errore termina l'esecuzione
+                return;
             }
-            ;
 
             while (true) {
                 System.out.print("> ");
@@ -72,6 +70,22 @@ public class Client {
         }
     }
 
+    private static boolean trasmettiPorta(Scanner inputMaster, PrintWriter outputMaster) {
+        portaPeerServer = server.getPorta();
+
+        if (portaPeerServer.isEmpty()) {
+            outputMaster.println("PORTA:" + portaPeerServer);
+            String risposta = inputMaster.nextline();
+
+            if ("porta_ricevuta".equals(risposta)) {
+                return true;
+            }
+        }
+
+        System.out.println("Errore nella trasmissione della porta di PeerServer");
+        return false;
+    }
+
     // Gestore della registraizone delle risorse locali
     private static boolean registrazioneRisorseLocali(Scanner inputMaster, PrintWriter outputMaster) {
         List<String> risorseLocali = new ArrayList<>();
@@ -90,6 +104,7 @@ public class Client {
         if ("aggiunto".equals(risposta)) {
             return true;
         } else {
+            System.out.println("Errore nella trasmissione delle risorse locali");
             return false;
         }
     }
@@ -210,7 +225,7 @@ public class Client {
 
     // Crea un thread che esegua PeerServer
     private static void avvioServer() {
-        server = new PeerServer(PORTA_PEER_SERVER);
+        server = new PeerServer();
         Thread threadServer = new Thread(server);
         threadServer.start();
     }
