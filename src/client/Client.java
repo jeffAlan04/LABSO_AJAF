@@ -4,7 +4,6 @@ import java.util.*;
 
 public class Client {
     private static PeerServer server;
-    private static Integer portaPeerServer;
 
     private final static String COMANDO_LISTDATA = "LISTDATA";
     private final static String COMANDO_LISTDATAREMOTE = "LISTDATA_REMOTE";
@@ -71,15 +70,14 @@ public class Client {
     }
 
     private static boolean trasmettiPorta(Scanner inputMaster, PrintWriter outputMaster) {
-        portaPeerServer = server.getPorta();
+        int portaPeerServer = server.getPorta();
 
-        if (portaPeerServer == null) {
-            outputMaster.println("PORTA:" + portaPeerServer);
-            String risposta = inputMaster.nextLine();
+        outputMaster.println("PORTA:" + portaPeerServer);
+        outputMaster.flush();
+        String risposta = inputMaster.nextLine();
 
-            if ("porta_ricevuta".equals(risposta)) {
-                return true;
-            }
+        if ("porta_ricevuta".equals(risposta)) {
+            return true;
         }
 
         System.out.println("Errore nella trasmissione della porta di PeerServer");
