@@ -114,13 +114,8 @@ public class PeerServer implements Runnable {
 
     // Da eliminare, inserito per testing
     public static void main(String[] args) {
-        PeerServer s;
-        if (args.length < 1) {
-            s = new PeerServer(9999);
-        } else {
-            s = new PeerServer(Integer.parseInt(args[0]));
-
-        }
+        PeerServer s = new PeerServer();
         s.run();
+        System.out.println("PeerServer in ascolto sulla porta: " + s.getPorta());
     }
 }
