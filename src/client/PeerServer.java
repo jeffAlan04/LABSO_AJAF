@@ -42,7 +42,7 @@ public class PeerServer implements Runnable {
 
                 } catch (IOException e) {
                     if (!running) {
-                        logger.logInfo("PeerServer chiuso");
+                        logger.logInfo("Server chiuso");
                     } else {
                         logger.logErrore("Errore mentre veniva stabilita una connessione");
                     }
