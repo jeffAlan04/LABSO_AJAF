@@ -166,9 +166,9 @@ public class GestionePeer implements Runnable {
     private void scritturaLog(String risorsa, String peerDestinazione, boolean esito) {
         this.arbitroLog.inizioScrittura();
         if (esito) {
-            this.loggerDownload.downloadSuccesso(risorsa, indirizzoPeerServer, peerDestinazione);
+            this.loggerDownload.downloadSuccesso(risorsa, indirizzoPeer, peerDestinazione);
         } else {
-            this.loggerDownload.downloadFallito(risorsa, indirizzoPeerServer, peerDestinazione);
+            this.loggerDownload.downloadFallito(risorsa, indirizzoPeer, peerDestinazione);
         }
         this.arbitroLog.fineScrittura();
     }
