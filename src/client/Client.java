@@ -1,9 +1,11 @@
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
 
 public class Client {
     private static PeerServer server;
+    private static CountDownLatch latch;
 
     private final static String COMANDO_LISTDATA = "LISTDATA";
     private final static String COMANDO_LISTDATAREMOTE = "LISTDATA_REMOTE";
@@ -70,7 +72,14 @@ public class Client {
     }
 
     private static boolean trasmettiPorta(Scanner inputMaster, PrintWriter outputMaster) {
-        int portaPeerServer = server.getPorta();
+
+        int portaPeerServer;
+        try {
+            latch.await();
+            portaPeerServer = server.getPorta();
+        } catch (InterruptedException e) {
+            portaPeerServer = 0;
+        }
 
         outputMaster.println("PORTA:" + portaPeerServer);
         outputMaster.flush();
@@ -108,12 +117,17 @@ public class Client {
     }
 
     private static void tipoListData(String messaggio, Scanner inputMaster, PrintWriter outputMaster) {
-        String tipo = messaggio.split(" ")[1].toUpperCase();
+        String[] partiMessaggio = messaggio.split(" ");
+        if (partiMessaggio.length > 1) {
+            String tipo = partiMessaggio[1].toUpperCase();
 
-        if ("REMOTE".equals(tipo)) {
-            gestisciListDataRemote(inputMaster, outputMaster);
-        } else if ("LOCAL".equals(tipo)) {
-            gestisciListDataLocal();
+            if ("REMOTE".equals(tipo)) {
+                gestisciListDataRemote(inputMaster, outputMaster);
+            } else if ("LOCAL".equals(tipo)) {
+                gestisciListDataLocal();
+            } else {
+                System.out.println("Comando non riconosciuto " + messaggio);
+            }
         } else {
             System.out.println("Comando non riconosciuto " + messaggio);
         }
@@ -223,7 +237,8 @@ public class Client {
 
     // Crea un thread che esegua PeerServer
     private static void avvioServer() {
-        server = new PeerServer();
+        latch = new CountDownLatch(1); // inizializza un blocco di attesa di 1 evento
+        server = new PeerServer(latch);
         Thread threadServer = new Thread(server);
         threadServer.start();
     }
