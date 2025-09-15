@@ -80,7 +80,7 @@ public class GestionePeer implements Runnable {
                         if (nomeRisorsa != null) {
                             downloadRisorsa(nomeRisorsa, in, out);
                         } else {
-                            out.println("Specifica una risorsa da scaricare.");
+                            out.println("non_disponibile");
                             logger.logErrore("Risorsa non specificata.");
                         }
                         break;
