@@ -10,6 +10,7 @@ public class PeerClient {
 
     private String indirizzoHostPeer;
     private int porta;
+    private String indirizzoCompletoPeer;
     private String nomeRisorsa;
     private Logger logger;
     private final String CARTELLA_RISORSE = "risorse/";
@@ -17,6 +18,7 @@ public class PeerClient {
     public PeerClient(String indirizzoHostPeer, int porta, String nomeRisorsa) {
         this.indirizzoHostPeer = indirizzoHostPeer;
         this.porta = porta;
+        this.indirizzoHostPeerCompleto = indirizzoHostPeer + ":" + porta;
         this.nomeRisorsa = nomeRisorsa;
         this.logger = new Logger("PeerClient");
     }
@@ -24,10 +26,10 @@ public class PeerClient {
     public boolean avviaConnessione() {
         try (Socket s = new Socket()) {
             s.connect(new java.net.InetSocketAddress(indirizzoHostPeer, porta), 5000);
-            logger.logInfo("Connesso a " + indirizzoHostPeer);
+            logger.logInfo("Connesso a " + indirizzoHostPeerCompleto);
             return richiediRisorsa(s);
         } catch (IOException e) {
-            logger.logErrore("Tentativo di connessione al peer " + indirizzoHostPeer + " fallito");
+            logger.logErrore("Tentativo di connessione al peer " + indirizzoHostPeerCompleto + " fallito");
             return false;
         }
     }
@@ -44,7 +46,7 @@ public class PeerClient {
             String rispostaServer = socketOut.nextLine();
 
             if (rispostaServer.equals("false")) {
-                logger.logInfo("Il peer " + indirizzoHostPeer + " non possiede la risorsa " + nomeRisorsa);
+                logger.logInfo("Il peer " + indirizzoHostPeerCompleto + " non possiede la risorsa " + nomeRisorsa);
                 return false;
             }
 
@@ -54,12 +56,12 @@ public class PeerClient {
             logger.logErrore("Errore nel controllo della risorsa");
             return false;
         } finally {
-            logger.logInfo("Disconnesione dal peer " + indirizzoHostPeer);
+            logger.logInfo("Disconnesione dal peer " + indirizzoHostPeerCompleto);
         }
     }
 
     private boolean downloadRisorsa(Socket s, String nomeRisorsa) {
-        logger.logInfo("Inizio download risorsa " + nomeRisorsa + " da " + indirizzoHostPeer);
+        logger.logInfo("Inizio download risorsa " + nomeRisorsa + " da " + indirizzoHostPeerCompleto);
 
         try (InputStream is = s.getInputStream();
                 FileOutputStream fos = new FileOutputStream(CARTELLA_RISORSE + nomeRisorsa);
@@ -72,7 +74,7 @@ public class PeerClient {
                 bos.write(byteArray, 0, byteRead);
             }
             bos.flush();
-            logger.logInfo("Fine download risorsa " + nomeRisorsa + " da " + indirizzoHostPeer);
+            logger.logInfo("Fine download risorsa " + nomeRisorsa + " da " + indirizzoHostPeerCompleto);
             return true;
 
         } catch (IOException e) {
