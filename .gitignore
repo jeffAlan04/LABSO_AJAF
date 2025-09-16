@@ -1,9 +1,8 @@
 # Compilati
 *.class
 
-#Risorse per il test
-src/client/risorse/*
-src/client/scaricati/*
+#Risorse
+risorse/*
 *.txt
 
 # jar
