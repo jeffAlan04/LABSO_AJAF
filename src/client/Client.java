@@ -1,10 +1,11 @@
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
 
 public class Client {
     private static PeerServer server;
-    private static final int PORTA_PEER_SERVER = 9999;
+    private static CountDownLatch latch;
 
     private final static String COMANDO_LISTDATA = "LISTDATA";
     private final static String COMANDO_LISTDATAREMOTE = "LISTDATA_REMOTE";
@@ -30,12 +31,10 @@ public class Client {
 
             avvioServer(); // Avvia PeerServer in contemporanea
 
-            if (!registrazioneRisorseLocali(inputMaster, outputMaster)) { // invio delle risorse locali al master
-                System.out.println("Errore nella trasmissione delle risorse");
+            if (!trasmettiPorta(inputMaster, outputMaster) || !registrazioneRisorseLocali(inputMaster, outputMaster)) {
                 server.terminaServer();
-                return; // in caso di errore termina l'esecuzione
+                return;
             }
-            ;
 
             while (true) {
                 System.out.print("> ");
@@ -51,7 +50,7 @@ public class Client {
                         break;
 
                     case COMANDO_DOWNLOAD:
-                        gestisciDownload(messaggio, inputMaster, outputMaster, PORTA_PEER_SERVER);
+                        gestisciDownload(messaggio, inputMaster, outputMaster);
                         break;
 
                     case COMANDO_ADD:
@@ -72,6 +71,28 @@ public class Client {
         }
     }
 
+    private static boolean trasmettiPorta(Scanner inputMaster, PrintWriter outputMaster) {
+
+        int portaPeerServer;
+        try {
+            latch.await();
+            portaPeerServer = server.getPorta();
+        } catch (InterruptedException e) {
+            portaPeerServer = 0;
+        }
+
+        outputMaster.println("PORTA:" + portaPeerServer);
+        outputMaster.flush();
+        String risposta = inputMaster.nextLine();
+
+        if ("porta_ricevuta".equals(risposta)) {
+            return true;
+        }
+
+        System.out.println("Errore nella trasmissione della porta di PeerServer");
+        return false;
+    }
+
     // Gestore della registraizone delle risorse locali
     private static boolean registrazioneRisorseLocali(Scanner inputMaster, PrintWriter outputMaster) {
         List<String> risorseLocali = new ArrayList<>();
@@ -90,17 +111,23 @@ public class Client {
         if ("aggiunto".equals(risposta)) {
             return true;
         } else {
+            System.out.println("Errore nella trasmissione delle risorse locali");
             return false;
         }
     }
 
     private static void tipoListData(String messaggio, Scanner inputMaster, PrintWriter outputMaster) {
-        String tipo = messaggio.split(" ")[1].toUpperCase();
+        String[] partiMessaggio = messaggio.split(" ");
+        if (partiMessaggio.length > 1) {
+            String tipo = partiMessaggio[1].toUpperCase();
 
-        if ("REMOTE".equals(tipo)) {
-            gestisciListDataRemote(inputMaster, outputMaster);
-        } else if ("LOCAL".equals(tipo)) {
-            gestisciListDataLocal();
+            if ("REMOTE".equals(tipo)) {
+                gestisciListDataRemote(inputMaster, outputMaster);
+            } else if ("LOCAL".equals(tipo)) {
+                gestisciListDataLocal();
+            } else {
+                System.out.println("Comando non riconosciuto " + messaggio);
+            }
         } else {
             System.out.println("Comando non riconosciuto " + messaggio);
         }
@@ -131,8 +158,7 @@ public class Client {
     }
 
     // Gestore del comando download
-    private static void gestisciDownload(String messaggio, Scanner inputMaster, PrintWriter outputMaster,
-            int portaPeerServer) {
+    private static void gestisciDownload(String messaggio, Scanner inputMaster, PrintWriter outputMaster) {
 
         String[] parti = messaggio.split("\\s+");
         if (parti.length != 2) {
@@ -152,11 +178,12 @@ public class Client {
 
         // Legge la risposta del master che contiene l'indirizzo dell'host peer che
         // possiede la risorsa indicata.
-        String indirizzoHostPeer = inputMaster.nextLine();
-        while (!"non_disponibile".equals(indirizzoHostPeer)) {
-            indirizzoHostPeer = indirizzoHostPeer.split(":")[0];
+        String risposta = inputMaster.nextLine();
+        while (!"non_disponibile".equals(risposta)) {
+            String indirizzoHostPeer = risposta.split(":")[0];
+            int portaHostPeer = Integer.parseInt(risposta.split(":")[1]);
 
-            PeerClient pc = new PeerClient(indirizzoHostPeer, PORTA_PEER_SERVER, nomeRisorsa);
+            PeerClient pc = new PeerClient(indirizzoHostPeer, portaHostPeer, nomeRisorsa);
             if (pc.avviaConnessione()) {
                 outputMaster.println("true");
                 outputMaster.flush();
@@ -167,7 +194,7 @@ public class Client {
             outputMaster.flush();
             indirizzoHostPeer = inputMaster.nextLine();
         }
-        if ("non_disponibile".equals(indirizzoHostPeer)) {
+        if ("non_disponibile".equals(risposta)) {
             System.out.println("Download fallito: nessun peer disponibile");
         } else {
             System.out.println("Download avvenuto con successo");
@@ -210,7 +237,8 @@ public class Client {
 
     // Crea un thread che esegua PeerServer
     private static void avvioServer() {
-        server = new PeerServer(PORTA_PEER_SERVER);
+        latch = new CountDownLatch(1); // inizializza un blocco di attesa di 1 evento
+        server = new PeerServer(latch);
         Thread threadServer = new Thread(server);
         threadServer.start();
     }

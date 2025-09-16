@@ -10,16 +10,20 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
+import java.util.concurrent.CountDownLatch;
 
 public class PeerServer implements Runnable {
     private int porta;
     private ServerSocket serverSocket;
     private boolean running;
     private Logger logger;
+    private CountDownLatch latch;
+
     private final String CARTELLA_RISORSE = "risorse/";
 
-    public PeerServer() {
+    public PeerServer(CountDownLatch latch) {
         this.logger = new Logger("PeerServer");
+        this.latch = latch;
     }
 
     @Override
@@ -27,6 +31,7 @@ public class PeerServer implements Runnable {
         try {
             this.serverSocket = new ServerSocket(0);
             this.porta = serverSocket.getLocalPort();
+            latch.countDown(); // segnala che la porta e' stata determinata
             logger.logInfo("Server in ascolto sulla porta " + porta);
             running = true;
 
@@ -42,7 +47,7 @@ public class PeerServer implements Runnable {
 
                 } catch (IOException e) {
                     if (!running) {
-                        logger.logInfo("PeerServer chiuso");
+                        logger.logInfo("Server chiuso");
                     } else {
                         logger.logErrore("Errore mentre veniva stabilita una connessione");
                     }
@@ -114,13 +119,8 @@ public class PeerServer implements Runnable {
 
     // Da eliminare, inserito per testing
     public static void main(String[] args) {
-        PeerServer s;
-        if (args.length < 1) {
-            s = new PeerServer(9999);
-        } else {
-            s = new PeerServer(Integer.parseInt(args[0]));
-
-        }
+        PeerServer s = new PeerServer(new CountDownLatch(1));
         s.run();
+        System.out.println("PeerServer in ascolto sulla porta: " + s.getPorta());
     }
 }

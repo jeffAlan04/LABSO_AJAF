@@ -10,6 +10,7 @@ public class GestionePeer implements Runnable {
     private GestioneTab gestioneTab;
     private Logger logger;
     private String indirizzoPeer;
+    private String indirizzoPeerServer;
 
     private final String COMANDO_LISTDATAREMOTE = "LISTDATA_REMOTE";
     private final String COMANDO_QUIT = "QUIT";
@@ -32,6 +33,11 @@ public class GestionePeer implements Runnable {
 
         try (Scanner in = new Scanner(this.socket.getInputStream());
                 PrintWriter out = new PrintWriter(this.socket.getOutputStream(), true)) {
+
+            if (!assegnaIPserver(in, out)) {
+                return;
+            }
+
             Set<String> risorsePeer = getRisorsePeer(in, out);
             String risposta = addRisorsa(risorsePeer);
             out.println(risposta);
@@ -39,7 +45,7 @@ public class GestionePeer implements Runnable {
                 logger.logInfo("Informazioni peer " + indirizzoPeer + " aggiunte con successo.");
             } else {
                 logger.logErrore("Errore aggiunta informazioni peer " + indirizzoPeer + ".");
-                quit();
+                return;
             }
 
             while (in.hasNextLine()) {
@@ -74,7 +80,7 @@ public class GestionePeer implements Runnable {
                         if (nomeRisorsa != null) {
                             downloadRisorsa(nomeRisorsa, in, out);
                         } else {
-                            out.println("Specifica una risorsa da scaricare.");
+                            out.println("non_disponibile");
                             logger.logErrore("Risorsa non specificata.");
                         }
                         break;
@@ -85,6 +91,8 @@ public class GestionePeer implements Runnable {
                         break;
                 }
             }
+        } catch (NoSuchElementException e) {
+            logger.logErrore("Chiusura inaspettata della connesione con " + indirizzoPeer);
         } catch (IOException e) {
             logger.logErrore("Errore con " + indirizzoPeer + " nell'apertura della socket.");
         } finally {
@@ -121,7 +129,7 @@ public class GestionePeer implements Runnable {
 
     private String addRisorsa(Set<String> risorse) {
         this.arbitroTabella.inizioScrittura();
-        String risposta = this.gestioneTab.aggiungiPeer(indirizzoPeer, risorse);
+        String risposta = this.gestioneTab.aggiungiPeer(indirizzoPeerServer, risorse);
         this.arbitroTabella.fineScrittura();
         return risposta;
     }
@@ -201,12 +209,28 @@ public class GestionePeer implements Runnable {
         return ip;
     }
 
+    private boolean assegnaIPserver(Scanner in, PrintWriter out) {
+        String[] scan = in.nextLine().trim().split(":");
+
+        if (scan.length > 1 && "PORTA".equals(scan[0]) && !"0".equals(scan[1])) {
+            this.indirizzoPeerServer = indirizzoPeer.split(":")[0] + ":" + scan[1];
+            out.println("porta_ricevuta");
+            logger.logInfo("Indirizzo PeerServer " + indirizzoPeerServer + " acquisito");
+            return true;
+        } else {
+            out.println("porta_non_ricevuta");
+            logger.logErrore("Errore nella ricezione della porta del PeerServer del peer " + indirizzoPeer);
+            return false;
+        }
+    }
+
     public void quit() {
         try {
             if (!this.socket.isClosed()) {
                 this.socket.close();
+                logger.logInfo("Chiusura socket di " + indirizzoPeer + " avvenuta con successo.");
             }
-            logger.logInfo("Chiusura socket di " + indirizzoPeer + " avvenuta con successo.");
+            // socket già chiusa
         } catch (IOException e) {
             logger.logErrore("Errore con la chiusura della socket di " + indirizzoPeer + ".");
         }
