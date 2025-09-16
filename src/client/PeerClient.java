@@ -10,7 +10,7 @@ public class PeerClient {
 
     private String indirizzoHostPeer;
     private int porta;
-    private String indirizzoCompletoPeer;
+    private String indirizzoHostPeerCompleto;
     private String nomeRisorsa;
     private Logger logger;
     private final String CARTELLA_RISORSE = "risorse/";
