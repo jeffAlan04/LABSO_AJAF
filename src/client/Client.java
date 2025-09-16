@@ -64,10 +64,12 @@ public class Client {
             }
         } catch (IOException e) {
             System.out.println("Errore di connessione al master.");
-            server.terminaServer();
         } catch (NoSuchElementException e) {
             System.out.println("Master disconnesso.");
-            server.terminaServer();
+        } finally {
+            if (server != null) {
+                server.terminaServer();
+            }
         }
     }
 
