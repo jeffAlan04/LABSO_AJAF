@@ -116,11 +116,4 @@ public class PeerServer implements Runnable {
             logger.logErrore("Errore durante la chiusura del server");
         }
     }
-
-    // Da eliminare, inserito per testing
-    public static void main(String[] args) {
-        PeerServer s = new PeerServer(new CountDownLatch(1));
-        s.run();
-        System.out.println("PeerServer in ascolto sulla porta: " + s.getPorta());
-    }
 }
