@@ -23,6 +23,9 @@ public class PeerClient {
         this.logger = new Logger("PeerClient");
     }
 
+    // metodo per connettersi ad un peer e tentare il download di una risorsa
+    // restitutisce false in caso di errore durante il download o mancata
+    // disponibilità della risorsa
     public boolean avviaConnessione() {
         try (Socket s = new Socket()) {
             s.connect(new java.net.InetSocketAddress(indirizzoHostPeer, porta), 5000);
@@ -34,6 +37,7 @@ public class PeerClient {
         }
     }
 
+    // metodo per richiedere disponibilità risorsa ad un peer
     private boolean richiediRisorsa(Socket s) {
         try (Scanner socketOut = new Scanner(s.getInputStream());
                 PrintWriter socketIn = new PrintWriter(s.getOutputStream());) {
@@ -43,7 +47,7 @@ public class PeerClient {
             socketIn.println(nomeRisorsa);
             socketIn.flush();
 
-            String rispostaServer = socketOut.nextLine();
+            String rispostaServer = socketOut.nextLine(); // false se la risorsa non è disponibile
 
             if (rispostaServer.equals("false")) {
                 logger.logInfo("Il peer " + indirizzoHostPeerCompleto + " non possiede la risorsa " + nomeRisorsa);
@@ -67,10 +71,11 @@ public class PeerClient {
                 FileOutputStream fos = new FileOutputStream(CARTELLA_RISORSE + nomeRisorsa);
                 BufferedOutputStream bos = new BufferedOutputStream(fos);) {
 
-            byte[] byteArray = new byte[4096]; // Buffer per la scrittura del file in locale
+            byte[] byteArray = new byte[4096]; // buffer per la ricezione del file
             int byteRead; // indica il numero di byte letti nel ciclo
             while ((byteRead = is.read(byteArray)) != -1) {
-                // preleva i dati da byteArray dall'indice 0 a quello di byteRead e li scrive
+                // preleva i dati da byteArray dall'indice 0 a quello di byteRead e li scrive in
+                // locale
                 bos.write(byteArray, 0, byteRead);
             }
             bos.flush();
