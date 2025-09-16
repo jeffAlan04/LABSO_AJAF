@@ -88,11 +88,4 @@ public class Logger {
         public void close() {
         } // Metodo no-op perchè non c'è nulla da chiudere
     }
-
-    // da eliminare, solo per testing
-    public static void main(String[] args) {
-        Logger prova = new Logger("Logger");
-        prova.logInfo("Sto facendo una prova");
-        prova.close();
-    }
 }
