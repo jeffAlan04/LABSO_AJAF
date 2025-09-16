@@ -1,18 +1,33 @@
-CP := src
-JAVAC := javac
+COMMON_DIR := src/common
+CLIENT_DIR := src/client
+MASTER_DIR := src/master
+BIN_DIR   := bin
+LIB_DIR   := lib
 
-# Trova tutti i file .java nella cartella src
-SOURCES := $(wildcard $(CP)/**/*.java)
+#librerie jar
+CP := $(LIB_DIR)/*
 
-.PHONY: all clean
+PORT      := 7000
+MASTER_IP := localhost
 
-all: build
+SOURCES_COMMON := $(shell find $(COMMON_DIR) -name "*.java")
+SOURCES_CLIENT := $(shell find $(CLIENT_DIR) -name "*.java")
+SOURCES_MASTER := $(shell find $(MASTER_DIR) -name "*.java")
 
-# Compila i file .java in .class
-build:
-	$(JAVAC) $(SOURCES) -sourcepath $(CP)
+.PHONY: all clean client master compile
+all: compile
 
-COMPILED := $(wildcard $(CP)/**/*.class)
+compile:
+	@mkdir -p $(BIN_DIR)
+	javac -d $(BIN_DIR) $(SOURCES_COMMON)
+	javac -cp "$(BIN_DIR):$(CP)" -d $(BIN_DIR) $(SOURCES_MASTER)
+	javac -cp "$(BIN_DIR)" -d $(BIN_DIR) $(SOURCES_CLIENT)
+
+client:
+	java -classpath "$(BIN_DIR)" Client $(MASTER_IP) $(PORT)
+
+master:
+	java -classpath "$(BIN_DIR):$(CP)" Master $(PORT)
+
 clean:
-	rm -f $(COMPILED)
-
+	rm -rf $(BIN_DIR)
