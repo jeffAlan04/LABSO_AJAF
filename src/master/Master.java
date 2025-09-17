@@ -19,6 +19,7 @@ public class Master {
             return;
         }
 
+        // Porta su cui il server rimane in ascolto
         int porta = Integer.parseInt(args[0]);
 
         tabella = new GestioneTab();
@@ -26,7 +27,7 @@ public class Master {
         arbitroLog = new ArbitroLetturaScrittura();
         logger = new LogMaster();
 
-        // Creazionde del ServerSocket
+        // Creazione del ServerSocket in ascolto sulla porta indicata
         try (ServerSocket serverSocket = new ServerSocket(porta)) {
 
             System.out.println("Server in ascolto sulla porta: " + porta);
@@ -34,15 +35,19 @@ public class Master {
             // Avvio del thread di GestoreComandi
             new Thread(new GestoreComandi(arbitroLog, arbitroTabella, tabella, logger, serverSocket)).start();
 
-            // Ciclo continuo fino a che inEsecuzione = false
+            // Ciclo che accetta nuove connesioni fino a che inEsecuzione = true
             while (inEsecuzione) {
+
+                // Accetta nuova connessione in ingresso
                 socket = serverSocket.accept();
 
-                // Creazione di GestionePeer e avvio del thread
+                // Per ogni peer connesso, si crea un oggetto GestionePeer
                 GestionePeer gp = new GestionePeer(socket, logger, arbitroTabella, arbitroLog, tabella);
                 synchronized (listaGestoriPeer) {
                     listaGestoriPeer.add(gp);
                 }
+
+                // Avvio del thread
                 new Thread(gp).start();
             }
         }
