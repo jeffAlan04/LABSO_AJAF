@@ -36,10 +36,12 @@ public class Client {
                 return;
             }
 
+            // Ciclo principale: attende comandi da console
             while (true) {
                 System.out.print("> ");
                 String messaggio = tastiera.nextLine().trim();
 
+                // Switch sul primo token del messaggio
                 switch (messaggio.split(" ")[0].toUpperCase()) {
                     case COMANDO_QUIT:
                         gestisciQuit(outputMaster);
@@ -118,6 +120,7 @@ public class Client {
         }
     }
 
+    // Gestore di "listdata local" e "listdata remote"
     private static void tipoListData(String messaggio, Scanner inputMaster, PrintWriter outputMaster) {
         String[] partiMessaggio = messaggio.split(" ");
         if (partiMessaggio.length > 1) {
