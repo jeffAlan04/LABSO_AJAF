@@ -28,7 +28,7 @@ Per eseguire `master`
 make master PORT=[]
 ```
 
-Se non speficicate, i valori di default definiti da `Makefile` sono:
+Se non speficicati, i valori di default definiti da `Makefile` sono:
 
 - MASTER_IP = localhost
 - PORT = 7000
