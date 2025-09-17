@@ -1,11 +1,34 @@
 # LABSO_AJAF
 
 ## Compilazione
-Per compilare tutti i sorgenti presenti dentro /src
+
+Per compilare dentro `bin/` tutti i sorgenti dentro `src/`
+
 ```bash
-make build
+make compile
 ```
-Per rimuovere tutti i compilati
+
+Per rimuovere tutti i compilati da `bin`
+
 ```bash
 make clean
 ```
+
+## Esecuzione
+
+Per eseguire `client`
+
+```bash
+make client MASTER_IP=[ip master] PORT=[porta]
+```
+
+Per eseguire `master`
+
+```bash
+make master PORT=[]
+```
+
+Se non speficicate, i valori di default definiti da `Makefile` sono:
+
+- MASTER_IP = localhost
+- PORT = 7000
