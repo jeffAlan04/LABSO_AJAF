@@ -1,6 +1,7 @@
 SRC_DIR := src
-BIN_DIR   := bin
-LIB_DIR   := lib
+BIN_DIR := bin
+LIB_DIR := lib
+LOG_DIR := .log
 
 #librerie jar
 CP := $(LIB_DIR)/*
@@ -25,4 +26,4 @@ master:
 	java -classpath "$(BIN_DIR):$(CP)" Master $(PORT)
 
 clean:
-	rm -rf $(BIN_DIR)
+	rm -rf $(BIN_DIR) $(LOG_DIR) 
