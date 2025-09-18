@@ -64,7 +64,8 @@ public class GestionePeer implements Runnable {
                         break;
 
                     case COMANDO_QUIT:
-                        return;
+                        quit();
+                        break;
 
                     case COMANDO_ADD:
                         if (nomeRisorsa != null) {
