@@ -92,9 +92,9 @@ public class GestionePeer implements Runnable {
                 }
             }
         } catch (NoSuchElementException e) {
-            logger.logErrore("Chiusura inaspettata della connesione con " + indirizzoPeer);
+            logger.logErrore("Chiusura inaspettata della connesione con " + indirizzoPeer + ".");
         } catch (IOException e) {
-            logger.logErrore("Errore con " + indirizzoPeer + " nell'apertura della socket.");
+            logger.logErrore("Errore nella connessione con " + indirizzoPeer + ".");
         } finally {
             quit();
         }
