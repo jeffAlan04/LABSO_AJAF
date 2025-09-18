@@ -25,7 +25,7 @@ make client MASTER_IP=[ip master] PORT=[porta]
 Per eseguire `master`
 
 ```bash
-make master PORT=[]
+make master PORT=[porta]
 ```
 
 Se non speficicati, i valori di default definiti da `Makefile` sono:
