@@ -197,7 +197,7 @@ public class Client {
 
             outputMaster.println("false");
             outputMaster.flush();
-            indirizzoHostPeer = inputMaster.nextLine();
+            risposta = inputMaster.nextLine();
         }
         if ("non_disponibile".equals(risposta)) {
             System.out.println("Download fallito: nessun peer disponibile");
