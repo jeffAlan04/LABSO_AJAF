@@ -8,8 +8,8 @@ public class GestioneTab {
     private Map<String, Set<String>> tabella = new HashMap<>();
     private Logger logger;
 
-    private final String FILE_PATH = "risorse/tabella.json";
-    private final String CARTELLA_RISORSE = "risorse";
+    private final String CARTELLA_RISORSE = "risorse_rete";
+    private final String FILE_PATH = CARTELLA_RISORSE + "/tabella.json";
 
     public GestioneTab() {
         logger = new Logger("GestioneTab");
@@ -85,7 +85,7 @@ public class GestioneTab {
         if (!cartella.exists()) {
             cartella.mkdirs();
         }
-        
+
         File file = new File(FILE_PATH);
         if (!file.exists() || file.length() == 0) {
             logger.logInfo("File JSON vuoto o non trovato. Inizializzo tabella vuota.");
@@ -94,7 +94,8 @@ public class GestioneTab {
         }
 
         try {
-            tabella = mapper.readValue(file, new TypeReference<Map<String, Set<String>>>() {});
+            tabella = mapper.readValue(file, new TypeReference<Map<String, Set<String>>>() {
+            });
             logger.logInfo("Tabella caricata con successo.");
         } catch (IOException e) {
             logger.logErrore("Errore nel caricamento da file della tabella.");
