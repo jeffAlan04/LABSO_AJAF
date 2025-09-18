@@ -35,7 +35,7 @@ public class LogMaster {
         String riga = orario + " " + risorsa +
                 " da: " + peerSorgente +
                 " a: " + peerDestinazione +
-                (esito ? " Ok" : " Fallito");
+                (esito ? " OK" : " FALLITO");
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_LOG, true))) {
             bw.write(riga);
             bw.newLine();
