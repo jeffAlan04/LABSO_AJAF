@@ -16,13 +16,8 @@ public class ArbitroLetturaScrittura {
                 wait();
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt(); // reimposta lo stato interrupt
-                throw new IllegalStateException("Thread interrotto durante l'attesa per la lettura", e); // solleva
-                                                                                                         // runtime
-                                                                                                         // exception
-                                                                                                         // per impedire
-                                                                                                         // al thread di
-                                                                                                         // entrare in
-                                                                                                         // lettura
+                throw new IllegalStateException("Thread interrotto durante l'attesa per la lettura", e);
+                // solleva runtime exception per impedire al thread di entrare in lettura
             }
         }
 
@@ -51,13 +46,8 @@ public class ArbitroLetturaScrittura {
                 wait();
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt(); // reimposta lo stato interrupt
-                throw new IllegalStateException("Thread interrotto durante l'attesa per la lettura", e); // solleva
-                                                                                                         // runtime
-                                                                                                         // exception
-                                                                                                         // per impedire
-                                                                                                         // al thread di
-                                                                                                         // entrare in
-                                                                                                         // lettura
+                throw new IllegalStateException("Thread interrotto durante l'attesa per la lettura", e);
+                // solleva runtime exception per impedire al thread di entrare in lettura
             }
         }
 
