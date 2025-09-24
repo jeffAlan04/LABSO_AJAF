@@ -97,6 +97,7 @@ public class GestionePeer implements Runnable {
         } catch (IOException e) {
             logger.logErrore("Errore nella connessione con " + indirizzoPeer + ".");
         } finally {
+            logger.logInfo("Chiusura thread GestionePeer per " + indirizzoPeer + ".");
             quit();
         }
     }
@@ -234,6 +235,11 @@ public class GestionePeer implements Runnable {
             // socket già chiusa
         } catch (IOException e) {
             logger.logErrore("Errore con la chiusura della socket di " + indirizzoPeer + ".");
+        }
+        finally {
+            synchronized (Master.listaGestoriPeer) {
+                Master.listaGestoriPeer.remove(this);
+            }
         }
     }
 }
