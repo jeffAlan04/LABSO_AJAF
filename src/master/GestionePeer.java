@@ -11,6 +11,7 @@ public class GestionePeer implements Runnable {
     private Logger logger;
     private String indirizzoPeer;
     private String indirizzoPeerServer;
+    private boolean terminato = false;
 
     private final String COMANDO_LISTDATAREMOTE = "LISTDATA_REMOTE";
     private final String COMANDO_QUIT = "QUIT";
@@ -69,7 +70,7 @@ public class GestionePeer implements Runnable {
                         break;
 
                     case COMANDO_QUIT:
-                        quit();
+                        quitGestionePeer();
                         break;
 
                     case COMANDO_ADD:
@@ -102,8 +103,10 @@ public class GestionePeer implements Runnable {
         } catch (IOException e) {
             logger.logErrore("Errore nella connessione con " + indirizzoPeer + ".");
         } finally {
-            logger.logInfo("Chiusura thread GestionePeer per " + indirizzoPeer + ".");
-            quit();
+            if (!terminato) {
+                logger.logErrore("Thread " + indirizzoPeer + " terminato.");
+                quitGestionePeer();
+            }
         }
     }
 
@@ -241,7 +244,25 @@ public class GestionePeer implements Runnable {
     }
 
     // Chiude la connessione e rimuove il peer dalla lista
-    public void quit() {
+    private void quitGestionePeer() {
+        terminato = true;
+
+        synchronized (Master.listaGestoriPeer) {
+            Master.listaGestoriPeer.remove(this);
+        }
+        
+        quit();
+    }
+
+    public void quitMaster() {
+        if (terminato) {
+            return; // Evita doppio quit
+        }
+        terminato = true;
+        quit();
+    }
+
+    private void quit() {
         try {
             if (!this.socket.isClosed()) {
                 this.socket.close();
@@ -250,11 +271,6 @@ public class GestionePeer implements Runnable {
             // Socket già chiusa
         } catch (IOException e) {
             logger.logErrore("Errore con la chiusura della socket di " + indirizzoPeer + ".");
-        }
-        finally {
-            synchronized (Master.listaGestoriPeer) {
-                Master.listaGestoriPeer.remove(this);
-            }
         }
     }
 }

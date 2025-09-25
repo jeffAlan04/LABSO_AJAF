@@ -85,7 +85,7 @@ public class GestoreComandi implements Runnable {
         Master.inEsecuzione = false;
         synchronized (Master.listaGestoriPeer) {
             for (GestionePeer gp : Master.listaGestoriPeer) {
-                gp.quit();
+                gp.quitMaster();
             }
         }
         try {
