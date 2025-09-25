@@ -11,13 +11,14 @@ public class GestioneTab {
     private final String CARTELLA_RISORSE = "risorse_rete";
     private final String FILE_PATH = CARTELLA_RISORSE + "/tabella.json";
 
+    // Inizializza il logger e carica i dati dal file
     public GestioneTab() {
         logger = new Logger("GestioneTab");
         caricaDaFile();
     }
 
-    // GET
-    public String getRisorse() { // restituisci tutte le risorse (comando `listdata remote`)
+    // Restituisce tutte le risorse con i peer associati
+    public String getRisorse() {
         String risposta = "";
 
         for (String risorsa : tabella.keySet()) {
@@ -27,25 +28,27 @@ public class GestioneTab {
         return risposta;
     }
 
-    public String getPrimoPeer(String risorsa) { // restituisci il primo peer che ha quella risorsa
+    // Restituisce il primo peer disponibile di una specifica risorsa
+    public String getPrimoPeer(String risorsa) {
         Set<String> peers = tabella.get(risorsa);
         if (peers == null || peers.isEmpty()) {
             return null;
         }
-        return peers.iterator().next();
+        return peers.iterator().next(); // Il primo valore
     }
 
-    // AGGIUNTA
+    // Aggiunge una nuova risorsa alla tabella
     private void aggiungiRisorsa(String risorsa) {
         tabella.put(risorsa, new HashSet<String>());
     }
 
+    // Aggiunge un nuovo peer con le sue risorse alla tabella
     public String aggiungiPeer(String indirizzoIp, Set<String> risorse) {
         Map<String, Set<String>> backup = backupTabella();
         for (String risorsa : risorse) {
-            if (tabella.containsKey(risorsa)) { // esiste la risorsa
+            if (tabella.containsKey(risorsa)) { // La risorsa esiste
                 tabella.get(risorsa).add(indirizzoIp);
-            } else { // non esiste la risorsa
+            } else { // La risorsa non esiste
                 aggiungiRisorsa(risorsa);
                 tabella.get(risorsa).add(indirizzoIp);
             }
@@ -55,31 +58,29 @@ public class GestioneTab {
             logger.logInfo("Informazioni peer " + indirizzoIp + " aggiunte con successo.");
             return "aggiunto";
         } else {
-            tabella = backup;
+            tabella = backup; // Rollback in caso di errore
             logger.logErrore("Errore nel salvataggio dopo l'aggiunta delle informazioni peer " + indirizzoIp + ".");
             return "non_aggiunto";
         }
     }
 
-    // RIMOZIONE
+    // Rimuove un peer in una specifica risorsa
     public void rimuoviPeerInRisorsa(String indirizzoIp, String risorsa) {
         Map<String, Set<String>> backup = backupTabella();
         if (tabella.get(risorsa).remove(indirizzoIp)) {
-            tabella.entrySet().removeIf(entry -> entry.getValue().isEmpty());
+            tabella.entrySet().removeIf(entry -> entry.getValue().isEmpty()); // Rimuove la risorsa se non ha peer associati
             if (salvaSuFile()) {
                 logger.logInfo("Rimozione " + indirizzoIp + " dalla risorsa " + risorsa + " avvenuta con successo.");
             } else {
-                tabella = backup;
-                logger.logErrore("Errore nel salvataggio dopo la rimozione di " + indirizzoIp + " dalla risorsa "
-                        + risorsa + ".");
+                tabella = backup; // Rollback in caso di errore
+                logger.logErrore("Errore nel salvataggio dopo la rimozione di " + indirizzoIp + " dalla risorsa " + risorsa + ".");
             }
         } else {
-            logger.logErrore("Impossibile rimuovere " + indirizzoIp + " dalla risorsa " + risorsa
-                    + "... uno dei due non presente.");
+            logger.logErrore("Impossibile rimuovere " + indirizzoIp + " dalla risorsa " + risorsa + "... uno dei due non presente.");
         }
     }
 
-    // SALVATAGGIO E CARICAMENTO DATI
+    // Carica la tabella dal file JSON
     private void caricaDaFile() {
         File cartella = new File(CARTELLA_RISORSE);
         if (!cartella.exists()) {
@@ -94,8 +95,7 @@ public class GestioneTab {
         }
 
         try {
-            tabella = mapper.readValue(file, new TypeReference<Map<String, Set<String>>>() {
-            });
+            tabella = mapper.readValue(file, new TypeReference<Map<String, Set<String>>>() {});
             logger.logInfo("Tabella caricata con successo.");
         } catch (IOException e) {
             logger.logErrore("Errore nel caricamento da file della tabella.");
@@ -103,6 +103,7 @@ public class GestioneTab {
         }
     }
 
+    // Salva la tabella su file JSON
     private boolean salvaSuFile() {
         try {
             mapper.writeValue(new File(FILE_PATH), tabella);
@@ -112,6 +113,7 @@ public class GestioneTab {
         }
     }
 
+    // Crea una copia della tabella per operazioni di rollback
     private Map<String, Set<String>> backupTabella() {
         Map<String, Set<String>> backup = new HashMap<>();
         for (Map.Entry<String, Set<String>> entry : tabella.entrySet()) {
