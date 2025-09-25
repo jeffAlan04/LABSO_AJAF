@@ -56,7 +56,6 @@ public class LogMaster {
         try (BufferedReader br = new BufferedReader(new FileReader(FILE_LOG))) {
             System.out.println("Risorse scaricati: ");
             String linea;
-            // Legge riga per riga e stampa
             while ((linea = br.readLine()) != null) {
                 System.out.println("- " + linea);
             }
