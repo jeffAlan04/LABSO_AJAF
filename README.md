@@ -44,3 +44,7 @@ Se non speficicati, i valori di default definiti da `Makefile` sono:
 
 - MASTER_IP = localhost
 - PORT = 7000
+
+## Documentazione
+
+Per informazioni dettagliate su struttura e implementazione consultare la documentazione contenuta nella cartella `doc/`
