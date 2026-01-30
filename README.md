@@ -14,7 +14,7 @@ Abbiamo testato il progetto con le versioni 2.17.0, ma anche le successive dovre
 
 ## Compilazione
 
-Per compilare dentro `bin/` tutti i sorgenti dentro `src/`
+Per compilare dentro `bin/` tutti i sorgenti presenti in `src/`
 
 ```bash
 make compile
